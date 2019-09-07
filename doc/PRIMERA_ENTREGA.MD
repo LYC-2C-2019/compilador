@@ -40,10 +40,10 @@
 |REPEAT|REPEAT|SI|Palabra reservada `REPEAT`. Estructura de iteración repeat-until||
 |UNTIL|UNTIL|SI|Palabra reservada `UNTIL`. Estructura de iteración repeat-until||
 |IF|IF|SI|Palabra reservada `IF`. Estructura de decicion if||
+|ENDIF|ENDIF|SI|Palabra reservada `ENDIF`. Estructura de decicion if||
 |AND|AND|SI|Palabra reservada `AND`. Operador logico and. Condiciones||
 |OR|OR|SI|Palabra reservada `OR`. Operador logico or. Condiciones||
 |NOT|NOT|SI|Palabra reservada `NOT`. Operador logico not. Condiciones||
-|ENDIF|ENDIF|SI|Palabra reservada `ENDIF`. Estructura de decicion if||
 |PRINT|PRINT|SI|Palabra reservada `PRINT`. Salida por pantalla||
 |READ|READ|SI|Palabra reservada `READ`. Entrada por teclado||
 |VAR|VAR|SI|Palabra reservada `VAR`. Bloques de declaracion de variables||
