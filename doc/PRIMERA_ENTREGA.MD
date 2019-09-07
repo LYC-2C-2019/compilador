@@ -35,6 +35,8 @@
 |CTE_S|"C4d3n4 de T3xt0", 'C4d3n4 de T3xt0'|NO|Cualquier conjunto de caracteres delimitados por `DQUOTE`|Hasta 30 caracteres|
 |CTE_I|1234, 34560, ...|NO|Comienza con `DIGIT` > 0, pude continuar con cualquier conjunto de `DIGIT`||
 |CTE_F|99999.99, 99., .9999|NO|Comienza con 0 o más `DIGIT` > 0 seguido de DOT, Puede continuar con cualquier conjunto de 0 o más `DIGIT`. Debe contener solo una ocurrencia de DOT||
+|INTEGER|Integer|SI|Palabra reservada `Integer`. Tipo de dato entero, declaraciones de variables|16 bit|
+|FLOAT|Float|SI|Palabra reservada `Float. Tipo de dato flotante, declaraciones de variables|32 bit|
 |REPEAT|REPEAT|SI|Palabra reservada `REPEAT`. Estructura de iteración repeat-until||
 |UNTIL|UNTIL|SI|Palabra reservada `UNTIL`. Estructura de iteración repeat-until||
 |IF|IF|SI|Palabra reservada `IF`. Estructura de decicion if||
@@ -43,8 +45,6 @@
 |READ|READ|SI|Palabra reservada `READ`. Entrada por teclado||
 |VAR|VAR|SI|Palabra reservada `VAR`. Bloques de declaracion de variables||
 |ENDVAR|ENDVAR|SI|Palabra reservada `ENDVAR`. Bloques de declaracion de variables||
-|INTEGER|Integer|SI|Palabra reservada `Integer`. Tipo de dato entero, declaraciones de variables|16 bit|
-|FLOAT|Float|SI|Palabra reservada `Float`|32 bit|
 |INLIST|INLIST|SI|Palabra reservada `INLIST`||
 |MOD|MOD|SI|Palabra reservada `MOD`||
 |DIV|DIV|SI|Palabra reservada `DIV`||
