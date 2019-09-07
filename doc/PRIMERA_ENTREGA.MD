@@ -37,6 +37,10 @@
 |CTE_F|99999.99, 99., .9999|NO|Comienza con 0 o más `DIGIT` > 0 seguido de DOT, Puede continuar con cualquier conjunto de 0 o más `DIGIT`. Debe contener solo una ocurrencia de DOT||
 |REPEAT|REPEAT|SI|Palabra reservada `REPEAT`. Estructura de iteración repeat-until||
 |UNTIL|UNTIL|SI|Palabra reservada `UNTIL`. Estructura de iteración repeat-until||
+|IF|IF|SI|Palabra reservada `IF`. Estructura de decicion if||
+|ENDIF|ENDIF|SI|Palabra reservada `ENDIF`. Estructura de decicion if||
+|PRINT|PRINT|SI|Palabra reservada `PRINT`. Salida por pantalla||
+|READ|READ|SI|Palabra reservada `READ`. Entrada por teclado||
 |VAR|VAR|SI|Palabra reservada `VAR`. Bloques de declaracion de variables||
 |ENDVAR|ENDVAR|SI|Palabra reservada `ENDVAR`. Bloques de declaracion de variables||
 |INTEGER|Integer|SI|Palabra reservada `Integer`. Tipo de dato entero, declaraciones de variables|16 bit|
@@ -44,4 +48,6 @@
 |INLIST|INLIST|SI|Palabra reservada `INLIST`||
 |MOD|MOD|SI|Palabra reservada `MOD`||
 |DIV|DIV|SI|Palabra reservada `DIV`||
-|CONST|const|SI|Palabra reservada `const`||
+|CONST|CONST|SI|Palabra reservada `CONST`||
+|FILTER|FILTER|SI|Palabra reservada `FILTER`||
+
