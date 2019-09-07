@@ -23,9 +23,9 @@
 |BRA_O|(|SI|Parentesis que abre||
 |BRA_C|)|SI|Parentesis que cierra|
 |SBRA_O|[|SI|Corchete que abre||
-|SBRA_C|[|SI|Corchete que cierra||
-|CBRA_O|[|SI|Llave que abre||
-|CBRA_C|[|SI|Llave que cierra||
+|SBRA_C|]|SI|Corchete que cierra||
+|CBRA_O|{|SI|Llave que abre||
+|CBRA_C|}|SI|Llave que cierra||
 |COMM_O|--/|SI|Comentario que abre. `DASH` seguido de `DASH` seguido de `SLASH`||
 |COMM_C|/--|SI|Comentario que cierra. `SLASH` seguido de `DASH` seguido de `DASH`||
 |DQUOTE|"|SI|Comillas dobles||
