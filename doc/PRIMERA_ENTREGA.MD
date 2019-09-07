@@ -21,7 +21,7 @@
 |DASH|-|SI|Guión, signo menos u operador de resta||
 |US|_|SI|Guión bajo||
 |BRA_O|(|SI|Parentesis que abre||
-|BRA_C|)|Parentesis que cierra||
+|BRA_C|)|SI|Parentesis que cierra|
 |SBRA_O|[|SI|Corchete que abre||
 |SBRA_C|[|SI|Corchete que cierra||
 |CBRA_O|[|SI|Llave que abre||
