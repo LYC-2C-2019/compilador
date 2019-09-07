@@ -50,3 +50,30 @@ gcc lex.yy.c -o lexico.exe
 Reconoce Letras, Digitos y Otros
 
 Al ejecutar ./lexico.exe, el programa se queda a la espera del ingreso de caracteres a traves de la entrada estandar STDIN, (generalmente el teclado). Con cada ENTER el programa informa los tipo de token reconocido.
+
+# Compilador
+
+### Compilar el Compilador 😛
+Windows:
+```
+./build.bat
+```
+
+Linux
+```
+./build.sh
+```
+
+### Ejecutar el Compilador
+```
+./Primera.exe Prueba.txt
+```
+
+
+# Herramientas
+### Si te gusta C
+- [Flex y bison para C](https://sites.google.com/view/lycunlam/compilador/herramientas)
+
+### Si te gusta Java
+- [flex](https://jflex.de/manual.html)
+- [jcup](http://www2.cs.tum.edu/projects/cup/index.php)
