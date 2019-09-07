@@ -39,6 +39,7 @@ int main() {
 	yylex();
 }
 ```
+[Flex manpage](http://dinosaur.compilertools.net/flex/manpage.html)
 
 ### Compilar ejemplo basico de flex
 ```
