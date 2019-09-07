@@ -27,7 +27,7 @@
 |CBRA_O|[|SI|Llave que abre||
 |CBRA_C|[|SI|Llave que cierra||
 |COMM_O|--/|SI|Comentario que abre. `DASH` seguido de `DASH` seguido de `SLASH`||
-|COMM_C|--/|SI|Comentario que cierra. `SLASH` seguido de `DASH` seguido de `DASH`||
+|COMM_C|/--|SI|Comentario que cierra. `SLASH` seguido de `DASH` seguido de `DASH`||
 |DQUOTE|"|SI|Comillas dobles||
 |ALPHA|a..z y A..Z|NO|Letra mayúscula o minúscula||
 |DIGIT|0..9|NO|Numeros del 0 al 9||
