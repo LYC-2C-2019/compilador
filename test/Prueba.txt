@@ -1,6 +1,21 @@
+--/ Delaraciones /--
+VAR
+    [Integer, Float, Integer] : [a, b, c],
+    [Integer, Float, Integer] : [s, r, t]
+ENDVAR
 
-a = (((8 + c) + d) / 3)
+--/ expresion /--
+(5.24 + c) * r - t;
 
+--/ asigncion simple /--
+a := (((8 + c) + d) / 3);
 
+--/ asigncion multiple: (no admite constantes strings) /--
+[a,b,c,d ] := [10.4,cont,hola,3];
 
+--/ impresiones /--
+PRINT CTE_S;
+PRINT ID;
 
+--/ lectura /--
+READ ID;
