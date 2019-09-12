@@ -16,7 +16,7 @@
 |BRA_O|(|SI|Parentesis que abre|||
 |BRA_C|)|SI|Parentesis que cierra||
 |SBRA_O|[|SI|Corchete que abre|||
-|SBRA_C|[|SI|Corchete que cierra|||
+|SBRA_C|]|SI|Corchete que cierra|||
 |CBRA_O|{|SI|Llave que abre|||
 |CBRA_C|}|SI|Llave que cierra|||
 |COMMENT|--/ 3st0 3s un c0m3nt4r1 0 /*-+ FIN /--|NO|Cualquier conjunto de caracteres excepto “newline” delimitados por “--/” y “/--”|||
