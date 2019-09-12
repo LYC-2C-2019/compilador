@@ -31,11 +31,11 @@ DIGIT		[0-9]
 ALPHA		[a-zA-Z]
 DOT		"."
 NEWLINE	\n
-ANYCHAR 	.*
+ANYCHAR	.*
 COMM_O	--\/
 COMM_C	\/--
 
-COMP 		{LT}|{LE}|{GT}|{GE}|{EQ}|{NE}
+COMP		{LT}|{LE}|{GT}|{GE}|{EQ}|{NE}
 COMMENT	{COMM_O}({NEWLINE}*|{ANYCHAR}){COMM_C}
 ID			({ALPHA}|_)({ALPHA}|{DIGIT}|_)*
 CTE_S		\"{ANYCHAR}\"
