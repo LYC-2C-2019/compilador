@@ -22,7 +22,7 @@
 |COMMENT|--/ 3st0 3s un c0m3nt4r1 0 /*-+ FIN /--|NO|Cualquier conjunto de caracteres excepto “newline” delimitados por “--/” y “/--”|||
 |ALPHA|a..z y A..Z|NO|Letra mayúscula o minúscula|||
 |DIGIT|0..9|NO|Numeros del 0 al 9|||
-|ID|varName, _varName, var_name, v4rNam3_ |NO|Cominezan `ALPHA` o `US`. Pueden contener `ALPHA`, `US` y `DIGIT`|||
+|ID|varName, _varName, var_name, v4rNam3_ |NO|Cominezan `ALPHA` o `UNDERSCORE`. Pueden contener `ALPHA`, `UNDERSCORE` y `DIGIT`|||
 |CTE_S|"C4d3n4 de T3xt0%@"|NO|Cualquier conjunto de caracteres delimitados por `DQUOTE`|Hasta 30 caracteres||
 |CTE_I|1234, 34560, ...|NO|Comienza con `DIGIT` > 0, pude continuar con cualquier conjunto de `DIGIT`|||
 |CTE_F|99999.99, 99., .9999|NO|Comienza con 0 o más `DIGIT` > 0 seguido de DOT, Puede continuar con cualquier conjunto de 0 o más `DIGIT`. Debe contener solo una ocurrencia de DOT|||
