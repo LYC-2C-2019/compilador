@@ -3,11 +3,11 @@
 #include <stdlib.h>
 
 #if defined(__APPLE__) || defined(__linux__)
-  #include <curses.h>
+	#include <curses.h>
 #elif defined(_WIN32)
-  #include <conio.h>
+	#include <conio.h>
 #else
-  #error "OS not suported"
+	#error "OS not suported"
 #endif
 
 #include "y.tab.h"
@@ -45,8 +45,8 @@ CTE_F		{DIGIT}*{DOT}{DIGIT}*
 %%
 "Integer"	{ return INTEGER; }
 "Float"		{ return FLOAT; }
-"String"	{ return STRING; }
-"REPEAT"	{ return REPEAT; }
+"String"		{ return STRING; }
+"REPEAT"		{ return REPEAT; }
 "UNTIL"		{ return UNTIL; }
 "IF"			{ return IF; }
 "ENDIF"		{ return ENDIF; }
@@ -56,23 +56,23 @@ CTE_F		{DIGIT}*{DOT}{DIGIT}*
 "PRINT"		{ return PRINT; }
 "READ"		{ return READ; }
 "VAR"			{ return VAR; }
-"ENDVAR"	{ return ENDVAR; }
-"INLIST"	{ return INLIST; }
+"ENDVAR"		{ return ENDVAR; }
+"INLIST"		{ return INLIST; }
 
-":"		{ return COLON; }
-";"		{ return SCOLON; }
-","		{ return COMMA; }
+":"	{ return COLON; }
+";"	{ return SCOLON; }
+","	{ return COMMA; }
 ":="	{ return ASIG; }
-"/"		{ return SLASH; }
-"*"		{ return STAR; }
-"+"		{ return PLUS; }
+"/"	{ return SLASH; }
+"*"	{ return STAR; }
+"+"	{ return PLUS; }
 "\-"	{ return DASH; }
-"("		{ return BRA_O; }
-")"		{ return BRA_C; }
-"["		{ return SBRA_O; }
-"]"		{ return SBRA_C; }
-"{"		{ return CBRA_O; }
-"}"		{ return CBRA_C; }
+"("	{ return BRA_O; }
+")"	{ return BRA_C; }
+"["	{ return SBRA_O; }
+"]"	{ return SBRA_C; }
+"{"	{ return CBRA_O; }
+"}"	{ return CBRA_C; }
 
 {COMP}		{ return COMP; }
 {COMMENT}	{ printf("comentario:\n%s\n", yytext); }
