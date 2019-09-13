@@ -40,7 +40,7 @@ COMMENT  {COMM_O}({NEWLINE}*|{ANYCHAR}){COMM_C}
 ID       ({ALPHA}|_)({ALPHA}|{DIGIT}|_)*
 CTE_S    \"{ANYCHAR}\"
 CTE_I    -?{DIGIT}+
-CTE_F    -?({DIGIT})+{DOT}({DIGIT})*
+CTE_F    -?{DIGIT}+{DOT}{DIGIT}*
 
 %%
 "Integer"   { return INTEGER; }
