@@ -31,7 +31,9 @@
 |STRNG|String|SI|Palabra reservada “String” para referirse al tipo de dato para cadenas|String||
 |REPEAT|REPEAT|SI|Palabra reservada `REPEAT`. Estructura de iteración repeat-until|||
 |UNTIL|UNTIL|SI|Palabra reservada `UNTIL`. Estructura de iteración repeat-until|||
-|IF|IF|SI|Palabra reservada `IF`. Estructura de decicion if|||
+|IF|IF|SI|Palabra reservada `IF`. Estructura de decición if|||
+|THEN|THEN|Palabra reservada `THEN`. Estructura de decición if|||
+|ELSE|ELSE|Palabra reservada `ELSE`. Estructura de decición if|||
 |ENDIF|ENDIF|SI|Palabra reservada `ENDIF`. Estructura de decicion if|||
 |AND|AND|SI|Palabra reservada `AND`. Operador logico and. Condiciones|||
 |OR|OR|SI|Palabra reservada `OR`. Operador logico or. Condiciones|||
