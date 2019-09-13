@@ -106,7 +106,6 @@ bloque:
 sentencia:
 		expresion SCOLON
 	|	asignacion SCOLON
-	|	asignacion_multiple SCOLON
 	|	seleccion
 	|	iteracion SCOLON
 	|	impresion SCOLON
@@ -134,8 +133,13 @@ factor:
 	;
 
 asignacion:
-		ID ASIG expresion	{printf("asignacion OK\n");}
-	|	ID ASIG CTE_S 		{printf("asignacion OK\nCTE_S es: %s\n", yytext);}
+		asignacion_simple
+	|	asignacion_multiple {printf("asignacion OK\n");}
+	;
+
+asignacion_simple:
+		ID ASIG expresion	{printf("asignacion_simple OK\n");}
+	|	ID ASIG CTE_S 		{printf("asignacion_simple OK\nCTE_S es: %s\n", yytext);}
 	;
 
 asignacion_multiple:
@@ -165,7 +169,8 @@ condicion:
 
 proposicion:
 		funcion
-	|	comparacion	{printf("proposicion OK\n");};
+	|	comparacion	{printf("proposicion OK\n");}
+	;
 
 comparacion:
 		BRA_O expresion COMP expresion BRA_C
@@ -181,7 +186,8 @@ repeat:
 
 impresion:
 		PRINT ID {printf("impresion ID OK\n");}
-	|	PRINT CTE_S {printf("impresion CTE_S OK\n");};
+	|	PRINT CTE_S {printf("impresion CTE_S OK\n");}
+	;
 
 lectura:
 		READ ID
