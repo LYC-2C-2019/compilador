@@ -10,15 +10,16 @@ ENDVAR
 
 (5.24 + c) * r - t;
 
+-4 + 4 + (-4.2);
 
 --/ asigncion simple /--
 
-a := (((8 + c) + d) / -3.21);
+a := (((8 + c) + d) / 3) + (-3);
 
 
 --/ asigncion multiple: (no admite constantes strings) /--
 
-[a,b,c,d ] := [10.4,cont,hola,3];
+[a,b,c,d ] := [10.4,cont,hola, -3];
 
 
 --/ SELECCION /--
@@ -29,8 +30,8 @@ IF (a < b) AND (c > 4 ) THEN
     PRINT C;
 ENDIF
 
-IF INLIST(z; [2.3; 1.22]) OR INLIST(z; [2.3; 1.22]) THEN
-    [a,b,c,d ] := [30,20,10,-1];
+IF INLIST(z; [2.3; 1.22]) OR INLIST(z; [2.3; -1.22]) THEN
+    [a,b,c,d ] := [30,20,10, -1];
 ELSE
     [a,b,c,d ] := [10.4,cont,hola,3];
 ENDIF
@@ -60,6 +61,6 @@ READ VARIABLE;
 
 
 --/ inlist /--
-INLIST(VARIABLE; [3; 7*6; (((8 + c) + d) / -3.21)]);
+INLIST(VARIABLE; [3; 7*6; (((8 + c) + d) / (-3.21))]);
 INLIST (a; [2*b+7 ; 12 ; a+b*(34+d) ; 48]);
 INLIST (z; [2.3 ; 1.22]);

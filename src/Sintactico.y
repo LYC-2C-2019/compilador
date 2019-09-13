@@ -64,6 +64,12 @@ void success();
 %token	CTE_I
 %token	CTE_F
 
+%left	PLUS DASH
+%left	STAR SLASH
+%right	MENOS_UNARIO
+
+%start programa
+
 %%
 programa:
 		declaraciones bloque
@@ -107,7 +113,7 @@ sentencia:
 		expresion SCOLON
 	|	asignacion SCOLON
 	|	seleccion
-	|	iteracion SCOLON
+	|	iteracion
 	|	impresion SCOLON
 	|	lectura SCOLON
 	|	funcion SCOLON {printf("sentencia OK\n");}
@@ -117,6 +123,7 @@ expresion:
 		termino
 	|	expresion DASH termino	{printf("Resta OK\n");}
 	|	expresion PLUS termino  {printf("Suma OK\n");}
+	| 	DASH expresion %prec MENOS_UNARIO {printf("menos unario OK\n");}
 	;
 
 termino:
@@ -181,7 +188,7 @@ iteracion:
 		{printf("iteracion OK\n");};
 
 repeat:
-		REPEAT bloque UNTIL condicion
+		REPEAT bloque UNTIL condicion SCOLON
 		{printf("repeat OK\n");};
 
 impresion:
@@ -223,7 +230,7 @@ int yyerror(void)
 {
 	printf("Syntax Error in line %d en token %s \n", yylineno, yytext);
 	system ("Pause");
-	exit (1);
+	exit(1);
 }
 
 void success() {
