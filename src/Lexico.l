@@ -14,7 +14,7 @@ NE       <>
 D1TO9    [1-9]
 DIGIT    [0-9]
 ALPHA    [a-zA-Z]
-DOT      "."
+DOT      \.
 NEWLINE  \n
 ANYCHAR  .*
 COMM_O   --\/
@@ -25,7 +25,7 @@ COMMENT  {COMM_O}({NEWLINE}*|{ANYCHAR}){COMM_C}
 ID       ({ALPHA}|_)({ALPHA}|{DIGIT}|_)*
 CTE_S    \"{ANYCHAR}\"
 CTE_I    {DIGIT}+
-CTE_F    {DIGIT}*{DOT}{DIGIT}*
+CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 
 %%
 "Integer"   { return INTEGER; }
