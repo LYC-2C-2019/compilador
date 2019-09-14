@@ -33,7 +33,7 @@ cd ..
 
 echo "";
 echo "Ejecutando procesador sobre prueba.txt";
-./bin/${entregas[$n]}.exe test/prueba.txt;
+./bin/${entregas[$N]}.exe test/prueba.txt;
 echo "Completado";
 read -p "Presione una tecla para continuar...";
 
