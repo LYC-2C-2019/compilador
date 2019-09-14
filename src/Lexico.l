@@ -1,20 +1,5 @@
 %{
-#include <stdio.h>
-#include <stdlib.h>
-
-#if defined(__APPLE__) || defined(__linux__)
-   #include <curses.h>
-#elif defined(_WIN32)
-   #include <conio.h>
-#else
-   #error "OS not suported"
-#endif
-
 #include "y.tab.h"
-
-FILE  *yyin;
-int yylval;
-
 %}
 %option noyywrap
 %option yylineno
@@ -80,8 +65,8 @@ CTE_F    {DIGIT}*{DOT}{DIGIT}*
 {COMP}      { return COMP; }
 {ID}        { return ID; }
 {CTE_S}     { return CTE_S; }
-{CTE_I}     { yylval = atoi( yytext ); return CTE_I; }
-{CTE_F}     { yylval = atof( yytext ); return CTE_F; }
+{CTE_I}     { yylval.entero = atoi( yytext ); return CTE_I; }
+{CTE_F}     { yylval.real = atof( yytext ); return CTE_F; }
 
 "\t"
 "\n"

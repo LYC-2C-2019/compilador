@@ -13,7 +13,6 @@
 
 #include "y.tab.h"
 
-int yylval;
 int yystopparser=0;
 FILE  *yyin;
 char *yyltext;
@@ -25,6 +24,19 @@ int yyerror();
 
 void success();
 %}
+
+/*
+	Estructura de yylval.
+	los tipos <entero> y <real> deben anteponerse
+	a los tokens de los cuales queremos obtener el valor
+	Ahora el valor del lexema reconocido se encuentra en
+	$<n> ($1,$2 ... etc) donde cada $<n> es la posicion del
+	elemento del lado derecho de la regla gramatical
+*/
+%union {
+	int entero;
+	float real;
+};
 
 %token	INTEGER
 %token	FLOAT
@@ -61,8 +73,8 @@ void success();
 %token	CBRA_C
 %token	ID
 %token	CTE_S
-%token	CTE_I
-%token	CTE_F
+%token	<entero> CTE_I
+%token	<real> CTE_F
 
 %left	PLUS DASH
 %left	STAR SLASH
@@ -134,8 +146,8 @@ termino:
 
 factor:
 		ID
-	|	CTE_I {$1 = yylval ;printf("CTE_I es: %d\n", yylval);}
-	|	CTE_F {$1 = yylval ;printf("CTE_F es: %d\n", yylval);}
+	|	CTE_I {printf("CTE_I es: %d\n", $1);}
+	|	CTE_F {printf("CTE_F es: %f\n", $1);}
 	|	BRA_O expresion BRA_C {printf("factor OK\n");}
 	;
 
