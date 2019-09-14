@@ -1,5 +1,17 @@
 %{
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "y.tab.h"
+
+#include "Tabla.h"
+
+#define MAX_SIM 200
+
+// VARIABLES GLOBALES
+simbolo_t tablaDeSimbolos[MAX_SIM];
+
 %}
 %option noyywrap
 %option yylineno
@@ -21,7 +33,7 @@ COMM_O   --\/
 COMM_C   \/--
 
 COMP     {LT}|{LE}|{GT}|{GE}|{EQ}|{NE}
-COMMENT  {COMM_O}({NEWLINE}*|{ANYCHAR}){COMM_C}
+COMMENT  {COMM_O}{ANYCHAR}{COMM_C}
 ID       ({ALPHA}|_)({ALPHA}|{DIGIT}|_)*
 CTE_S    \"{ANYCHAR}\"
 CTE_I    {DIGIT}+
@@ -63,10 +75,24 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 
 {COMMENT}
 {COMP}      { return COMP; }
-{ID}        { return ID; }
-{CTE_S}     { return CTE_S; }
-{CTE_I}     { yylval.entero = atoi( yytext ); return CTE_I; }
-{CTE_F}     { yylval.real = atof( yytext ); return CTE_F; }
+{ID}        {
+               insertarSimbolo(yytext, "", "");
+               return ID;
+            }
+{CTE_S}     {
+               insertarSimbolo(yytext, "String", yytext);
+               return CTE_S;
+            }
+{CTE_I}     {
+               yylval.entero = atoi( yytext );
+               insertarSimbolo(yytext, "Integer", yytext);
+               return CTE_I;
+            }
+{CTE_F}     {
+               yylval.real = atof( yytext );
+               insertarSimbolo(yytext, "Float", yytext);
+               return CTE_F;
+            }
 
 "\t"
 "\n"

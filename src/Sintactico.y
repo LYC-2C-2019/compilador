@@ -13,15 +13,17 @@
 
 #include "y.tab.h"
 
+#include "Tabla.h"
+
 int yystopparser=0;
 FILE  *yyin;
-char *yyltext;
 char *yytext;
 int yylineno;
 
 int yylex();
 int yyerror();
 
+// MENSAJES
 void success();
 %}
 
@@ -231,6 +233,7 @@ int main(int argc,char *argv[])
 	if ((yyin = fopen(argv[1], "rt")) == NULL) {
 		printf("\nNo se puede abrir el archivo: %s\n", argv[1]);
 	} else {
+		crearTablaDeSimbolos();
 		yyparse();
 	}
 

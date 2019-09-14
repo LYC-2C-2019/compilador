@@ -1,0 +1,41 @@
+NOMBRE                                            |	TIPO                |	VALOR                           |	LONGITUD            
+------------------------------------------------------------------------------------------------------------------------------
+5.24                                              |	Float               |	5.240000                        |	                    
+4                                                 |	Integer             |	4                               |	                    
+4                                                 |	Integer             |	4                               |	                    
+4.2                                               |	Float               |	4.200000                        |	                    
+.99                                               |	Float               |	0.990000                        |	                    
+8                                                 |	Integer             |	8                               |	                    
+3                                                 |	Integer             |	3                               |	                    
+3                                                 |	Integer             |	3                               |	                    
+10.4                                              |	Float               |	10.400000                       |	                    
+3                                                 |	Integer             |	3                               |	                    
+4                                                 |	Integer             |	4                               |	                    
+2.3                                               |	Float               |	2.300000                        |	                    
+1.22                                              |	Float               |	1.220000                        |	                    
+2.3                                               |	Float               |	2.300000                        |	                    
+1.22                                              |	Float               |	1.220000                        |	                    
+30                                                |	Integer             |	30                              |	                    
+20                                                |	Integer             |	20                              |	                    
+10                                                |	Integer             |	10                              |	                    
+1                                                 |	Integer             |	1                               |	                    
+10.4                                              |	Float               |	10.400000                       |	                    
+3                                                 |	Integer             |	3                               |	                    
+2.3                                               |	Float               |	2.300000                        |	                    
+1.22                                              |	Float               |	1.220000                        |	                    
+"SELECCION"                                       |	String              |	"SELECCION"                     |	11                  
+0                                                 |	Integer             |	0                               |	                    
+1                                                 |	Integer             |	1                               |	                    
+10                                                |	Integer             |	10                              |	                    
+3                                                 |	Integer             |	3                               |	                    
+7                                                 |	Integer             |	7                               |	                    
+6                                                 |	Integer             |	6                               |	                    
+8                                                 |	Integer             |	8                               |	                    
+3.21                                              |	Float               |	3.210000                        |	                    
+2                                                 |	Integer             |	2                               |	                    
+7                                                 |	Integer             |	7                               |	                    
+12                                                |	Integer             |	12                              |	                    
+34                                                |	Integer             |	34                              |	                    
+48                                                |	Integer             |	48                              |	                    
+2.3                                               |	Float               |	2.300000                        |	                    
+1.22                                              |	Float               |	1.220000                        |	                    
