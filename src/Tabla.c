@@ -9,6 +9,7 @@
 #define FORMATO_REG_STR "%-50s|\t%-20s|\t%-32s|\t%-20d\n"
 #define FORMATO_REG_INT "%-50s|\t%-20s|\t%-32d|\t%-20s\n"
 #define FORMATO_REG_FLT "%-50s|\t%-20s|\t%-32f|\t%-20s\n"
+#define FORMATO_REG_UND "%-50s|\t%-20s|\t%-32s|\t%-20s\n"
 #define FORMATO_LEN 126
 
 // TABLA DE SIMBOLOS
@@ -45,6 +46,9 @@ void insertarSimbolo(const char *nombre, const char* tipo, const char* valor) {
    } else if (strcmp(tipo, "Float") == 0) {
       fprintf(fp, FORMATO_REG_FLT,
          nombre, tipo, atof(valor), "");
+   } else if (strcmp(tipo, "") == 0) {
+      fprintf(fp, FORMATO_REG_UND,
+         nombre, "", "", "");
    }
 
    fclose(fp);
