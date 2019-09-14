@@ -62,7 +62,7 @@ void success();
 %token	SCOLON
 %token	COMMA
 %token	COMP
-%token	ASIG
+%token	ASSIG
 %token	SLASH
 %token	STAR
 %token	PLUS
@@ -159,12 +159,12 @@ asignacion:
 	;
 
 asignacion_simple:
-		ID ASIG expresion	{printf("asignacion_simple OK\n");}
-	|	ID ASIG CTE_S 		{printf("asignacion_simple OK\nCTE_S es: %s\n", yytext);}
+		ID ASSIG expresion	{printf("asignacion_simple OK\n");}
+	|	ID ASSIG CTE_S 		{printf("asignacion_simple OK\nCTE_S es: %s\n", yytext);}
 	;
 
 asignacion_multiple:
-		SBRA_O lista_ids SBRA_C ASIG SBRA_O lista_expresiones_comma SBRA_C
+		SBRA_O lista_ids SBRA_C ASSIG SBRA_O lista_expresiones_comma SBRA_C
 		{printf("asignacion_multiple OK\n");};
 
 lista_expresiones_comma:

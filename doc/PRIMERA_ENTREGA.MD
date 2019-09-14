@@ -8,7 +8,7 @@
 |SCOLON|;|SI|Punto y coma. Usado para finalizar sentencias.|||
 |COMMA|,|SI|Coma. Usado dentro del bloque de declaraciones y en asignación en línea múltiple.|||
 |COMP|<, <=, >, >=, ==, <>|NO|Operadores de comparación|||
-|ASIG|:=|SI|`COLON` seguido de `EQ`. Operador de asignación|||
+|ASSIG|:=|SI|`COLON` seguido de `EQ`. Operador de asignación|||
 |SLASH|/|SI|Barra u operador de división|||
 |STAR|*|SI|Asterisco u operador de  multiplicación|||
 |PLUS|+|SI|Signo más u operador de suma|||

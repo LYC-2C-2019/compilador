@@ -61,7 +61,7 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 ":"   { return COLON; }
 ";"   { return SCOLON; }
 ","   { return COMMA; }
-":="  { return ASIG; }
+":="  { return ASSIG; }
 "/"   { return SLASH; }
 "*"   { return STAR; }
 "+"   { return PLUS; }
