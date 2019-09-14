@@ -219,7 +219,7 @@ funcion:
 		{printf("funcion OK\n");};
 
 inlist:
-		INLIST BRA_O ID SCOLON SBRA_O lista_expresiones_scolon SBRA_C BRA_C
+		INLIST BRA_O ID COMMA SBRA_O lista_expresiones_scolon SBRA_C BRA_C
 		{printf("inlist OK\n");};
 
 lista_expresiones_scolon:
