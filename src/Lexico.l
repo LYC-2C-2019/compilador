@@ -99,8 +99,7 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
             }
 {CTE_I}     {
                yylval.entero = atoi( yytext );
-               fprintf(stderr, "%s\n", yytext);
-           			if(validateInteger(yylval.entero)){
+       			if(validateInteger(yylval.entero)){
                   insertarSimbolo(yytext, "Integer", yytext);
                   return CTE_I;
                  }
