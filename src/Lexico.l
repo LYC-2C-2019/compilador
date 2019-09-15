@@ -100,15 +100,15 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 {CTE_I}     {
                yylval.entero = atoi( yytext );
                fprintf(stderr, "%s\n", yytext);
-
-        			if(validateInteger(yylval.entero)){
+           			if(validateInteger(yylval.entero)){
                   insertarSimbolo(yytext, "Integer", yytext);
                   return CTE_I;
                  }
 					   
             }
 {CTE_F}     {
-               if(validateFloat(atof( yytext ))){
+               yylval.real = atof( yytext );
+                if(validateFloat(atof( yytext ))){
                   insertarSimbolo(yytext, "Float", yytext);
                   return CTE_F;
                }
@@ -131,7 +131,7 @@ int validateString(char * str) {
 }
 
 int validateInteger(int Value) {
-    if(Value <= (int)MAX_INT) {
+    if( strlen(yytext) <= 5 && Value <= (int)MAX_INT ) {
         return 1;
 	}        
     else {
@@ -142,7 +142,9 @@ int validateInteger(int Value) {
 }
 
 int validateFloat(float Value) {
-	if( fabs(Value - (float)MAX_FLOAT) < 0.001) {
+    double valor = strtod(yytext,NULL);
+
+	if( strlen(yytext) <= 10 && valor >= (float)MAX_FLOAT) {
 		fprintf(stderr, "LEXICAL ERROR (line %d): Float constant out of range (Allowed range: up to %.0f) -> \%f\n", yylineno, (float)MAX_FLOAT, atof(yytext));
         system("PAUSE");	
 		exit(-1);
