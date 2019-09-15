@@ -2,6 +2,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #if defined(__APPLE__) || defined(__linux__)
 	#include <curses.h>
@@ -19,6 +20,15 @@ int yystopparser=0;
 FILE  *yyin;
 char *yytext;
 int yylineno;
+int cantidadTiposId = 0;              
+int cantidadIds = 0;
+char listaTiposId[MAX_SIM][20];
+char listaIds[MAX_SIM][50];
+
+void guardarTipoId(char*);
+void guardarId(char*);
+int esIdDeclarado(char*);
+void asignarTipoIds();
 
 int yylex();
 int yyerror();
@@ -91,7 +101,10 @@ programa:
 
 declaraciones:
 		VAR lista_declaraciones ENDVAR
-		{printf("declaraciones OK\n");};
+		{
+			asignarTipoIds();
+			printf("declaraciones OK\n");
+		};
 
 lista_declaraciones:
 		lista_declaraciones COMMA declaracion
@@ -108,14 +121,30 @@ lista_tipos:
 	;
 
 lista_ids:
-		ID
-	|	lista_ids COMMA ID {printf("lista_ids OK\n");}
+		ID { guardarId(yytext);}
+	|	lista_ids COMMA ID 
+		{
+			guardarId(yytext);
+			printf("lista_ids OK\n");
+		}
 	;
 
 tipo:
-		INTEGER {printf("tipo integer OK\n");}
-	|	FLOAT	{printf("tipo float OK\n");}
-	|	STRING	{printf("tipo string OK\n");}
+		INTEGER 
+		{
+			guardarTipoId(yytext);
+			printf("tipo integer OK\n");			
+		}
+	|	FLOAT
+		{
+			guardarTipoId(yytext);
+			printf("tipo float OK\n");
+		}
+	|	STRING	
+		{
+			guardarTipoId(yytext);
+			printf("tipo string OK\n");
+		}
 	;
 
 bloque:
@@ -242,9 +271,13 @@ int main(int argc,char *argv[])
 	return 0;
 }
 
-int yyerror(void)
+int yyerror(const char *s)
 {
-	printf("Syntax Error in line %d en token %s \n", yylineno, yytext);
+	printf("Syntax Error.\nLinea: %d\nToken: %s", yylineno, yytext);
+	if (*s)
+	{
+		printf("\nDetalle del error: %s", s);
+	}
 	system("Pause");
 	exit(1);
 }
@@ -257,6 +290,45 @@ void success() {
 	printf("\n");
 }
 
+void guardarTipoId(char* tipo)
+{
 
+  strcpy(listaTiposId[cantidadTiposId], tipo);
+  cantidadTiposId++;
+  
+}
 
+void guardarId(char* id)
+{
 
+  strcpy(listaIds[cantidadIds], id);
+  cantidadIds++;
+
+}
+
+int esIdDeclarado(char* nombre)
+{
+	int i = 0;
+	for (i = 0 ; i < cantidadIds ; i++)
+	{
+		if (strcmp(listaIds[i], nombre) == 0)
+			return 1;
+	}
+
+	return 0;
+}
+
+void asignarTipoIds()
+{
+	int i = 0;
+	int j = 0;
+	for (i = 0 ; i < cantidadTiposId ; i++)
+	{
+		if (esIdDeclarado(tablaDeSimbolos[i].nombre))
+		{
+			strcpy(tablaDeSimbolos[i].tipo, listaTiposId[j]);
+			j++;
+		}
+
+	}
+}

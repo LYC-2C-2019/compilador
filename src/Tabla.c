@@ -4,19 +4,10 @@
 
 #include "Tabla.h"
 
-typedef struct simbolo_s {
-   char nombre[50];
-   char tipo[20];
-   char valor[32];
-   int longitud;
-} simbolo_t;
-
 #define FORMATO_HEADER "%-50s|\t%-20s|\t%-50s|\t%-20s\n"
 #define FORMATO_REG_TABLA_SIM "%-50s|\t%-20s|\t%-50s|\t%-20d\n"
 #define REG_LEN 160
-#define MAX_SIM 200
 
-simbolo_t tablaDeSimbolos[MAX_SIM];
 int cantidadSimbolos = 0;
 
 // FUNCIONES PUBLICAS

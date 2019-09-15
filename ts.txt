@@ -1,11 +1,11 @@
 NOMBRE                                            |	TIPO                |	VALOR                                             |	LONGITUD            
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
-a                                                 |	Undefined           |	Undefined                                         |	1                   
-b                                                 |	Undefined           |	Undefined                                         |	1                   
-c                                                 |	Undefined           |	Undefined                                         |	1                   
-s                                                 |	Undefined           |	Undefined                                         |	1                   
-r                                                 |	Undefined           |	Undefined                                         |	1                   
-t                                                 |	Undefined           |	Undefined                                         |	1                   
+a                                                 |	Integer             |	Undefined                                         |	1                   
+b                                                 |	Float               |	Undefined                                         |	1                   
+c                                                 |	Integer             |	Undefined                                         |	1                   
+s                                                 |	Integer             |	Undefined                                         |	1                   
+r                                                 |	Float               |	Undefined                                         |	1                   
+t                                                 |	Integer             |	Undefined                                         |	1                   
 5.24                                              |	Float               |	5.24                                              |	4                   
 4                                                 |	Integer             |	4                                                 |	1                   
 4.2                                               |	Float               |	4.2                                               |	3                   
