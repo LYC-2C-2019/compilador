@@ -1,4 +1,4 @@
-REM @echo off
+@echo off
 cd src
 echo COMPILACION FLEX
 flex Lexico.l
