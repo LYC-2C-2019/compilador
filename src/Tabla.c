@@ -4,54 +4,102 @@
 
 #include "Tabla.h"
 
+typedef struct simbolo_s {
+   char nombre[50];
+   char tipo[20];
+   char valor[32];
+   int longitud;
+} simbolo_t;
 
-#define FORMATO_COL "%-50s|\t%-20s|\t%-32s|\t%-20s\n"
-#define FORMATO_REG_STR "%-50s|\t%-20s|\t%-32s|\t%-20d\n"
-#define FORMATO_REG_INT "%-50s|\t%-20s|\t%-32d|\t%-20s\n"
-#define FORMATO_REG_FLT "%-50s|\t%-20s|\t%-32f|\t%-20s\n"
-#define FORMATO_REG_UND "%-50s|\t%-20s|\t%-32s|\t%-20s\n"
-#define FORMATO_LEN 126
+#define FORMATO_HEADER "%-50s|\t%-20s|\t%-50s|\t%-20s\n"
+#define FORMATO_REG_TABLA_SIM "%-50s|\t%-20s|\t%-50s|\t%-20d\n"
+#define REG_LEN 160
+#define MAX_SIM 200
 
-// TABLA DE SIMBOLOS
-void crearTablaDeSimbolos() {
-   char buff[FORMATO_LEN];
-   FILE *fp;
-   if ((fp = fopen("ts.txt", "w+")) == NULL) {
-      printf("Error creando en tabla de simbolos\n");
-      return;
+simbolo_t tablaDeSimbolos[MAX_SIM];
+int cantidadSimbolos = 0;
+
+// FUNCIONES PUBLICAS
+
+void insertarSimbolo(const char* nombre, const char* tipo)
+{
+   if (!simboloEstaEnTabla(nombre))
+   {
+      simbolo_t reg;
+      strcpy(reg.nombre, nombre);
+      strcpy(reg.tipo, tipo);
+      strcpy(reg.valor, simboloEsConstante(tipo) ? nombre : TD_UNDEFINED);
+      reg.longitud = strlen(nombre);
+
+      tablaDeSimbolos[cantidadSimbolos] = reg;
+
+      cantidadSimbolos++;
+      
    }
 
-   fprintf(fp, FORMATO_COL,
-      "NOMBRE", "TIPO", "VALOR", "LONGITUD");
+}
 
-   memset(buff, '-', sizeof(char)*FORMATO_LEN);
+void guardarTablaDeSimbolos()
+{
+   FILE *fp;
+   int i = 0;
+   char buff[REG_LEN];
+
+   if ((fp = fopen("ts.txt", "w+")) == NULL)
+   {
+      printf("Error al guardar tabla de simbolos\n");
+      exit(1);
+   }
+
+   fprintf(fp, FORMATO_HEADER, "NOMBRE", "TIPO", "VALOR", "LONGITUD");
+   memset(buff, '-', (sizeof(char) * REG_LEN) - 2);
    fprintf(fp, "%s\n", buff);
 
-   fclose(fp);
-}
+   for (i = 0 ; i < cantidadSimbolos ; i++) {
 
-void insertarSimbolo(const char *nombre, const char* tipo, const char* valor) {
-   FILE *fp;
-   if ((fp = fopen("ts.txt", "a+")) == NULL) {
-      printf("Error escribiendo en tabla de simbolos\n");
-      return;
-   }
+      fprintf(fp, 
+      FORMATO_REG_TABLA_SIM, 
+      tablaDeSimbolos[i].nombre, 
+      tablaDeSimbolos[i].tipo,
+      tablaDeSimbolos[i].valor,
+      tablaDeSimbolos[i].longitud);
 
-   if (strcmp(tipo, "String") == 0) {
-      fprintf(fp, FORMATO_REG_STR,
-         nombre, tipo, valor, (int)strlen(valor));
-   } else if (strcmp(tipo, "Integer") == 0) {
-      fprintf(fp, FORMATO_REG_INT,
-         nombre, tipo, atoi(valor), "");
-   } else if (strcmp(tipo, "Float") == 0) {
-      fprintf(fp, FORMATO_REG_FLT,
-         nombre, tipo, atof(valor), "");
-   } else if (strcmp(tipo, "") == 0) {
-      fprintf(fp, FORMATO_REG_UND,
-         nombre, "", "", "");
    }
 
    fclose(fp);
 }
 
+
+
+// FUNCIONES PRIVADAS
+
+int simboloEsConstante(const char* tipo)
+{
+   if (strcmp(tipo, TD_CTE_S) == 0 || strcmp(tipo, TD_CTE_I) == 0 || strcmp(tipo, TD_CTE_F) == 0)
+      return 1;
+
+   return 0;
+}
+
+/*
+ * int simboloEstaEnTabla(const char* nombre)
+ * 
+ * Determina si el simbolo especificado con el nombre se encuentra
+ * o no dentro de la tabla. Devuelve 1 en caso de encontrarse; 0 en caso de no
+ * encontrarse.
+ * 
+ */
+
+int simboloEstaEnTabla(const char* nombre)
+{
+    int i;
+
+    for (i = 0; i < MAX_SIM; i++)
+    {
+          if(strcmp(tablaDeSimbolos[i].nombre, nombre) == 0)
+             return 1;
+    }
+    
+    return 0;
+}
 

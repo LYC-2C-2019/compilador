@@ -232,8 +232,9 @@ int main(int argc,char *argv[])
 {
 	if ((yyin = fopen(argv[1], "rt")) == NULL) {
 		printf("\nNo se puede abrir el archivo: %s\n", argv[1]);
+		system("Pause");
+		exit(1);
 	} else {
-		crearTablaDeSimbolos();
 		yyparse();
 	}
 
@@ -244,7 +245,7 @@ int main(int argc,char *argv[])
 int yyerror(void)
 {
 	printf("Syntax Error in line %d en token %s \n", yylineno, yytext);
-	system ("Pause");
+	system("Pause");
 	exit(1);
 }
 

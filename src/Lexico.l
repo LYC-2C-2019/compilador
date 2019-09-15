@@ -7,11 +7,6 @@
 
 #include "Tabla.h"
 
-#define MAX_SIM 200
-
-// VARIABLES GLOBALES
-simbolo_t tablaDeSimbolos[MAX_SIM];
-
 %}
 %option noyywrap
 %option yylineno
@@ -76,22 +71,26 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 {COMMENT}
 {COMP}      { return COMP; }
 {ID}        {
-               insertarSimbolo(yytext, "", "");
+               insertarSimbolo(yytext, TD_UNDEFINED);
                return ID;
             }
 {CTE_S}     {
-               insertarSimbolo(yytext, "String", yytext);
+               insertarSimbolo(yytext, TD_CTE_S);
                return CTE_S;
             }
 {CTE_I}     {
                yylval.entero = atoi( yytext );
-               insertarSimbolo(yytext, "Integer", yytext);
+               insertarSimbolo(yytext, TD_CTE_I);
                return CTE_I;
             }
 {CTE_F}     {
                yylval.real = atof( yytext );
-               insertarSimbolo(yytext, "Float", yytext);
+               insertarSimbolo(yytext, TD_CTE_F);
                return CTE_F;
+            }
+<<EOF>>     {
+               guardarTablaDeSimbolos();
+               yyterminate();
             }
 
 "\t"

@@ -1,18 +1,14 @@
 #ifndef TABLA_H
 #define TABLA_H
 
-// TIPOS
-typedef enum { tInteger, tFloat, tString } tipo_t;
-typedef struct simbolo_s {
-   char *nombre;
-   tipo_t tipoDato;
-   int valorEntero;
-   float valorReal;
-   char *valorString;
-   int longitud;
-} simbolo_t;
+#define TD_CTE_S "String"
+#define TD_CTE_I "Integer"
+#define TD_CTE_F "Float"
+#define TD_UNDEFINED "Undefined"
 
-void crearTablaDeSimbolos();
-void insertarSimbolo(const char *nombre, const char * tipo, const char* valor);
+void insertarSimbolo(const char*, const char*);
+void guardarTablaDeSimbolos();
+int simboloEsConstante(const char*);
+int simboloEstaEnTabla(const char*);
 
 #endif
