@@ -1,14 +1,17 @@
+@echo off
 cd src
-c:\GnuWin32\bin\flex Lexico.l
-pause
-c:\GnuWin32\bin\bison -dyv Sintactico.y
-pause
-c:\MinGW\bin\gcc.exe lex.yy.c y.tab.c -o ..\bin\Primera.exe
-pause
-pause
+echo COMPILACION FLEX
+flex Lexico.l
+REM pause
+echo COMPILACION BISON
+bison -dyv Sintactico.y
+REM pause
+echo COMPILACION GCC
+gcc.exe lex.yy.c y.tab.c Tabla.c -o ..\bin\Primera.exe
+REM pause
 cd ..
+echo EJECUCION DE PRUEBAS
 bin\Primera.exe test\Prueba.txt
-
 cd src
 del lex.yy.c
 del y.tab.c
