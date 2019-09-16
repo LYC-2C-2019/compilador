@@ -32,8 +32,8 @@ read -p "Presione una tecla para continuar...";
 cd ..
 
 echo "";
-echo "Ejecutando procesador sobre Prueba.txt";
-./bin/${entregas[$n]}.exe test/Prueba.txt;
+echo "Ejecutando procesador sobre prueba.txt";
+./bin/${entregas[$N]}.exe test/prueba.txt;
 echo "Completado";
 read -p "Presione una tecla para continuar...";
 
