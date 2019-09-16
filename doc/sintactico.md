@@ -5,6 +5,32 @@
 < bloque > -> < bloque > < sentencia >  
 < bloque > -> < sentencia >  
 
+### Declaraciones
+< declaraciones > -> VAR < lista-declaraciones > ENDVAR  
+< lista-declaraciones > -> < lista-declaraciones > COMMA < declaracion >  
+< lista-declaraciones > -> < declaracion >  
+< declaracion > -> SBRA_O < lista-tipos > SBRA_C COLON SBRA_O < lista-ids > SBRA_C  
+< lista-tipos > -> < lista-tipos > COMMA < tipo >  
+< lista-tipos > -> < tipo >  
+< tipo > -> INTEGER | FLOAT | STRING  
+
+### Asignacion
+< asignacion > -> < asignacion-simple >  
+< asignacion > -> < asignacion-multiple >  
+
+### Asignacion Simple
+< asignacion-simple > -> ID ASIG < expresion >  
+< asignacion-simple > -> ID ASIG CONST_S  
+
+### Asignacion Multiple
+< asignacion-multiple > -> SBRA_O < lista-ids > SBRA_C ASIG SBRA_O < lista-expresiones-comma > SBRA_C  
+< lista-expresiones-comma > -> < lista-expresiones-comma > COMMA < expresion >  
+< lista-expresiones-comma > -> < expresion >  
+< lista-expresiones-scolon > -> < lista-expresiones-scolon > SCOLON < expresion >  
+< lista-expresiones-scolon > -> < expresion >  
+< lista-ids > -> < lista-ids > COMMA ID  
+< lista-ids > -> ID  
+
 ### Tipo de Estructuras o Sentencias
 < sentencia > -> < expresion > SCOLON  
 < sentencia > -> < asignacion > SCOLON  
@@ -30,23 +56,6 @@
 < factor > -> CONST_F  
 < factor > -> BRA_O < expresion > BRA_C  
 
-### Asignacion
-< asignacion > -> < asignacion-simple >  
-< asignacion > -> < asignacion-multiple >  
-
-### Asignacion Simple
-< asignacion-simple > -> ID ASIG < expresion >  
-< asignacion-simple > -> ID ASIG CONST_S  
-
-### Asignacion Multiple
-< asignacion-multiple > -> SBRA_O < lista-ids > SBRA_C ASIG SBRA_O < lista-expresiones-comma > SBRA_C  
-< lista-expresiones-comma > -> < lista-expresiones-comma > COMMA < expresion >  
-< lista-expresiones-comma > -> < expresion >  
-< lista-expresiones-scolon > -> < lista-expresiones-scolon > SCOLON < expresion >  
-< lista-expresiones-scolon > -> < expresion >  
-< lista-ids > -> < lista-ids > COMMA ID  
-< lista-ids > -> ID  
-
 ### Seleccion
 < seleccion > -> < ifelse >  
 < ifelse > -> IF < condicion > THEN < bloque > ENDIF  
@@ -62,15 +71,6 @@
 ### Iteracion
 < iteracion > -> < repeat >  
 < repeat > -> REPEAT < bloque > UNTIL < condicion >  
-
-### Declaraciones
-< declaraciones > -> VAR < lista-declaraciones > ENDVAR  
-< lista-declaraciones > -> < lista-declaraciones > COMMA < declaracion >  
-< lista-declaraciones > -> < declaracion >  
-< declaracion > -> SBRA_O < lista-tipos > SBRA_C COLON SBRA_O < lista-ids > SBRA_C  
-< lista-tipos > -> < lista-tipos > COMMA < tipo >  
-< lista-tipos > -> < tipo >  
-< tipo > -> INTEGER | FLOAT | STRING  
 
 ### Impresion por Pantalla
 < impresion > -> PRINT CTE_S  
