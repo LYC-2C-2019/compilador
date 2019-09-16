@@ -2,7 +2,6 @@
 .DS_Store
 
 notas.txt
-ts.txt
 
 src/y.output
 src/y.tab.c
@@ -10,5 +9,3 @@ src/y.tab.h
 src/lex.yy.c
 
 samples/lex.yy.c
-
-*.exe
