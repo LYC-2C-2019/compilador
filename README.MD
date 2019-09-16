@@ -1,4 +1,4 @@
-# UNLaM - Lenguajes y Compiladores - 1er Cuatrimestre 2019
+# UNLaM - Lenguajes y Compiladores - 2do Cuatrimestre 2019
 
 ## Grupo: 4
 ### Integrantes:
