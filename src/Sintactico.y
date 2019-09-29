@@ -16,6 +16,10 @@
 
 #include "Tabla.h"
 
+#define ERROR -1
+#define MAX_TERCETOS 1024
+#define MAX_LONG 32 
+
 int yystopparser=0;
 FILE  *yyin;
 char *yytext;
@@ -29,12 +33,50 @@ void guardarTipoId(char*);
 void guardarId(char*);
 int esIdDeclarado(char*);
 void asignarTipoIds();
+void obtenerValorId(char* nombre, char * destino);
 
 int yylex();
 int yyerror();
 
 // MENSAJES
 void success();
+
+/* Notacion intermedia */
+/* estrutura de un terceto */
+typedef struct s_terceto {
+    char t1[MAX_LONG], // primer termino
+         t2[MAX_LONG], // segundo termino
+         t3[MAX_LONG]; // tercer termino
+    char aux[MAX_LONG]; // nombre variable auxiliar correspondiente
+} t_terceto;
+/* coleccion de tercetos */
+t_terceto* tercetos[MAX_TERCETOS];
+/* cantidad de tercetos */
+int cant_tercetos;
+/** crea una estructura de datos de terceto */
+t_terceto* crear_estructura_terceto (const char*, const char*, const char*);
+/* crea un terceto y lo agrega a la coleccion */
+int crear_terceto(const char*, const char*, const char*);
+/* escribe los tercetos en un archivo */
+void escribir_tercetos(FILE *);
+/* libera memoria pedida para tercetos */
+void limpiar_tercetos();
+/* Pila */ 
+typedef struct s_nodo {
+    int valor;
+    struct s_nodo *sig;
+} t_nodo;
+typedef t_nodo* t_pila;
+/* apunta al ultimo elemento ingresado */
+t_pila pila;
+/* Indica que operador de comparacion se uso */
+t_pila comparacion;
+/* Apila los tipos de condicion (and, or, not) cuando hay anidamiento */
+t_pila pila_condicion;
+void insertar_pila (t_pila*, int);
+int sacar_pila(t_pila*);
+void crear_pila(t_pila*);
+void destruir_pila(t_pila*);
 %}
 
 /*
@@ -83,7 +125,7 @@ void success();
 %token	SBRA_C
 %token	CBRA_O
 %token	CBRA_C
-%token	ID
+%token	<real> ID
 %token	CTE_S
 %token	<entero> CTE_I
 %token	<real> CTE_F
@@ -177,8 +219,20 @@ termino:
 
 factor:
 		ID
-	|	CTE_I {printf("CTE_I es: %d\n", $1);}
-	|	CTE_F {printf("CTE_F es: %f\n", $1);}
+	|	CTE_I		{
+            char valor[MAX_LONG];
+			sprintf(valor, "%d", $1);
+			printf("Valor: " , valor, "\n");
+            crear_terceto (valor, NULL, NULL);
+			printf("CTE_I es: %d\n", $1);
+           }
+	|	CTE_F {
+            char valor[MAX_LONG];
+			sprintf(valor, "%.2f", $1);
+			printf("Valor: " , valor, "\n");
+            crear_terceto (valor, NULL, NULL);
+			printf("CTE_F es: %f\n", $1);
+            }
 	|	BRA_O expresion BRA_C {printf("factor OK\n");}
 	;
 
@@ -241,8 +295,13 @@ impresion:
 
 lectura:
 		READ ID
-		{printf("lectura OK\n");};
-
+		{
+            char valor[MAX_LONG];
+            // COMO SE EL VALOR DEL ID SI NO SE DECLARA ANTES?? NO ME CIERRA
+			// obtenerValorId($2, valor);
+            crear_terceto ("READ", valor, NULL);
+			printf("lectura OK\n");
+           }
 funcion:
 		inlist
 		{printf("funcion OK\n");};
@@ -259,13 +318,26 @@ lista_expresiones_scolon:
 %%
 int main(int argc,char *argv[])
 {
+	FILE *intermedia;
+
 	if ((yyin = fopen(argv[1], "rt")) == NULL) {
 		printf("\nNo se puede abrir el archivo: %s\n", argv[1]);
 		system("Pause");
 		exit(1);
-	} else {
-		yyparse();
-	}
+	} 
+	if((intermedia = fopen("Intermedia.txt", "w"))==NULL){
+        printf("No se puede crear el archivo Intermedia.txt\n");
+        exit(ERROR);
+    }
+
+
+	yyparse();
+	
+    escribir_tercetos(intermedia);
+    escribir_tercetos(stdout);
+
+    // libero memoria de tercetos
+    limpiar_tercetos();
 
 	fclose(yyin);
 	return 0;
@@ -331,4 +403,102 @@ void asignarTipoIds()
 		}
 
 	}
+}
+
+void obtenerValorId(char* nombre, char * destino)
+{
+	int i = 0;
+	for (i = 0 ; i < cantidadIds ; i++)
+	{
+		if (strcmp(listaIds[i], nombre) == 0)
+	        strcpy(destino, tablaDeSimbolos[i].valor);
+
+	}
+
+}
+
+/** crea una estructura de datos de terceto */
+t_terceto* _crear_terceto (const char* t1, const char* t2, const char* t3){
+    t_terceto* terceto = (t_terceto*) malloc(sizeof(t_terceto));
+    // completo sus atributos
+    strcpy(terceto->t1, t1);
+
+    if (t2)
+        strcpy(terceto->t2, t2);
+    else
+        *(terceto->t2) = '\0';
+
+    if (t3)
+        strcpy(terceto->t3, t3);
+    else
+        *(terceto->t3) = '\0';
+    return terceto; 
+}
+
+/** crea una estructura de datos de terceto */
+t_terceto* crear_estructura_terceto (const char* t1, const char* t2, const char* t3){
+    t_terceto* terceto = (t_terceto*) malloc(sizeof(t_terceto));
+    // completo sus atributos
+    strcpy(terceto->t1, t1);
+
+    if (t2)
+        strcpy(terceto->t2, t2);
+    else
+        *(terceto->t2) = '\0';
+
+    if (t3)
+        strcpy(terceto->t3, t3);
+    else
+        *(terceto->t3) = '\0';
+    return terceto; 
+}
+
+int crear_terceto(const char* t1, const char* t2, const char* t3){
+    // creo un nuevo terceto y lo agrego a la coleccion de tercetos
+    int numero = cant_tercetos;
+    tercetos[numero] = _crear_terceto (t1, t2, t3);
+    cant_tercetos++;
+    // devuelvo numero de terceto
+    return numero;
+}
+
+void escribir_tercetos (FILE* archivo) {
+    int i;
+    for (i = 0; i < cant_tercetos; i++)
+        fprintf(archivo, "%d (%s, %s, %s)\n", i,
+                                              tercetos[i]->t1,
+                                              tercetos[i]->t2,
+                                              tercetos[i]->t3);
+}
+void limpiar_tercetos () {
+    int i;
+    for (i = 0; i < cant_tercetos; i++)
+        free(tercetos[i]);
+}
+
+void insertar_pila (t_pila *p, int valor) {
+    t_nodo *nodo = (t_nodo*) malloc (sizeof(t_nodo));
+    nodo->valor = valor;
+    nodo->sig = *p;
+    *p = nodo;
+}
+
+int sacar_pila(t_pila *p) {
+    int valor = ERROR;
+    t_nodo *aux;
+    if (*p != NULL) {
+       aux = *p;
+       valor = aux->valor;
+       *p = aux->sig;
+       free(aux);
+    }
+    return valor;
+}
+
+void crear_pila(t_pila *p) {
+    *p = NULL;
+}
+
+void destruir_pila(t_pila *p) {
+    while ( ERROR != sacar_pila(p));
 }

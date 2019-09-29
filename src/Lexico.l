@@ -13,7 +13,7 @@
 #define MAX_INT 65535
 #define MAX_FLOAT 4294967295.f
 #define MAX_STRING 32 
-#define MAX_ID 15
+#define MAX_ID 32
 
 // VARIABLES GLOBALES
 simbolo_t tablaDeSimbolos[MAX_SIM];
