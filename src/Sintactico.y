@@ -33,7 +33,6 @@ void guardarTipoId(char*);
 void guardarId(char*);
 int esIdDeclarado(char*);
 void asignarTipoIds();
-void obtenerValorId(char* nombre, char * destino);
 
 int yylex();
 int yyerror();
@@ -298,7 +297,6 @@ lectura:
 		{
             char valor[MAX_LONG];
             // COMO SE EL VALOR DEL ID SI NO SE DECLARA ANTES?? NO ME CIERRA
-			// obtenerValorId($2, valor);
             crear_terceto ("READ", valor, NULL);
 			printf("lectura OK\n");
            }
@@ -403,18 +401,6 @@ void asignarTipoIds()
 		}
 
 	}
-}
-
-void obtenerValorId(char* nombre, char * destino)
-{
-	int i = 0;
-	for (i = 0 ; i < cantidadIds ; i++)
-	{
-		if (strcmp(listaIds[i], nombre) == 0)
-	        strcpy(destino, tablaDeSimbolos[i].valor);
-
-	}
-
 }
 
 /** crea una estructura de datos de terceto */
