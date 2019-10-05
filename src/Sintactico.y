@@ -103,7 +103,7 @@ t_pila pila_condicion;
 %left	STAR SLASH
 %right	MENOS_UNARIO
 
-%start asignacion
+%start programa
 
 %%
 programa: declaraciones bloque

@@ -20,8 +20,8 @@
 
 // LONGITUDES DE VALORES
 #define MAX_ID 32
-#define MAX_INT USHRT_MAX // 16 bit
 #define MAX_STRING 32
+#define MAX_INT USHRT_MAX // 16 bit
 #define MAX_FLOAT FLT_MAX // 32 bit
 #define MAX_TYPE 20
 #define MAX_REG_TABLA_SIM 160
