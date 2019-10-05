@@ -1,4 +1,4 @@
---/ Delaraciones /--
+--/ hola --/ Delaraciones /--  /--
 
 VAR
     [Integer, Float, Integer] : [a, b, c],
@@ -16,7 +16,7 @@ ENDVAR
 
 a := (((8 + c) + d) / 3) + (-3);
 
-b := 9013245679013245679013245687912345666666666666666666666.32456790132456745679;
+b := 20.15;
 
 
 --/ asigncion multiple: (no admite constantes strings) /--

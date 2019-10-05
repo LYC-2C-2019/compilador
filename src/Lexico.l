@@ -44,6 +44,7 @@ COMM_C   \/--
 
 COMP     {LT}|{LE}|{GT}|{GE}|{EQ}|{NE}
 COMMENT  {COMM_O}{ANYCHAR}{COMM_C}
+NESTED_COMMENT {COMM_O}{COMMENT}{COMM_C}
 ID       ({ALPHA}|_)({ALPHA}|{DIGIT}|_)*
 CTE_S    \"{ANYCHAR}\"
 CTE_I    ([1-9]{DIGIT}+|{DIGIT})
@@ -84,6 +85,7 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 "}"   { return CBRA_C; }
 
 {COMMENT}
+{NESTED_COMMENT}
 {COMP}      { return COMP; }
 {ID}        {
 
