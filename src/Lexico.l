@@ -154,7 +154,7 @@ int validateInteger(int Value) {
 int validateFloat(float Value) {
     double valor = strtod(yytext,NULL);
 
-	if( strlen(yytext) <= 10 && valor >= (float)MAX_FLOAT) {
+	if( valor >= (float)MAX_FLOAT) {
 		fprintf(stderr, "LEXICAL ERROR (line %d): Float constant out of range (Allowed range: up to %.0f) -> \%f\n", yylineno, (float)MAX_FLOAT, atof(yytext));
         system("PAUSE");	
 		exit(-1);

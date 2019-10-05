@@ -13,6 +13,7 @@ t                                                 |	Integer             |	Undefi
 8                                                 |	Integer             |	8                                                 |	1                   
 d                                                 |	Undefined           |	Undefined                                         |	1                   
 3                                                 |	Integer             |	3                                                 |	1                   
+90132456790132456790132456879123456.32456790132456Float|	Float               |	90132456790132456790132456879123458               |	56                  
 10.4                                              |	Float               |	10.4                                              |	4                   
 cont                                              |	Undefined           |	Undefined                                         |	4                   
 hola                                              |	Undefined           |	Undefined                                         |	4                   
