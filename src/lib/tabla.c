@@ -2,11 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Tabla.h"
-
-#define FORMATO_HEADER "%-50s|\t%-20s|\t%-50s|\t%-20s\n"
-#define FORMATO_REG_TABLA_SIM "%-50s|\t%-20s|\t%-50s|\t%-20d\n"
-#define REG_LEN 160
+#include "tabla.h"
 
 int cantidadSimbolos = 0;
 
@@ -25,7 +21,7 @@ void insertarSimbolo(const char* nombre, const char* tipo)
       tablaDeSimbolos[cantidadSimbolos] = reg;
 
       cantidadSimbolos++;
-      
+
    }
 
 }
@@ -34,23 +30,23 @@ void guardarTablaDeSimbolos()
 {
    FILE *fp;
    int i = 0;
-   char buff[REG_LEN];
+   char buff[MAX_REG_TABLA_SIM];
 
    if ((fp = fopen("ts.txt", "w+")) == NULL)
    {
       printf("Error al guardar tabla de simbolos\n");
-      exit(1);
+      exit(ERROR);
    }
 
-   fprintf(fp, FORMATO_HEADER, "NOMBRE", "TIPO", "VALOR", "LONGITUD");
-   memset(buff, '-', (sizeof(char) * REG_LEN) - 2);
+   fprintf(fp, FORMATO_HEADER_TABLA_SIM, "NOMBRE", "TIPO", "VALOR", "LONGITUD");
+   memset(buff, '-', (sizeof(char) * MAX_REG_TABLA_SIM) - 2);
    fprintf(fp, "%s\n", buff);
 
    for (i = 0 ; i < cantidadSimbolos ; i++) {
 
-      fprintf(fp, 
-      FORMATO_REG_TABLA_SIM, 
-      tablaDeSimbolos[i].nombre, 
+      fprintf(fp,
+      FORMATO_REG_TABLA_SIM,
+      tablaDeSimbolos[i].nombre,
       tablaDeSimbolos[i].tipo,
       tablaDeSimbolos[i].valor,
       tablaDeSimbolos[i].longitud);
@@ -74,11 +70,11 @@ int simboloEsConstante(const char* tipo)
 
 /*
  * int simboloEstaEnTabla(const char* nombre)
- * 
+ *
  * Determina si el simbolo especificado con el nombre se encuentra
  * o no dentro de la tabla. Devuelve 1 en caso de encontrarse; 0 en caso de no
  * encontrarse.
- * 
+ *
  */
 
 int simboloEstaEnTabla(const char* nombre)
@@ -90,7 +86,7 @@ int simboloEstaEnTabla(const char* nombre)
           if(strcmp(tablaDeSimbolos[i].nombre, nombre) == 0)
              return 1;
     }
-    
+
     return 0;
 }
 

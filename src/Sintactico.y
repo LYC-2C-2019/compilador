@@ -14,20 +14,19 @@
 
 #include "y.tab.h"
 
-#include "Tabla.h"
-
-#define ERROR -1
-#define MAX_TERCETOS 1024
-#define MAX_LONG 32 
+#include "lib/const.h"
+#include "lib/tabla.h"
+#include "lib/pila.h"
+#include "lib/tercetos.h"
 
 int yystopparser=0;
 FILE  *yyin;
 char *yytext;
 int yylineno;
-int cantidadTiposId = 0;              
+int cantidadTiposId = 0;
 int cantidadIds = 0;
-char listaTiposId[MAX_SIM][20];
-char listaIds[MAX_SIM][50];
+char listaTiposId[MAX_SIM][MAX_TYPE];
+char listaIds[MAX_SIM][MAX_ID];
 
 void guardarTipoId(char*);
 void guardarId(char*);
@@ -40,42 +39,12 @@ int yyerror();
 // MENSAJES
 void success();
 
-/* Notacion intermedia */
-/* estrutura de un terceto */
-typedef struct s_terceto {
-    char t1[MAX_LONG], // primer termino
-         t2[MAX_LONG], // segundo termino
-         t3[MAX_LONG]; // tercer termino
-    char aux[MAX_LONG]; // nombre variable auxiliar correspondiente
-} t_terceto;
-/* coleccion de tercetos */
-t_terceto* tercetos[MAX_TERCETOS];
-/* cantidad de tercetos */
-int cant_tercetos;
-/** crea una estructura de datos de terceto */
-t_terceto* crear_estructura_terceto (const char*, const char*, const char*);
-/* crea un terceto y lo agrega a la coleccion */
-int crear_terceto(const char*, const char*, const char*);
-/* escribe los tercetos en un archivo */
-void escribir_tercetos(FILE *);
-/* libera memoria pedida para tercetos */
-void limpiar_tercetos();
-/* Pila */ 
-typedef struct s_nodo {
-    int valor;
-    struct s_nodo *sig;
-} t_nodo;
-typedef t_nodo* t_pila;
 /* apunta al ultimo elemento ingresado */
 t_pila pila;
 /* Indica que operador de comparacion se uso */
 t_pila comparacion;
 /* Apila los tipos de condicion (and, or, not) cuando hay anidamiento */
 t_pila pila_condicion;
-void insertar_pila (t_pila*, int);
-int sacar_pila(t_pila*);
-void crear_pila(t_pila*);
-void destruir_pila(t_pila*);
 %}
 
 /*
@@ -89,6 +58,7 @@ void destruir_pila(t_pila*);
 %union {
 	int entero;
 	float real;
+	char string[100];
 };
 
 %token	INTEGER
@@ -124,7 +94,7 @@ void destruir_pila(t_pila*);
 %token	SBRA_C
 %token	CBRA_O
 %token	CBRA_C
-%token	<real> ID
+%token	<string>ID
 %token	CTE_S
 %token	<entero> CTE_I
 %token	<real> CTE_F
@@ -133,184 +103,187 @@ void destruir_pila(t_pila*);
 %left	STAR SLASH
 %right	MENOS_UNARIO
 
-%start programa
+%start asignacion
 
 %%
-programa:
-		declaraciones bloque
-		{success();};
+programa: declaraciones bloque
+		{
+			printf("Regla 0\n");
+			success();
+		};
 
 declaraciones:
 		VAR lista_declaraciones ENDVAR
 		{
 			asignarTipoIds();
-			printf("declaraciones OK\n");
+			printf("Regla 1\n");
 		};
 
 lista_declaraciones:
-		lista_declaraciones COMMA declaracion
-	|	declaracion {printf("lista_declaraciones OK\n");}
+		lista_declaraciones COMMA declaracion	{printf("Regla 2\n");}
+	|	declaracion 							{printf("Regla 3\n");}
 	;
 
 declaracion:
 		SBRA_O lista_tipos SBRA_C COLON SBRA_O lista_ids SBRA_C
-		{printf("declaracion OK\n");};
+		{printf("Regla 4\n");};
 
 lista_tipos:
-		tipo
-	|	lista_tipos COMMA tipo {printf("lista_tipos OK\n");}
+		tipo {printf("Regla 5\n");}
+	|	lista_tipos COMMA tipo {printf("Regla 6\n");}
 	;
 
 lista_ids:
-		ID { guardarId(yytext);}
-	|	lista_ids COMMA ID 
+		ID { guardarId(yytext); printf("Regla 7\n");}
+	|	lista_ids COMMA ID
 		{
 			guardarId(yytext);
-			printf("lista_ids OK\n");
+			{printf("Regla 8\n");}
 		}
 	;
 
 tipo:
-		INTEGER 
+		INTEGER
 		{
 			guardarTipoId(yytext);
-			printf("tipo integer OK\n");			
+			{printf("Regla 9\n");}
 		}
 	|	FLOAT
 		{
 			guardarTipoId(yytext);
-			printf("tipo float OK\n");
+			{printf("Regla 10\n");}
 		}
-	|	STRING	
+	|	STRING
 		{
 			guardarTipoId(yytext);
-			printf("tipo string OK\n");
+			{printf("Regla 11\n");}
 		}
 	;
 
 bloque:
-		sentencia
-	|	bloque sentencia {printf("bloque OK\n");}
+		sentencia 			{printf("Regla 12\n");}
+	|	bloque sentencia 	{printf("Regla 13\n");}
 	;
 
 sentencia:
-		expresion SCOLON
-	|	asignacion SCOLON
-	|	seleccion
-	|	iteracion
-	|	impresion SCOLON
-	|	lectura SCOLON
-	|	funcion SCOLON {printf("sentencia OK\n");}
+		expresion SCOLON	{printf("Regla 14\n");}
+	|	asignacion SCOLON 	{printf("Regla 15\n");}
+	|	seleccion			{printf("Regla 16\n");}
+	|	iteracion			{printf("Regla 17\n");}
+	|	impresion SCOLON	{printf("Regla 18\n");}
+	|	lectura SCOLON		{printf("Regla 19\n");}
+	|	funcion SCOLON		{printf("Regla 20\n");}
 	;
 
 expresion:
-		termino
-	|	expresion DASH termino	{printf("Resta OK\n");}
-	|	expresion PLUS termino  {printf("Suma OK\n");}
-	| 	DASH expresion %prec MENOS_UNARIO {printf("menos unario OK\n");}
+		termino                             {printf("Regla 21\n");}
+	|	expresion DASH termino				{printf("Regla 22\n");}
+	|	expresion PLUS termino				{printf("Regla 23\n");}
+	| 	DASH expresion %prec MENOS_UNARIO	{printf("Regla 24\n");}
 	;
 
 termino:
-		factor
-	|	termino STAR factor 	{printf("Multiplicacion OK\n");}
-	|	termino SLASH factor	{printf("Division OK\n");}
+		factor					{printf("Regla 25\n");}
+	|	termino STAR factor 	{printf("Regla 26\n");}
+	|	termino SLASH factor	{printf("Regla 27\n");}
 	;
 
 factor:
-		ID
-	|	CTE_I		{
-            char valor[MAX_LONG];
+		ID {
+			printf("Regla 28\n");
+		}
+	|	CTE_I {
+            char valor[MAX_STRING];
 			sprintf(valor, "%d", $1);
-			printf("Valor: " , valor, "\n");
-            crear_terceto (valor, NULL, NULL);
-			printf("CTE_I es: %d\n", $1);
-           }
+            crear_terceto(valor, NULL, NULL);
+			{printf("Regla 29\n");}
+        }
 	|	CTE_F {
-            char valor[MAX_LONG];
+            char valor[MAX_STRING];
 			sprintf(valor, "%.2f", $1);
-			printf("Valor: " , valor, "\n");
-            crear_terceto (valor, NULL, NULL);
-			printf("CTE_F es: %f\n", $1);
-            }
-	|	BRA_O expresion BRA_C {printf("factor OK\n");}
+            crear_terceto(valor, NULL, NULL);
+			{printf("Regla 30\n");}
+        }
+	|	BRA_O expresion BRA_C {
+			printf("Regla 31\n");
+		}
 	;
 
 asignacion:
-		asignacion_simple
-	|	asignacion_multiple {printf("asignacion OK\n");}
+		asignacion_simple	{printf("Regla 32\n");}
+	|	asignacion_multiple {printf("Regla 33\n");}
 	;
 
 asignacion_simple:
-		ID ASSIG expresion	{printf("asignacion_simple OK\n");}
-	|	ID ASSIG CTE_S 		{printf("asignacion_simple OK\nCTE_S es: %s\n", yytext);}
+		ID ASSIG expresion	{printf("Regla 34\n");}
+	|	ID ASSIG CTE_S 		{printf("Regla 35\n");}
 	;
 
 asignacion_multiple:
 		SBRA_O lista_ids SBRA_C ASSIG SBRA_O lista_expresiones_comma SBRA_C
-		{printf("asignacion_multiple OK\n");};
+		{printf("Regla 36\n");};
 
 lista_expresiones_comma:
-		expresion
-	| 	lista_expresiones_comma COMMA expresion {printf("lista_expresiones_comma OK\n");}
+		expresion 								{printf("Regla 37\n");}
+	| 	lista_expresiones_comma COMMA expresion {printf("Regla 38\n");}
 	;
 
 seleccion:
 		ifelse
-		{printf("seleccion OK\n");};
+		{printf("Regla 39\n");};
 
 ifelse:
-		IF condicion THEN bloque ENDIF
-	|	IF condicion THEN bloque ELSE bloque ENDIF {printf("ifelse OK\n");}
+		IF condicion THEN bloque ENDIF				{printf("Regla 40\n");}
+	|	IF condicion THEN bloque ELSE bloque ENDIF 	{printf("Regla 41\n");}
 	;
 
 condicion:
-		proposicion
-	|	proposicion AND proposicion
-	|	proposicion OR proposicion
-	|	NOT proposicion	{printf("condicion OK\n");}
+		proposicion						{printf("Regla 42\n");}
+	|	proposicion AND proposicion		{printf("Regla 43\n");}
+	|	proposicion OR proposicion		{printf("Regla 44\n");}
+	|	NOT proposicion	{printf("Regla 45\n");}
 	;
 
 proposicion:
-		funcion
-	|	comparacion	{printf("proposicion OK\n");}
+		funcion		{printf("Regla 46\n");}
+	|	comparacion	{printf("Regla 47\n");}
 	;
 
 comparacion:
 		BRA_O expresion COMP expresion BRA_C
-		{printf("comparacion OK\n");};
+		{printf("Regla 48\n");};
 
 iteracion:
 		repeat
-		{printf("iteracion OK\n");};
+		{printf("Regla 49\n");};
 
 repeat:
 		REPEAT bloque UNTIL condicion SCOLON
-		{printf("repeat OK\n");};
+		{printf("Regla 50\n");};
 
 impresion:
-		PRINT ID {printf("impresion ID OK\n");}
-	|	PRINT CTE_S {printf("impresion CTE_S OK\n");}
+		PRINT ID {printf("Regla 51\n");}
+	|	PRINT CTE_S {printf("Regla 52\n");}
 	;
 
 lectura:
-		READ ID
-		{
-            char valor[MAX_LONG];
-            // COMO SE EL VALOR DEL ID SI NO SE DECLARA ANTES?? NO ME CIERRA
-            crear_terceto ("READ", valor, NULL);
-			printf("lectura OK\n");
-           }
+		READ ID {
+			char valor[MAX_STRING];
+			// COMO SE EL VALOR DEL ID SI NO SE DECLARA ANTES?? NO ME CIERRA
+			crear_terceto("READ", valor, NULL);
+			printf("Regla 52\n");
+        }
 funcion:
 		inlist
-		{printf("funcion OK\n");};
+		{printf("Regla 53\n");};
 
 inlist:
 		INLIST BRA_O ID COMMA SBRA_O lista_expresiones_scolon SBRA_C BRA_C
-		{printf("inlist OK\n");};
+		{printf("Regla 54\n");};
 
 lista_expresiones_scolon:
-		expresion
-	|	lista_expresiones_scolon SCOLON expresion	{printf("lista-expresiones-scolon OK\n");}
+		expresion									{printf("Regla 55\n");}
+	|	lista_expresiones_scolon SCOLON expresion	{printf("Regla 56\n");}
 	;
 
 %%
@@ -321,16 +294,17 @@ int main(int argc,char *argv[])
 	if ((yyin = fopen(argv[1], "rt")) == NULL) {
 		printf("\nNo se puede abrir el archivo: %s\n", argv[1]);
 		system("Pause");
-		exit(1);
-	} 
+		exit(ERROR);
+	}
+
 	if((intermedia = fopen("Intermedia.txt", "w"))==NULL){
         printf("No se puede crear el archivo Intermedia.txt\n");
         exit(ERROR);
     }
 
-
 	yyparse();
-	
+
+    // Muestro los tercetos
     escribir_tercetos(intermedia);
     escribir_tercetos(stdout);
 
@@ -338,18 +312,17 @@ int main(int argc,char *argv[])
     limpiar_tercetos();
 
 	fclose(yyin);
-	return 0;
+	return SUCCESS;
 }
 
 int yyerror(const char *s)
 {
 	printf("Syntax Error.\nLinea: %d\nToken: %s", yylineno, yytext);
-	if (*s)
-	{
+	if (*s) {
 		printf("\nDetalle del error: %s", s);
 	}
 	system("Pause");
-	exit(1);
+	exit(ERROR);
 }
 
 void success() {
@@ -362,27 +335,23 @@ void success() {
 
 void guardarTipoId(char* tipo)
 {
-
-  strcpy(listaTiposId[cantidadTiposId], tipo);
-  cantidadTiposId++;
-  
+	strcpy(listaTiposId[cantidadTiposId], tipo);
+	cantidadTiposId++;
 }
 
 void guardarId(char* id)
 {
-
-  strcpy(listaIds[cantidadIds], id);
-  cantidadIds++;
-
+	strcpy(listaIds[cantidadIds], id);
+	cantidadIds++;
 }
 
 int esIdDeclarado(char* nombre)
 {
 	int i = 0;
-	for (i = 0 ; i < cantidadIds ; i++)
-	{
-		if (strcmp(listaIds[i], nombre) == 0)
+	for (i = 0 ; i < cantidadIds ; i++) {
+		if (strcmp(listaIds[i], nombre) == 0) {
 			return 1;
+		}
 	}
 
 	return 0;
@@ -392,99 +361,11 @@ void asignarTipoIds()
 {
 	int i = 0;
 	int j = 0;
-	for (i = 0 ; i < cantidadTiposId ; i++)
-	{
-		if (esIdDeclarado(tablaDeSimbolos[i].nombre))
-		{
+	for (i = 0 ; i < cantidadTiposId ; i++) {
+		if (esIdDeclarado(tablaDeSimbolos[i].nombre)) {
 			strcpy(tablaDeSimbolos[i].tipo, listaTiposId[j]);
 			j++;
 		}
 
 	}
-}
-
-/** crea una estructura de datos de terceto */
-t_terceto* _crear_terceto (const char* t1, const char* t2, const char* t3){
-    t_terceto* terceto = (t_terceto*) malloc(sizeof(t_terceto));
-    // completo sus atributos
-    strcpy(terceto->t1, t1);
-
-    if (t2)
-        strcpy(terceto->t2, t2);
-    else
-        *(terceto->t2) = '\0';
-
-    if (t3)
-        strcpy(terceto->t3, t3);
-    else
-        *(terceto->t3) = '\0';
-    return terceto; 
-}
-
-/** crea una estructura de datos de terceto */
-t_terceto* crear_estructura_terceto (const char* t1, const char* t2, const char* t3){
-    t_terceto* terceto = (t_terceto*) malloc(sizeof(t_terceto));
-    // completo sus atributos
-    strcpy(terceto->t1, t1);
-
-    if (t2)
-        strcpy(terceto->t2, t2);
-    else
-        *(terceto->t2) = '\0';
-
-    if (t3)
-        strcpy(terceto->t3, t3);
-    else
-        *(terceto->t3) = '\0';
-    return terceto; 
-}
-
-int crear_terceto(const char* t1, const char* t2, const char* t3){
-    // creo un nuevo terceto y lo agrego a la coleccion de tercetos
-    int numero = cant_tercetos;
-    tercetos[numero] = _crear_terceto (t1, t2, t3);
-    cant_tercetos++;
-    // devuelvo numero de terceto
-    return numero;
-}
-
-void escribir_tercetos (FILE* archivo) {
-    int i;
-    for (i = 0; i < cant_tercetos; i++)
-        fprintf(archivo, "%d (%s, %s, %s)\n", i,
-                                              tercetos[i]->t1,
-                                              tercetos[i]->t2,
-                                              tercetos[i]->t3);
-}
-void limpiar_tercetos () {
-    int i;
-    for (i = 0; i < cant_tercetos; i++)
-        free(tercetos[i]);
-}
-
-void insertar_pila (t_pila *p, int valor) {
-    t_nodo *nodo = (t_nodo*) malloc (sizeof(t_nodo));
-    nodo->valor = valor;
-    nodo->sig = *p;
-    *p = nodo;
-}
-
-int sacar_pila(t_pila *p) {
-    int valor = ERROR;
-    t_nodo *aux;
-    if (*p != NULL) {
-       aux = *p;
-       valor = aux->valor;
-       *p = aux->sig;
-       free(aux);
-    }
-    return valor;
-}
-
-void crear_pila(t_pila *p) {
-    *p = NULL;
-}
-
-void destruir_pila(t_pila *p) {
-    while ( ERROR != sacar_pila(p));
 }
