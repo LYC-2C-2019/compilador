@@ -123,6 +123,11 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 "\t"
 "\n"
 "\r"
+"\r\n"
+" "
+
+.           { printf("\nCaracter invalido!\n");  exit(1);}
+
 %%
 int validateString(char * str) {
     if(strlen(str) <= (int)MAX_STRING) {
