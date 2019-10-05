@@ -3,7 +3,6 @@
 #include <string.h>
 
 #include "tercetos.h"
-/* Un puntero por cada no terminal
 
 /* cantidad de tercetos */
 int cant_tercetos = 0;
