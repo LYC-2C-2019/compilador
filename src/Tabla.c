@@ -4,9 +4,8 @@
 
 #include "Tabla.h"
 
-#define FORMATO_HEADER "%-50s|\t%-20s|\t%-50s|\t%-20s\n"
-#define FORMATO_REG_TABLA_SIM "%-50s|\t%-20s|\t%-50s|\t%-20d\n"
-#define REG_LEN 160
+#define FORMATO_REG_TABLA_SIM "%-34s| %-14s| %-34s| %-10s\n"
+#define REG_LEN 98
 
 int cantidadSimbolos = 0;
 
@@ -20,12 +19,11 @@ void insertarSimbolo(const char* nombre, const char* tipo)
       strcpy(reg.nombre, nombre);
       strcpy(reg.tipo, tipo);
       strcpy(reg.valor, simboloEsConstante(tipo) ? nombre : TD_UNDEFINED);
-      reg.longitud = strlen(nombre);
+      simboloEsConstante(tipo) ? sprintf(reg.longitud, "%d", strlen(nombre)) : sprintf(reg.longitud, "%s", "");
 
       tablaDeSimbolos[cantidadSimbolos] = reg;
 
       cantidadSimbolos++;
-      
    }
 
 }
@@ -42,7 +40,7 @@ void guardarTablaDeSimbolos()
       exit(1);
    }
 
-   fprintf(fp, FORMATO_HEADER, "NOMBRE", "TIPO", "VALOR", "LONGITUD");
+   fprintf(fp, FORMATO_REG_TABLA_SIM, "NOMBRE", "TIPO", "VALOR", "LONGITUD");
    memset(buff, '-', (sizeof(char) * REG_LEN) - 2);
    fprintf(fp, "%s\n", buff);
 

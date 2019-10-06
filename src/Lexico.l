@@ -44,6 +44,7 @@ COMM_C   \/--
 
 COMP     {LT}|{LE}|{GT}|{GE}|{EQ}|{NE}
 COMMENT  {COMM_O}{ANYCHAR}{COMM_C}
+NESTED_COMMENT {COMM_O}{COMMENT}{COMM_C}
 ID       ({ALPHA}|_)({ALPHA}|{DIGIT}|_)*
 CTE_S    \"{ANYCHAR}\"
 CTE_I    ([1-9]{DIGIT}+|{DIGIT})
@@ -84,6 +85,7 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 "}"   { return CBRA_C; }
 
 {COMMENT}
+{NESTED_COMMENT}
 {COMP}      { return COMP; }
 {ID}        {
 
@@ -123,6 +125,11 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 "\t"
 "\n"
 "\r"
+"\r\n"
+" "
+
+.           { printf("\nCaracter invalido!\n");  exit(1);}
+
 %%
 int validateString(char * str) {
     if(strlen(str) <= (int)MAX_STRING) {
@@ -149,7 +156,7 @@ int validateInteger(int Value) {
 int validateFloat(float Value) {
     double valor = strtod(yytext,NULL);
 
-	if( strlen(yytext) <= 10 && valor >= (float)MAX_FLOAT) {
+	if( valor >= (float)MAX_FLOAT) {
 		fprintf(stderr, "LEXICAL ERROR (line %d): Float constant out of range (Allowed range: up to %.0f) -> \%f\n", yylineno, (float)MAX_FLOAT, atof(yytext));
         system("PAUSE");	
 		exit(-1);
