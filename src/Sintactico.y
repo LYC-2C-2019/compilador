@@ -105,6 +105,16 @@ t_pila pila_condicion;
 %left	STAR SLASH
 %right	MENOS_UNARIO
 
+%type <entero> bloque
+%type <entero> sentencia
+%type <entero> expresion
+%type <entero> termino
+%type <entero> factor
+%type <entero> asignacion
+%type <entero> asignacion_simple
+%type <entero> seleccion
+%type <entero> lectura
+
 %start bloque
 
 %%
@@ -163,7 +173,7 @@ tipo:
 
 bloque:
 		sentencia {
-			idx_bloque = idx_sentencia;
+			$$ = $1;
 			printf("Regla 12\n");
 		}
 	|	bloque sentencia 	{printf("Regla 13\n");}
@@ -171,90 +181,86 @@ bloque:
 
 sentencia:
 		expresion SCOLON {
-			idx_sentencia = idx_expresion;
+			$$ = $1;
 			printf("Regla 14\n");
 		}
 	|	asignacion SCOLON {
-			idx_sentencia = idx_asignacion;
+			$$ = $1;
 			printf("Regla 15\n");
 		}
 	|	seleccion {
-			idx_sentencia = idx_seleccion;
 			printf("Regla 16\n");
 		}
 	|	iteracion {
-			idx_sentencia = idx_iteracion;
 			printf("Regla 17\n");
 		}
 	|	impresion SCOLON {
-			idx_sentencia = idx_impresion;
 			printf("Regla 18\n");
 		}
 	|	lectura SCOLON {
-			idx_sentencia = idx_lectura;
+			$$ = $1;
 			printf("Regla 19\n");}
 	|	funcion SCOLON		{
-			idx_funcion = idx_funcion;
 			printf("Regla 20\n");
 		}
 	;
 
 expresion:
 		termino {
-			idx_expresion = idx_termino;
+			$$ = $1;
 			printf("Regla 21\n");
 		}
 	|	expresion DASH termino {
-			idx_expresion = crear_terceto($2, intToStr(idx_expresion), intToStr(idx_termino));
+			$$ = crear_terceto($2, intToStr($1), intToStr($3));
 			printf("Regla 22\n");
 		}
 	|	expresion PLUS termino {
-			idx_expresion = crear_terceto($2, intToStr(idx_expresion), intToStr(idx_termino));
+			$$ = crear_terceto($2, intToStr($1), intToStr($3));
 			printf("Regla 23\n");
 		}
 	| 	DASH expresion %prec MENOS_UNARIO	{
-			idx_expresion = crear_terceto($1, intToStr(idx_expresion), NULL);
+			$$ = crear_terceto($1, intToStr($2), NULL);
 			printf("Regla 24\n");
 		}
 	;
 
 termino:
 		factor {
-			idx_termino = idx_factor;
+			$$ = $1;
 			printf("Regla 25\n");
 		}
 	|	termino STAR factor	{
-			idx_termino = crear_terceto($2, intToStr(idx_termino), intToStr(idx_factor));
+			$$ = crear_terceto($2, intToStr($1), intToStr($3));
 			printf("Regla 26\n");
 		}
 	|	termino SLASH factor {
-			idx_termino = crear_terceto($2, intToStr(idx_termino), intToStr(idx_factor));
+			$$ = crear_terceto($2, intToStr($1), intToStr($3));
 			printf("Regla 27\n");
 		}
 	;
 
 factor:
 		ID {
-			idx_factor = crear_terceto($1, NULL, NULL);
+			$$ = crear_terceto($1, NULL, NULL);
 			printf("Regla 28\n");
 		}
 	|	CTE_I {
-            idx_factor = crear_terceto($1, NULL, NULL);
+			$$ = crear_terceto($1, NULL, NULL);
 			{printf("Regla 29\n");}
         }
 	|	CTE_F {
-            idx_factor = crear_terceto($1, NULL, NULL);
+			$$ = crear_terceto($1, NULL, NULL);
 			{printf("Regla 30\n");}
         }
 	|	BRA_O expresion BRA_C {
-			idx_factor = idx_expresion;
+			$$ = $2;
 			printf("Regla 31\n");
 		}
 	;
 
 asignacion:
 		asignacion_simple	{
-			idx_asignacion = idx_asignacion_simple;
+			$$ = $1;
 			printf("Regla 32\n");
 		}
 	|	asignacion_multiple {printf("Regla 33\n");}
@@ -262,11 +268,11 @@ asignacion:
 
 asignacion_simple:
 		ID ASSIG expresion {
-			idx_asignacion_simple = crear_terceto($2, $1, intToStr(idx_expresion));
+			$$ = crear_terceto($2, $1, intToStr($3));
 			printf("Regla 34\n");
 		}
 	|	ID ASSIG CTE_S {
-			idx_asignacion_simple = crear_terceto($2, $1, $3);
+			$$ = crear_terceto($2, $1, $3);
 			printf("Regla 35\n");
 		}
 	;
@@ -281,10 +287,7 @@ lista_expresiones_comma:
 	;
 
 seleccion:
-		ifelse {
-			idx_seleccion = idx_ifelse;
-			printf("Regla 39\n");
-		};
+		ifelse {printf("Regla 39\n");};
 
 ifelse:
 		IF condicion THEN bloque ENDIF {
@@ -324,7 +327,7 @@ impresion:
 
 lectura:
 		READ ID {
-			idx_lectura = crear_terceto("READ", $2, NULL);
+			$$ = crear_terceto("READ", $2, NULL);
 			printf("Regla 52\n");
         }
 funcion:
