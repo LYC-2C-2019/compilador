@@ -46,7 +46,7 @@ t_pila pila;
 /* Indica que operador de comparacion se uso */
 t_pila comparacion;
 /* Apila los tipos de condicion (and, or, not) cuando hay anidamiento */
-t_pila pila_condicion;
+t_pila pila_operador_logico;
 %}
 
 /*
@@ -72,9 +72,9 @@ t_pila pila_condicion;
 %token	THEN
 %token	ELSE
 %token	ENDIF
-%token	AND
-%token	OR
-%token	NOT
+%token	<entero> AND
+%token	<entero> OR
+%token	<entero> NOT
 %token	PRINT
 %token	READ
 %token	VAR
@@ -84,7 +84,7 @@ t_pila pila_condicion;
 %token	COLON
 %token	SCOLON
 %token	COMMA
-%token	COMP
+%token	<texto> COMP
 %token	<texto> ASSIG
 %token	<texto> SLASH
 %token	<texto> STAR
@@ -113,6 +113,11 @@ t_pila pila_condicion;
 %type <entero> asignacion
 %type <entero> asignacion_simple
 %type <entero> seleccion
+%type <entero> ifelse
+%type <entero> condicion
+%type <entero> proposicion
+%type <entero> comparacion
+
 %type <entero> lectura
 
 %start bloque
@@ -189,6 +194,7 @@ sentencia:
 			printf("Regla 15\n");
 		}
 	|	seleccion {
+			$$ = $1;
 			printf("Regla 16\n");
 		}
 	|	iteracion {
@@ -287,30 +293,111 @@ lista_expresiones_comma:
 	;
 
 seleccion:
-		ifelse {printf("Regla 39\n");};
+		ifelse {
+			$$ = $1;
+			printf("Regla 39\n");
+		};
 
 ifelse:
-		IF condicion THEN bloque ENDIF {
+		IF condicion THEN bloque {
+			/**
+			 * Fin del bloque verdadero
+			 * - Desapilar
+			 * - Completar en el terceto desapilado el nro de terceto actual + 1
+			 * - Apilar el n° del terceto actual
+			 */
+
+
+			/**
+			 * 2da condicion:
+			 * - Salto siempre al final del bloque
+			 */
+			int idx = sacar_pila(&pila);
+			int op_logico = sacar_pila(&pila_operador_logico);
+			strcpy(tercetos[idx]->t3, intToStr($4 + 1));
+
+			/**
+			 * 1ra condicion:
+			 * - AND: salto siempre al final del bloque
+			 * - OR: salto a la segunda condicion
+			 */
+			if (op_logico == olAND) {
+				idx = sacar_pila(&pila);
+				strcpy(tercetos[idx]->t3, intToStr($4 + 1));
+			} else if (op_logico == olOR) {
+				int old = idx;
+				idx = sacar_pila(&pila);
+				strcpy(tercetos[idx]->t3, intToStr(old));
+			}
+			insertar_pila(&pila, $4);
+		} ENDIF {
+			$$ = $4;
 			printf("Regla 40\n");
 		}
-	|	IF condicion THEN bloque ELSE bloque ENDIF 	{printf("Regla 41\n");}
+	|	IF condicion THEN bloque ELSE bloque ENDIF {
+			printf("Regla 41\n");
+		}
 	;
 
 condicion:
-		proposicion						{printf("Regla 42\n");}
-	|	proposicion AND proposicion		{printf("Regla 43\n");}
-	|	proposicion OR proposicion		{printf("Regla 44\n");}
-	|	NOT proposicion	{printf("Regla 45\n");}
+		proposicion {
+			/**
+			 * Fin de la condicion
+			 * - Apilar nro del terceto actual
+			 */
+			insertar_pila(&pila, $1);
+			insertar_pila(&pila_operador_logico, olNULL);
+			$$ = $1;
+			printf("Regla 42\n");
+		}
+	|	proposicion AND proposicion	{
+			/**
+			 * Fin de la condicion
+			 * - Apilar nro del terceto actual
+			 */
+			insertar_pila(&pila, $1);
+			insertar_pila(&pila, $3);
+			insertar_pila(&pila_operador_logico, $2);
+			$$ = $3;
+			printf("Regla 43\n");
+		}
+	|	proposicion OR proposicion {
+			/**
+			 * Fin de la condicion
+			 * - Apilar nro del terceto actual
+			 */
+			insertar_pila(&pila, $1);
+			insertar_pila(&pila, $3);
+			insertar_pila(&pila_operador_logico, $2);
+			$$ = $3;
+			printf("Regla 44\n");
+		}
+	|	NOT proposicion	{
+			/**
+			 * Fin de la condicion
+			 * - Apilar nro del terceto actual
+			 */
+			insertar_pila(&pila, $2);
+			insertar_pila(&pila_operador_logico, $1);
+			$$ = $2;
+			printf("Regla 45\n");
+		}
 	;
 
 proposicion:
 		funcion		{printf("Regla 46\n");}
-	|	comparacion	{printf("Regla 47\n");}
+	|	comparacion	{
+			$$ = $1;
+			printf("Regla 47\n");
+		}
 	;
 
 comparacion:
-		BRA_O expresion COMP expresion BRA_C
-		{printf("Regla 48\n");};
+		BRA_O expresion COMP expresion BRA_C {
+			int idx = crear_terceto("CMP", intToStr($2), intToStr($4));
+			$$ = crear_terceto($3, intToStr(idx), NULL);
+			printf("Regla 48\n");
+		};
 
 iteracion:
 		repeat

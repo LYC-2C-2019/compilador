@@ -30,4 +30,41 @@
 #define FORMATO_HEADER_TABLA_SIM "%-50s|\t%-20s|\t%-50s|\t%-20s\n"
 #define FORMATO_REG_TABLA_SIM "%-50s|\t%-20s|\t%-50s|\t%-20d\n"
 
+// ISTRUCCIONES DE SALTO
+typedef enum {
+    olNULL,
+    olAND,
+    olNOT,
+    olOR,
+} t_op_logico;
+
+typedef enum {
+    tsJE,
+    tsJNE,
+    tsJL,
+    tsJLE,
+    tsJG,
+    tsJGE
+} t_salto;
+
+/* signados */
+static const char * saltos[] = {
+    "JE",
+    "JNE",
+    "JL",
+    "JLE",
+    "JG",
+    "JGE",
+};
+
+/* sin signar */
+static const char * saltos_u[] = {
+    "JE",
+    "JNE",
+    "JB",
+    "JBE",
+    "JNBE",
+    "JAE",
+};
+
 #endif

@@ -42,7 +42,6 @@ ANYCHAR  .*
 COMM_O   --\/
 COMM_C   \/--
 
-COMP     {LT}|{LE}|{GT}|{GE}|{EQ}|{NE}
 COMMENT  {COMM_O}{ANYCHAR}{COMM_C}
 ID       ({ALPHA}|_)({ALPHA}|{DIGIT}|_)*
 CTE_S    \"{ANYCHAR}\"
@@ -59,9 +58,9 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 "THEN"      { return THEN; }
 "ELSE"      { return ELSE; }
 "ENDIF"     { return ENDIF; }
-"AND"       { return AND; }
-"OR"        { return OR; }
-"NOT"       { return NOT; }
+"AND"       { yylval.entero = olAND; return AND; }
+"OR"        { yylval.entero = olOR; return OR; }
+"NOT"       { yylval.entero = olNOT; return NOT; }
 "PRINT"     { return PRINT; }
 "READ"      { return READ; }
 "VAR"       { return VAR; }
@@ -84,7 +83,14 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 "}"   { return CBRA_C; }
 
 {COMMENT}
-{COMP}      { return COMP; }
+
+{EQ} { strcpy(yylval.texto, /* salto opuesto */ saltos[tsJNE]); return COMP; }
+{NE} { strcpy(yylval.texto, /* salto opuesto */ saltos[tsJE]); return COMP; }
+{LT} { strcpy(yylval.texto, /* salto opuesto */ saltos[tsJGE]); return COMP; }
+{LE} { strcpy(yylval.texto, /* salto opuesto */ saltos[tsJG]); return COMP; }
+{GT} { strcpy(yylval.texto, /* salto opuesto */ saltos[tsJLE]); return COMP; }
+{GE} { strcpy(yylval.texto, /* salto opuesto */ saltos[tsJL]); return COMP; }
+
 {ID}        {
                 if(validateID(yytext)){
                     strcpy(yylval.texto, yytext);
