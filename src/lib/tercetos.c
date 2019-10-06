@@ -30,7 +30,7 @@ int crear_terceto(const char* t1, const char* t2, const char* t3)
 {
     // creo un nuevo terceto y lo agrego a la coleccion de tercetos
     int numero = cant_tercetos;
-    tercetos[numero] = nuevo_terceto (t1, t2, t3);
+    tercetos[numero] = nuevo_terceto(t1, t2, t3);
     cant_tercetos++;
     // devuelvo numero de terceto
     return numero;

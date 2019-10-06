@@ -18,10 +18,10 @@
 
 // VARIABLES GLOBALES
 char *end;
-int validateID(char * id);
-int validateString(char * str);
-int validateInteger(int Value);
-int validateFloat(float Value);
+int validateID(char *id);
+int validateString(char *str);
+int validateInteger(char *);
+int validateFloat(char *);
 %}
 %option noyywrap
 %option yylineno
@@ -50,9 +50,9 @@ CTE_I    ([1-9]{DIGIT}+|{DIGIT})
 CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 
 %%
-"Integer"   { return INTEGER; }
-"Float"     { return FLOAT; }
-"String"    { return STRING; }
+"Integer"   { strcpy(yylval.texto, yytext); return INTEGER; }
+"Float"     { strcpy(yylval.texto, yytext); return FLOAT; }
+"String"    { strcpy(yylval.texto, yytext); return STRING; }
 "REPEAT"    { return REPEAT; }
 "UNTIL"     { return UNTIL; }
 "IF"        { return IF; }
@@ -71,11 +71,11 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 ":"   { return COLON; }
 ";"   { return SCOLON; }
 ","   { return COMMA; }
-":="  { return ASSIG; }
-"/"   { return SLASH; }
-"*"   { return STAR; }
-"+"   { return PLUS; }
-"-"   { return DASH; }
+":="  { strcpy(yylval.texto, yytext); return ASSIG; }
+"/"   { strcpy(yylval.texto, yytext); return SLASH; }
+"*"   { strcpy(yylval.texto, yytext); return STAR; }
+"+"   { strcpy(yylval.texto, yytext); return PLUS; }
+"-"   { strcpy(yylval.texto, yytext); return DASH; }
 "("   { return BRA_O; }
 ")"   { return BRA_C; }
 "["   { return SBRA_O; }
@@ -86,28 +86,31 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 {COMMENT}
 {COMP}      { return COMP; }
 {ID}        {
-                strcpy(yylval.string, yytext);
                 if(validateID(yytext)){
+                    strcpy(yylval.texto, yytext);
                     insertarSimbolo(yytext, TD_UNDEFINED);
                     return ID;
                 }
             }
 {CTE_S}     {
                if(validateString(yytext)){
+                   strcpy(yylval.texto, yytext);
                    insertarSimbolo(yytext, TD_CTE_S);
           		   return CTE_S;
                }
             }
 {CTE_I}     {
-               yylval.entero = atoi( yytext );
-       			if(validateInteger(yylval.entero)){
+       			if(validateInteger(yytext)){
+                    yylval.entero = atoi(yytext);
+                    strcpy(yylval.texto, yytext);
                     insertarSimbolo(yytext, TD_CTE_I);
                     return CTE_I;
                 }
             }
 {CTE_F}     {
-                yylval.real = atof( yytext );
-                if(validateFloat(atof( yytext ))){
+                if(validateFloat(yytext)){
+                    yylval.real = atof(yytext);
+                    strcpy(yylval.texto, yytext);
                     insertarSimbolo(yytext, TD_CTE_F);
                     return CTE_F;
                 }
@@ -124,30 +127,29 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 int validateString(char * str) {
     if(strlen(str) <= (int)MAX_STRING) {
 		return 1;
-	}
-    else {
+	} else {
    	fprintf(stderr, "LEXICAL ERROR (line %d): String size exceeded (Maximum %d characters long) -> \%s\n", yylineno, (int)MAX_STRING - 2, str);
         system("PAUSE");
         exit(ERROR);
     }
 }
 
-int validateInteger(int Value) {
-    if( strlen(yytext) <= 5 && Value <= (int)MAX_INT ) {
+int validateInteger(char *str) {
+    int value = atoi(str);
+    if(strlen(str) <= 5 && value <= (int)MAX_INT ) {
         return 1;
-	}
-    else {
-        fprintf(stderr, "LEXICAL ERROR (line %d): Integer constant out of range (Allowed range: up to %d) -> \%d\n", yylineno, (int)MAX_INT, Value);
+	} else {
+        fprintf(stderr, "LEXICAL ERROR (line %d): Integer constant out of range (Allowed range: up to %d) -> \%d\n", yylineno, (int)MAX_INT, value);
         system("PAUSE");
         exit(ERROR);
     }
 }
 
-int validateFloat(float Value) {
-    double valor = strtod(yytext,NULL);
+int validateFloat(char *str) {
+    double value = strtod(str, NULL);
 
-	if(strlen(yytext) <= 10 && valor >= (float)MAX_FLOAT) {
-	    fprintf(stderr, "LEXICAL ERROR (line %d): Float constant out of range (Allowed range: up to %.0f) -> \%f\n", yylineno, (float)MAX_FLOAT, atof(yytext));
+	if(strlen(str) <= 10 && value >= (float)MAX_FLOAT) {
+	    fprintf(stderr, "LEXICAL ERROR (line %d): Float constant out of range (Allowed range: up to %.0f) -> \%f\n", yylineno, (float)MAX_FLOAT, value);
         system("PAUSE");
 	    exit(ERROR);
 	} else {
@@ -155,11 +157,10 @@ int validateFloat(float Value) {
    }
 }
 
-int validateID(char * id) {
+int validateID(char *id) {
     if(strlen(id) <= (int)MAX_ID) {
 		return 1;
-	}
-    else {
+	} else {
 		fprintf(stderr, "LEXICAL ERROR (line %d): ID size exceeded (Maximum %d characters long) -> \%s\n", yylineno, (int)MAX_ID, id);
         system("PAUSE");
         exit(ERROR);

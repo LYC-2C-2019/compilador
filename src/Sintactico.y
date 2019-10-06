@@ -18,6 +18,8 @@
 #include "lib/tabla.h"
 #include "lib/pila.h"
 #include "lib/tercetos.h"
+#include "lib/index.h"
+#include "lib/utils.h"
 
 int yystopparser=0;
 FILE  *yyin;
@@ -58,12 +60,12 @@ t_pila pila_condicion;
 %union {
 	int entero;
 	float real;
-	char string[100];
+	char texto[100];
 };
 
-%token	INTEGER
-%token	FLOAT
-%token	STRING
+%token	<texto> INTEGER
+%token	<texto> FLOAT
+%token	<texto> STRING
 %token	REPEAT
 %token	UNTIL
 %token	IF
@@ -83,27 +85,27 @@ t_pila pila_condicion;
 %token	SCOLON
 %token	COMMA
 %token	COMP
-%token	ASSIG
-%token	SLASH
-%token	STAR
-%token	PLUS
-%token	DASH
+%token	<texto> ASSIG
+%token	<texto> SLASH
+%token	<texto> STAR
+%token	<texto> PLUS
+%token	<texto> DASH
 %token	BRA_O
 %token	BRA_C
 %token	SBRA_O
 %token	SBRA_C
 %token	CBRA_O
 %token	CBRA_C
-%token	<string>ID
-%token	CTE_S
-%token	<entero> CTE_I
-%token	<real> CTE_F
+%token	<texto> ID
+%token	<texto> CTE_S
+%token	<texto> CTE_I
+%token	<texto> CTE_F
 
 %left	PLUS DASH
 %left	STAR SLASH
 %right	MENOS_UNARIO
 
-%start programa
+%start bloque
 
 %%
 programa: declaraciones bloque
@@ -134,89 +136,139 @@ lista_tipos:
 	;
 
 lista_ids:
-		ID { guardarId(yytext); printf("Regla 7\n");}
-	|	lista_ids COMMA ID
-		{
-			guardarId(yytext);
+		ID {
+			guardarId($1);
+			printf("Regla 7\n");
+		}
+	|	lista_ids COMMA ID {
+			guardarId($3);
 			{printf("Regla 8\n");}
 		}
 	;
 
 tipo:
-		INTEGER
-		{
-			guardarTipoId(yytext);
+		INTEGER {
+			guardarTipoId($1);
 			{printf("Regla 9\n");}
 		}
-	|	FLOAT
-		{
-			guardarTipoId(yytext);
+	|	FLOAT {
+			guardarTipoId($1);
 			{printf("Regla 10\n");}
 		}
-	|	STRING
-		{
-			guardarTipoId(yytext);
+	|	STRING {
+			guardarTipoId($1);
 			{printf("Regla 11\n");}
 		}
 	;
 
 bloque:
-		sentencia 			{printf("Regla 12\n");}
+		sentencia {
+			idx_bloque = idx_sentencia;
+			printf("Regla 12\n");
+		}
 	|	bloque sentencia 	{printf("Regla 13\n");}
 	;
 
 sentencia:
-		expresion SCOLON	{printf("Regla 14\n");}
-	|	asignacion SCOLON 	{printf("Regla 15\n");}
-	|	seleccion			{printf("Regla 16\n");}
-	|	iteracion			{printf("Regla 17\n");}
-	|	impresion SCOLON	{printf("Regla 18\n");}
-	|	lectura SCOLON		{printf("Regla 19\n");}
-	|	funcion SCOLON		{printf("Regla 20\n");}
+		expresion SCOLON {
+			idx_sentencia = idx_expresion;
+			printf("Regla 14\n");
+		}
+	|	asignacion SCOLON {
+			idx_sentencia = idx_asignacion;
+			printf("Regla 15\n");
+		}
+	|	seleccion {
+			idx_sentencia = idx_seleccion;
+			printf("Regla 16\n");
+		}
+	|	iteracion {
+			idx_sentencia = idx_iteracion;
+			printf("Regla 17\n");
+		}
+	|	impresion SCOLON {
+			idx_sentencia = idx_impresion;
+			printf("Regla 18\n");
+		}
+	|	lectura SCOLON {
+			idx_sentencia = idx_lectura;
+			printf("Regla 19\n");}
+	|	funcion SCOLON		{
+			idx_funcion = idx_funcion;
+			printf("Regla 20\n");
+		}
 	;
 
 expresion:
-		termino                             {printf("Regla 21\n");}
-	|	expresion DASH termino				{printf("Regla 22\n");}
-	|	expresion PLUS termino				{printf("Regla 23\n");}
-	| 	DASH expresion %prec MENOS_UNARIO	{printf("Regla 24\n");}
+		termino {
+			idx_expresion = idx_termino;
+			printf("Regla 21\n");
+		}
+	|	expresion DASH termino {
+			idx_expresion = crear_terceto($2, intToStr(idx_expresion), intToStr(idx_termino));
+			printf("Regla 22\n");
+		}
+	|	expresion PLUS termino {
+			idx_expresion = crear_terceto($2, intToStr(idx_expresion), intToStr(idx_termino));
+			printf("Regla 23\n");
+		}
+	| 	DASH expresion %prec MENOS_UNARIO	{
+			idx_expresion = crear_terceto($1, intToStr(idx_expresion), NULL);
+			printf("Regla 24\n");
+		}
 	;
 
 termino:
-		factor					{printf("Regla 25\n");}
-	|	termino STAR factor 	{printf("Regla 26\n");}
-	|	termino SLASH factor	{printf("Regla 27\n");}
+		factor {
+			idx_termino = idx_factor;
+			printf("Regla 25\n");
+		}
+	|	termino STAR factor	{
+			idx_termino = crear_terceto($2, intToStr(idx_termino), intToStr(idx_factor));
+			printf("Regla 26\n");
+		}
+	|	termino SLASH factor {
+			idx_termino = crear_terceto($2, intToStr(idx_termino), intToStr(idx_factor));
+			printf("Regla 27\n");
+		}
 	;
 
 factor:
 		ID {
+			idx_factor = crear_terceto($1, NULL, NULL);
 			printf("Regla 28\n");
 		}
 	|	CTE_I {
-            char valor[MAX_STRING];
-			sprintf(valor, "%d", $1);
-            crear_terceto(valor, NULL, NULL);
+            idx_factor = crear_terceto($1, NULL, NULL);
 			{printf("Regla 29\n");}
         }
 	|	CTE_F {
-            char valor[MAX_STRING];
-			sprintf(valor, "%.2f", $1);
-            crear_terceto(valor, NULL, NULL);
+            idx_factor = crear_terceto($1, NULL, NULL);
 			{printf("Regla 30\n");}
         }
 	|	BRA_O expresion BRA_C {
+			idx_factor = idx_expresion;
 			printf("Regla 31\n");
 		}
 	;
 
 asignacion:
-		asignacion_simple	{printf("Regla 32\n");}
+		asignacion_simple	{
+			idx_asignacion = idx_asignacion_simple;
+			printf("Regla 32\n");
+		}
 	|	asignacion_multiple {printf("Regla 33\n");}
 	;
 
 asignacion_simple:
-		ID ASSIG expresion	{printf("Regla 34\n");}
-	|	ID ASSIG CTE_S 		{printf("Regla 35\n");}
+		ID ASSIG expresion {
+			idx_asignacion_simple = crear_terceto($2, $1, intToStr(idx_expresion));
+			printf("Regla 34\n");
+		}
+	|	ID ASSIG CTE_S {
+			idx_asignacion_simple = crear_terceto($2, $1, $3);
+			printf("Regla 35\n");
+		}
 	;
 
 asignacion_multiple:
@@ -229,11 +281,15 @@ lista_expresiones_comma:
 	;
 
 seleccion:
-		ifelse
-		{printf("Regla 39\n");};
+		ifelse {
+			idx_seleccion = idx_ifelse;
+			printf("Regla 39\n");
+		};
 
 ifelse:
-		IF condicion THEN bloque ENDIF				{printf("Regla 40\n");}
+		IF condicion THEN bloque ENDIF {
+			printf("Regla 40\n");
+		}
 	|	IF condicion THEN bloque ELSE bloque ENDIF 	{printf("Regla 41\n");}
 	;
 
@@ -268,9 +324,7 @@ impresion:
 
 lectura:
 		READ ID {
-			char valor[MAX_STRING];
-			// COMO SE EL VALOR DEL ID SI NO SE DECLARA ANTES?? NO ME CIERRA
-			crear_terceto("READ", valor, NULL);
+			idx_lectura = crear_terceto("READ", $2, NULL);
 			printf("Regla 52\n");
         }
 funcion:
