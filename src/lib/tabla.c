@@ -60,7 +60,7 @@ void guardarTablaDeSimbolos()
 
 int simboloEsConstante(const char* tipo)
 {
-   if (strcmp(tipo, TD_CTE_S) == 0 || strcmp(tipo, TD_CTE_I) == 0 || strcmp(tipo, TD_CTE_F) == 0)
+   if (strcmp(tipo, tipos[tdString]) == 0 || strcmp(tipo, tipos[tdInteger]) == 0 || strcmp(tipo, tipos[tdFloat]) == 0)
       return 1;
 
    return 0;

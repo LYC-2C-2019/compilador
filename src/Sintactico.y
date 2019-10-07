@@ -31,7 +31,7 @@ char listaTiposId[MAX_SIM][MAX_TYPE];
 char listaIds[MAX_SIM][MAX_ID];
 int cantidadRepeat = 0;
 
-void guardarTipoId(char*);
+void guardarTipoId(const char*);
 void guardarId(char*);
 int esIdDeclarado(char*);
 void asignarTipoIds();
@@ -46,8 +46,8 @@ void success();
 t_pila pila;
 /* Apila los tipos de condicion (and, or, not) cuando hay anidamiento */
 t_pila pila_operador_logico;
-/* Apila los ids del lado izquierdo en asignaciones multiples */
-t_pila pila_asig_mult_ids;
+/* Apila los ids en declaraciones y en asignaciones multiples */
+t_pila pila_ids;
 /* Apila las expresiones del lado derecho en asignaciones multiples */
 t_pila pila_asig_mult_exp;
 /* Apila etiquetas para el bloque repeat */
@@ -69,9 +69,9 @@ t_pila pila_repeat_etiq;
 	char texto[100];
 };
 
-%token	<texto> INTEGER
-%token	<texto> FLOAT
-%token	<texto> STRING
+%token	<entero> INTEGER
+%token	<entero> FLOAT
+%token	<entero> STRING
 %token	REPEAT
 %token	UNTIL
 %token	IF
@@ -81,8 +81,8 @@ t_pila pila_repeat_etiq;
 %token	<entero> AND
 %token	<entero> OR
 %token	<entero> NOT
-%token	PRINT
-%token	READ
+%token	<texto> PRINT
+%token	<texto> READ
 %token	VAR
 %token	ENDVAR
 %token	INLIST
@@ -111,6 +111,7 @@ t_pila pila_repeat_etiq;
 %left	STAR SLASH
 %right	MENOS_UNARIO
 
+%type <entero>declaracion
 %type <entero> bloque
 %type <entero> sentencia
 %type <entero> expresion
@@ -125,12 +126,13 @@ t_pila pila_repeat_etiq;
 %type <entero> comparacion
 %type <entero> iteracion
 %type <entero> repeat
+%type <entero> impresion
 %type <entero> lectura
 %type <entero> lista_ids
 %type <entero> asignacion_multiple
 %type <entero> lista_expresiones_comma
 
-%start bloque
+%start programa
 
 %%
 programa: declaraciones bloque
@@ -152,43 +154,59 @@ lista_declaraciones:
 	;
 
 declaracion:
-		SBRA_O lista_tipos SBRA_C COLON SBRA_O lista_ids SBRA_C
-		{printf("Regla 4\n");};
+		SBRA_O lista_tipos SBRA_C COLON SBRA_O lista_ids SBRA_C {
+			int idx_id = -1;
+			int idx_tipo = -1;
+			while(!pila_vacia(&pila_ids)) {
+				idx_id = sacar_pila(&pila_ids);
+				idx_tipo = sacar_pila(&pila);
+				strcpy(tercetos[idx_id]->t2, tercetos[idx_id]->t1);
+				strcpy(tercetos[idx_id]->t1, tipos[idx_tipo]);
+			}
+			$$ = $6;
+			printf("Regla 4\n");
+		}
+		;
 
 lista_tipos:
 		tipo {printf("Regla 5\n");}
-	|	lista_tipos COMMA tipo {printf("Regla 6\n");}
+	|	lista_tipos COMMA tipo {
+			printf("Regla 6\n");
+		}
 	;
 
 lista_ids:
 		ID {
 			guardarId($1);
 			int idx = crear_terceto($1, NULL, NULL);
-			insertar_pila(&pila_asig_mult_ids, idx);
+			insertar_pila(&pila_ids, idx);
 			$$ = idx;
 			printf("Regla 7\n");
 		}
 	|	lista_ids COMMA ID {
 			guardarId($3);
 			int idx = crear_terceto($3, NULL, NULL);
-			insertar_pila(&pila_asig_mult_ids, idx);
+			insertar_pila(&pila_ids, idx);
 			$$ = idx;
-			{printf("Regla 8\n");}
+			printf("Regla 8\n");
 		}
 	;
 
 tipo:
 		INTEGER {
-			guardarTipoId($1);
+			guardarTipoId(tipos[$1]);
+			insertar_pila(&pila, $1);
 			{printf("Regla 9\n");}
 		}
 	|	FLOAT {
-			guardarTipoId($1);
-			{printf("Regla 10\n");}
+			guardarTipoId(tipos[$1]);
+			insertar_pila(&pila, $1);
+			printf("Regla 10\n");
 		}
 	|	STRING {
-			guardarTipoId($1);
-			{printf("Regla 11\n");}
+			guardarTipoId(tipos[$1]);
+			insertar_pila(&pila, $1);
+			printf("Regla 11\n");
 		}
 	;
 
@@ -221,6 +239,7 @@ sentencia:
 			printf("Regla 17\n");
 		}
 	|	impresion SCOLON {
+			$$ = $1;
 			printf("Regla 18\n");
 		}
 	|	lectura SCOLON {
@@ -312,8 +331,8 @@ asignacion_multiple:
 			int idx_exp = -1;
 			int idx_id = -1;
 			int idx = -1;
-			while(!pila_vacia(&pila_asig_mult_ids)) {
-				idx_id = sacar_pila(&pila_asig_mult_ids);
+			while(!pila_vacia(&pila_ids)) {
+				idx_id = sacar_pila(&pila_ids);
 				idx_exp = sacar_pila(&pila_asig_mult_exp);
 				idx = crear_terceto($4, intToStr(idx_id), intToStr(idx_exp));
 			}
@@ -552,13 +571,34 @@ repeat:
 		};
 
 impresion:
-		PRINT ID {printf("Regla 51\n");}
-	|	PRINT CTE_S {printf("Regla 52\n");}
+		PRINT ID {
+			/*
+			 * No se que deberia dejar preparado
+			 * para la generacion del assembler
+			 * en este tipo de instrucciones
+			 */
+			$$ = crear_terceto($1, $2, NULL);
+			printf("Regla 51\n");
+		}
+	|	PRINT CTE_S {
+			/*
+			 * No se que deberia dejar preparado
+			 * para la generacion del assembler
+			 * en este tipo de instrucciones
+			 */
+			$$ = crear_terceto($1, $2, NULL);
+			printf("Regla 52\n");
+		}
 	;
 
 lectura:
 		READ ID {
-			$$ = crear_terceto("READ", $2, NULL);
+			/*
+			 * No se que deberia dejar preparado
+			 * para la generacion del assembler
+			 * en este tipo de instrucciones
+			 */
+			$$ = crear_terceto($1, $2, NULL);
 			printf("Regla 52\n");
         }
 funcion:
@@ -621,7 +661,7 @@ void success() {
 	printf("\n");
 }
 
-void guardarTipoId(char* tipo)
+void guardarTipoId(const char* tipo)
 {
 	strcpy(listaTiposId[cantidadTiposId], tipo);
 	cantidadTiposId++;

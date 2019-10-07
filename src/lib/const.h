@@ -14,6 +14,20 @@
 #define TD_CTE_F "Float"
 #define TD_UNDEFINED "Undefined"
 
+static const char * tipos[] = {
+    TD_CTE_S,
+    TD_CTE_I,
+    TD_CTE_F,
+    TD_UNDEFINED
+};
+
+typedef enum {
+    tdString,
+    tdInteger,
+    tdFloat,
+    tdUndefined
+} t_tipo_dato;
+
 // LIMITES DE COLECCIONES
 #define MAX_SIM 200
 #define MAX_TERCETOS 1024

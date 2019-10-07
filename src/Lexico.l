@@ -49,9 +49,20 @@ CTE_I    ([1-9]{DIGIT}+|{DIGIT})
 CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 
 %%
-"Integer"   { strcpy(yylval.texto, yytext); return INTEGER; }
-"Float"     { strcpy(yylval.texto, yytext); return FLOAT; }
-"String"    { strcpy(yylval.texto, yytext); return STRING; }
+"Integer"   {
+                strcpy(yylval.texto, yytext);
+                yylval.entero = tdInteger;
+                return INTEGER; }
+"Float"     {
+                strcpy(yylval.texto, yytext);
+                yylval.entero = tdFloat;
+                return FLOAT;
+            }
+"String"    {
+                strcpy(yylval.texto, yytext);
+                yylval.entero = tdString;
+                return STRING;
+            }
 "REPEAT"    { return REPEAT; }
 "UNTIL"     { return UNTIL; }
 "IF"        { return IF; }
@@ -61,8 +72,8 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 "AND"       { yylval.entero = olAND; return AND; }
 "OR"        { yylval.entero = olOR; return OR; }
 "NOT"       { yylval.entero = olNOT; return NOT; }
-"PRINT"     { return PRINT; }
-"READ"      { return READ; }
+"PRINT"     { strcpy(yylval.texto, yytext); return PRINT; }
+"READ"      { strcpy(yylval.texto, yytext); return READ; }
 "VAR"       { return VAR; }
 "ENDVAR"    { return ENDVAR; }
 "INLIST"    { return INLIST; }
@@ -94,14 +105,14 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 {ID}        {
                 if(validateID(yytext)){
                     strcpy(yylval.texto, yytext);
-                    insertarSimbolo(yytext, TD_UNDEFINED);
+                    insertarSimbolo(yytext, tipos[tdUndefined]);
                     return ID;
                 }
             }
 {CTE_S}     {
                if(validateString(yytext)){
                    strcpy(yylval.texto, yytext);
-                   insertarSimbolo(yytext, TD_CTE_S);
+                   insertarSimbolo(yytext, tipos[tdString]);
           		   return CTE_S;
                }
             }
@@ -109,7 +120,7 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
        			if(validateInteger(yytext)){
                     yylval.entero = atoi(yytext);
                     strcpy(yylval.texto, yytext);
-                    insertarSimbolo(yytext, TD_CTE_I);
+                    insertarSimbolo(yytext, tipos[tdInteger]);
                     return CTE_I;
                 }
             }
@@ -117,7 +128,7 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
                 if(validateFloat(yytext)){
                     yylval.real = atof(yytext);
                     strcpy(yylval.texto, yytext);
-                    insertarSimbolo(yytext, TD_CTE_F);
+                    insertarSimbolo(yytext, tipos[tdFloat]);
                     return CTE_F;
                 }
             }
