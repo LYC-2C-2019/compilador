@@ -29,6 +29,7 @@ int cantidadIds = 0;
 char listaTiposId[MAX_SIM][MAX_TYPE];
 char listaIds[MAX_SIM][MAX_ID];
 int cantidadRepeat = 0;
+int cantidadInlist = 0;
 
 void guardarTipoId(const char*);
 void guardarId(char*);
@@ -43,14 +44,18 @@ void success();
 
 /* apunta al ultimo elemento terceto de salto */
 t_pila pila;
-/* Apila los tipos de condicion (and, or, not) cuando hay anidamiento */
+/* Apila los valores de enumeracion de tipos de condicion (and, or, not) cuando hay anidamiento */
 t_pila pila_operador_logico;
-/* Apila los ids en declaraciones y en asignaciones multiples */
+/* Apila los valores de enumeracion de tipos de dato para delaraciones */
+t_pila pila_operador_logico;
+/* Apila los indices de tercetos ids, para listas de ids*/
 t_pila pila_ids;
-/* Apila las expresiones del lado derecho en asignaciones multiples */
-t_pila pila_asig_mult_exp;
-/* Apila etiquetas para el bloque repeat */
+/* Apila los indices a tercetos de expresiones, para listas de expresiones*/
+t_pila pila_exp;
+/* Apila indice de tercetos de etiquetas para el bloque repeat */
 t_pila pila_repeat_etiq;
+/* Apila los indices de tercetos de salto que quedaron por completar */
+t_pila pila_saltos;
 
 %}
 
@@ -134,7 +139,7 @@ t_pila pila_repeat_etiq;
 %type <entero> inlist
 %type <entero> funcion
 
-%start programa
+%start bloque
 
 %%
 programa: declaraciones bloque
@@ -336,7 +341,7 @@ asignacion_multiple:
 			int idx = -1;
 			while(!pila_vacia(&pila_ids)) {
 				idx_id = sacar_pila(&pila_ids);
-				idx_exp = sacar_pila(&pila_asig_mult_exp);
+				idx_exp = sacar_pila(&pila_exp);
 				idx = crear_terceto($4, intToStr(idx_id), intToStr(idx_exp));
 			}
 			$$ = idx;
@@ -345,12 +350,12 @@ asignacion_multiple:
 
 lista_expresiones_comma:
 		expresion {
-			insertar_pila(&pila_asig_mult_exp, $1);
+			insertar_pila(&pila_exp, $1);
 			$$ = $1;
 			printf("Regla 37\n");
 		}
 	| 	lista_expresiones_comma COMMA expresion {
-			insertar_pila(&pila_asig_mult_exp, $3);
+			insertar_pila(&pila_exp, $3);
 			$$ = $3;
 			printf("Regla 38\n");
 		}
@@ -609,22 +614,79 @@ lectura:
         }
 funcion:
 		inlist {
+			int idx = -1;
+			int idx_jmp= -1;
+			while(!pila_vacia(&pila_saltos)) {
+				idx_jmp = sacar_pila(&pila_saltos);
+
+				/*
+				 * - Si se cumple por verdadero, salto al terceto actual - 2
+				 * - si se cumple por falso, salto al siguiente terceto de comparacion
+				 */
+				if (strcmp(tercetos[idx_jmp]->t1, saltos[tsJE]) == 0) {
+					strcpy(tercetos[idx_jmp]->t3, intToStr($1));
+				} else {
+					strcpy(tercetos[idx_jmp]->t3, intToStr(idx_jmp + 2));
+				}
+			}
+
 			$$ = $1;
 			printf("Regla 53\n");
 		};
 
 inlist:
 		INLIST BRA_O ID COMMA SBRA_O lista_expresiones_scolon SBRA_C BRA_C {
-			$$ = $6;
+			int idx = -1;
+			int idx_exp = -1;
+			while(!pila_vacia(&pila_exp)) {
+				idx_exp = sacar_pila(&pila_exp);
+
+				/*
+				 * Creo un terceto de comparacion y dos tercetos de salto
+				 *  n-2 (CMP, ID, EXPRESION)
+				 * 	n-1 (JNE, n-2, NULL) -> completar
+				 * 	n   (JE, n-1, NULL) -> completar
+				 */
+				int cmp = crear_terceto("CMP", $3, intToStr(idx_exp));
+
+				idx = crear_terceto(saltos[tsJNE], intToStr(cmp), NULL);
+				insertar_pila(&pila_saltos, idx);
+
+				idx = crear_terceto(saltos[tsJE], intToStr(cmp), NULL);
+				insertar_pila(&pila_saltos, idx);
+			}
+
+			/*
+			 * Creo una variable de apoyo con falso
+			 * Si no se encuentra el valor en la lista
+			 * saltará a este terceto.
+			 * debe guardarse en la tabla de simbolos
+			 */
+			char aux[20];
+			sprintf(aux, "_INLIST_%d", ++cantidadInlist);
+
+			/* terceto resultado falso */
+			idx = crear_terceto(":=", aux, "false");
+
+			/* salteo un terceto */
+			idx = crear_terceto(saltos[tsJMP], NULL , intToStr(idx + 2));
+
+			/* terceto resultado verdadero */
+			idx = crear_terceto(":=", aux, "true");
+
+			// devuelvo el ultimo terceto creado */
+			$$ = idx;
 			printf("Regla 54\n");
 		};
 
 lista_expresiones_scolon:
 		expresion {
+			insertar_pila(&pila_exp, $1);
 			$$ = $1;
 			printf("Regla 55\n");
 		}
 	|	lista_expresiones_scolon SCOLON expresion	{
+			insertar_pila(&pila_exp, $3);
 			$$ = $3;
 			printf("Regla 56\n");
 		}
