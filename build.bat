@@ -1,13 +1,13 @@
 @echo off
 cd src
 echo COMPILACION FLEX
-c:\GnuWin32\bin\flex Lexico.l
+flex Lexico.l
 REM pause
 echo COMPILACION BISON
-c:\GnuWin32\bin\bison -dyv Sintactico.y
+bison -dyv Sintactico.y
 REM pause
 echo COMPILACION GCC
-c:\MinGW\bin\gcc.exe Tabla.c lex.yy.c y.tab.c -o ..\bin\Primera.exe
+gcc.exe lib\*.c lex.yy.c y.tab.c -o ..\bin\Segunda.exe
 REM pause
 cd ..
 echo EJECUCION DE PRUEBAS

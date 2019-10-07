@@ -6,36 +6,32 @@ c                                 | Integer       | Undefined                   
 s                                 | Integer       | Undefined                         |           
 r                                 | Float         | Undefined                         |           
 t                                 | Integer       | Undefined                         |           
-5.24                              | ConstFloat    | 5.24                              | 4         
-4                                 | ConstInteger  | 4                                 | 1         
-4.2                               | ConstFloat    | 4.2                               | 3         
-.99                               | ConstFloat    | .99                               | 3         
 8                                 | ConstInteger  | 8                                 | 1         
 d                                 | Undefined     | Undefined                         |           
 3                                 | ConstInteger  | 3                                 | 1         
-20.15                             | ConstFloat    | 20.15                             | 5         
+10                                | ConstInteger  | 10                                | 2         
 10.4                              | ConstFloat    | 10.4                              | 4         
 cont                              | Undefined     | Undefined                         |           
 hola                              | Undefined     | Undefined                         |           
+4                                 | ConstInteger  | 4                                 | 1         
+11                                | ConstInteger  | 11                                | 2         
+13                                | ConstInteger  | 13                                | 2         
+0                                 | ConstInteger  | 0                                 | 1         
+7                                 | ConstInteger  | 7                                 | 1         
+1                                 | ConstInteger  | 1                                 | 1         
+5                                 | ConstInteger  | 5                                 | 1         
+6                                 | ConstInteger  | 6                                 | 1         
+z                                 | Undefined     | Undefined                         |           
+w                                 | Undefined     | Undefined                         |           
+f                                 | Undefined     | Undefined                         |           
+g                                 | Undefined     | Undefined                         |           
 A                                 | Undefined     | Undefined                         |           
 B                                 | Undefined     | Undefined                         |           
-C                                 | Undefined     | Undefined                         |           
-z                                 | Undefined     | Undefined                         |           
-2.3                               | ConstFloat    | 2.3                               | 3         
-1.22                              | ConstFloat    | 1.22                              | 4         
-30                                | ConstInteger  | 30                                | 2         
-20                                | ConstInteger  | 20                                | 2         
-10                                | ConstInteger  | 10                                | 2         
-1                                 | ConstInteger  | 1                                 | 1         
-"SELECCION"                       | ConstString   | "SELECCION"                       | 11        
-i                                 | Undefined     | Undefined                         |           
-0                                 | ConstInteger  | 0                                 | 1         
-CTE_S                             | Undefined     | Undefined                         |           
 VARIABLE                          | Undefined     | Undefined                         |           
-7                                 | ConstInteger  | 7                                 | 1         
-6                                 | ConstInteger  | 6                                 | 1         
 3.21                              | ConstFloat    | 3.21                              | 4         
 2                                 | ConstInteger  | 2                                 | 1         
 12                                | ConstInteger  | 12                                | 2         
 34                                | ConstInteger  | 34                                | 2         
 48                                | ConstInteger  | 48                                | 2         
+2.3                               | ConstFloat    | 2.3                               | 3         
+1.22                              | ConstFloat    | 1.22                              | 4         
