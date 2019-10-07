@@ -34,19 +34,18 @@ void guardarTipoId(char*);
 void guardarId(char*);
 int esIdDeclarado(char*);
 void asignarTipoIds();
-
+void tercetosIfThen(int);
 int yylex();
 int yyerror();
 
 // MENSAJES
 void success();
 
-/* apunta al ultimo elemento ingresado */
+/* apunta al ultimo elemento terceto de salto */
 t_pila pila;
-/* Indica que operador de comparacion se uso */
-t_pila comparacion;
 /* Apila los tipos de condicion (and, or, not) cuando hay anidamiento */
 t_pila pila_operador_logico;
+
 %}
 
 /*
@@ -117,7 +116,8 @@ t_pila pila_operador_logico;
 %type <entero> condicion
 %type <entero> proposicion
 %type <entero> comparacion
-
+%type <entero> iteracion
+%type <entero> repeat
 %type <entero> lectura
 
 %start bloque
@@ -181,7 +181,10 @@ bloque:
 			$$ = $1;
 			printf("Regla 12\n");
 		}
-	|	bloque sentencia 	{printf("Regla 13\n");}
+	|	bloque sentencia 	{
+			$$ = $2;
+			printf("Regla 13\n");
+		}
 	;
 
 sentencia:
@@ -198,6 +201,7 @@ sentencia:
 			printf("Regla 16\n");
 		}
 	|	iteracion {
+			$$ = $1;
 			printf("Regla 17\n");
 		}
 	|	impresion SCOLON {
@@ -300,41 +304,97 @@ seleccion:
 
 ifelse:
 		IF condicion THEN bloque {
-			/**
+			/*
 			 * Fin del bloque verdadero
 			 * - Desapilar
 			 * - Completar en el terceto desapilado el nro de terceto actual + 1
 			 * - Apilar el n° del terceto actual
+			 *
+			 *	Terceto actual: $4
 			 */
-
-
-			/**
-			 * 2da condicion:
-			 * - Salto siempre al final del bloque
-			 */
-			int idx = sacar_pila(&pila);
 			int op_logico = sacar_pila(&pila_operador_logico);
-			strcpy(tercetos[idx]->t3, intToStr($4 + 1));
 
-			/**
-			 * 1ra condicion:
-			 * - AND: salto siempre al final del bloque
-			 * - OR: salto a la segunda condicion
+			/*
+			 * condicion derecha:
+			 * - Si no se cumple salto siempre al final del bloque
 			 */
+			int idx_right = sacar_pila(&pila);
+
+			strcpy(tercetos[idx_right]->t3, intToStr($4 + 1));
+
+			/*
+			 * condicion izquierda:
+			 * - AND: Si no se cumple salto siempre al final del bloque
+			 * - OR: Si se cumple salto al principio del then. Si no,
+			 *   continuo a la siguiente condicion.
+			 */
+			int idx_left = -1;
+
 			if (op_logico == olAND) {
-				idx = sacar_pila(&pila);
-				strcpy(tercetos[idx]->t3, intToStr($4 + 1));
+				idx_left = sacar_pila(&pila);
+				strcpy(tercetos[idx_left]->t3, intToStr($4 + 1));
 			} else if (op_logico == olOR) {
-				int old = idx;
-				idx = sacar_pila(&pila);
-				strcpy(tercetos[idx]->t3, intToStr(old));
+				idx_left = sacar_pila(&pila);
+				// salto por verdadero por simplicidad.
+				char *salto = tercetos[idx_left]->t1;
+				strcpy(tercetos[idx_left]->t1, salto_opuesto(salto));
+				strcpy(tercetos[idx_left]->t3, intToStr(idx_right + 1));
 			}
-			insertar_pila(&pila, $4);
 		} ENDIF {
 			$$ = $4;
 			printf("Regla 40\n");
 		}
-	|	IF condicion THEN bloque ELSE bloque ENDIF {
+	|	IF condicion THEN bloque {
+			/*
+			 * Fin del bloque verdadero
+			 * - Desapilar
+			 * - Completar en el terceto desapilado el nro de terceto actual + 1
+			 * - Apilar el n° del terceto actual
+			 *
+			 *	Terceto actual: $4
+			 */
+			int op_logico = sacar_pila(&pila_operador_logico);
+
+			/*
+			 * condicion derecha:
+			 * - Si no se cumple salto siempre al final del bloque
+			 */
+			int idx_right = sacar_pila(&pila);
+
+			strcpy(tercetos[idx_right]->t3, intToStr($4 + 1));
+
+			/*
+			 * condicion izquierda:
+			 * - AND: Si no se cumple salto siempre al final del bloque
+			 * - OR: Si se cumple salto al principio del then. Si no,
+			 *   continuo a la siguiente condicion.
+			 */
+			int idx_left = -1;
+
+			if (op_logico == olAND) {
+				idx_left = sacar_pila(&pila);
+				strcpy(tercetos[idx_left]->t3, intToStr($4 + 1));
+			} else if (op_logico == olOR) {
+				idx_left = sacar_pila(&pila);
+				// salto por verdadero por simplicidad.
+				char *salto = tercetos[idx_left]->t1;
+				strcpy(tercetos[idx_left]->t1, salto_opuesto(salto));
+				strcpy(tercetos[idx_left]->t3, intToStr(idx_right + 1));
+			}
+
+			// salto incondicional al final del else
+			int idx = crear_terceto(saltos[tsJMP], NULL, NULL);
+			insertar_pila(&pila, idx);
+		} ELSE bloque ENDIF {
+			/*
+			 * - Desapilar
+			 * - Completar en el terceto desapilado el n° de Terceto actual + 1
+			 *
+			 *   Terceto actual: $7
+			 */
+			int idx = sacar_pila(&pila);
+			strcpy(tercetos[idx]->t3, intToStr($7 + 1));
+			$$ = $7;
 			printf("Regla 41\n");
 		}
 	;
@@ -400,8 +460,10 @@ comparacion:
 		};
 
 iteracion:
-		repeat
-		{printf("Regla 49\n");};
+		repeat {
+			$$ = $1;
+			printf("Regla 49\n");
+		};
 
 repeat:
 		REPEAT bloque UNTIL condicion SCOLON

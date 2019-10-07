@@ -44,7 +44,8 @@ typedef enum {
     tsJL,
     tsJLE,
     tsJG,
-    tsJGE
+    tsJGE,
+    tsJMP,
 } t_salto;
 
 /* signados */
@@ -55,6 +56,7 @@ static const char * saltos[] = {
     "JLE",
     "JG",
     "JGE",
+    "JMP"
 };
 
 /* sin signar */
@@ -65,6 +67,7 @@ static const char * saltos_u[] = {
     "JBE",
     "JNBE",
     "JAE",
+    "JMP"
 };
 
 #endif

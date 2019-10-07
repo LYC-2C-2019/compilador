@@ -4,8 +4,6 @@
 
 #include "tabla.h"
 
-int cantidadSimbolos = 0;
-
 // FUNCIONES PUBLICAS
 
 void insertarSimbolo(const char* nombre, const char* tipo)

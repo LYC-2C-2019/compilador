@@ -3,6 +3,8 @@
 
 #include "const.h"
 
+static int cantidadSimbolos = 0;
+
 typedef struct simbolo_s {
    char nombre[MAX_ID];
    char tipo[MAX_TYPE];

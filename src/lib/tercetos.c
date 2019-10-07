@@ -4,9 +4,6 @@
 
 #include "tercetos.h"
 
-/* cantidad de tercetos */
-int cant_tercetos = 0;
-
 /** crea una estructura de datos de terceto */
 t_terceto* nuevo_terceto (const char* t1, const char* t2, const char* t3)
 {

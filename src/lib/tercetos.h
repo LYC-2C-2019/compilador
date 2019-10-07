@@ -3,6 +3,9 @@
 
 #include "const.h"
 
+/* cantidad de tercetos */
+static int cant_tercetos = 0;
+
 /* estrutura de un terceto */
 typedef struct s_terceto {
     char t1[MAX_STRING],
