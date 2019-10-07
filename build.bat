@@ -11,7 +11,7 @@ gcc.exe lib\*.c lex.yy.c y.tab.c -o ..\bin\Segunda.exe
 REM pause
 cd ..
 echo EJECUCION DE PRUEBAS
-bin\Primera.exe test\Prueba.txt
+bin\Segunda.exe test\Prueba.txt
 cd src
 del lex.yy.c
 del y.tab.c
