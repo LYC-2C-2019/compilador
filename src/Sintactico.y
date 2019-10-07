@@ -45,6 +45,10 @@ void success();
 t_pila pila;
 /* Apila los tipos de condicion (and, or, not) cuando hay anidamiento */
 t_pila pila_operador_logico;
+/* Apila los ids del lado izquierdo en asignaciones multiples */
+t_pila pila_asig_mult_ids;
+/* Apila las expresiones del lado derecho en asignaciones multiples */
+t_pila pila_asig_mult_exp;
 
 %}
 
@@ -119,6 +123,9 @@ t_pila pila_operador_logico;
 %type <entero> iteracion
 %type <entero> repeat
 %type <entero> lectura
+%type <entero> lista_ids
+%type <entero> asignacion_multiple
+%type <entero> lista_expresiones_comma
 
 %start bloque
 
@@ -153,10 +160,16 @@ lista_tipos:
 lista_ids:
 		ID {
 			guardarId($1);
+			int idx = crear_terceto($1, NULL, NULL);
+			insertar_pila(&pila_asig_mult_ids, idx);
+			$$ = idx;
 			printf("Regla 7\n");
 		}
 	|	lista_ids COMMA ID {
 			guardarId($3);
+			int idx = crear_terceto($3, NULL, NULL);
+			insertar_pila(&pila_asig_mult_ids, idx);
+			$$ = idx;
 			{printf("Regla 8\n");}
 		}
 	;
@@ -273,7 +286,10 @@ asignacion:
 			$$ = $1;
 			printf("Regla 32\n");
 		}
-	|	asignacion_multiple {printf("Regla 33\n");}
+	|	asignacion_multiple {
+			$$ = $1;
+			printf("Regla 33\n");
+		}
 	;
 
 asignacion_simple:
@@ -289,11 +305,30 @@ asignacion_simple:
 
 asignacion_multiple:
 		SBRA_O lista_ids SBRA_C ASSIG SBRA_O lista_expresiones_comma SBRA_C
-		{printf("Regla 36\n");};
+		{
+			int idx_exp = -1;
+			int idx_id = -1;
+			int idx = -1;
+			while(!pila_vacia(&pila_asig_mult_ids)) {
+				idx_id = sacar_pila(&pila_asig_mult_ids);
+				idx_exp = sacar_pila(&pila_asig_mult_exp);
+				idx = crear_terceto($4, intToStr(idx_id), intToStr(idx_exp));
+			}
+			$$ = idx;
+			printf("Regla 36\n");
+		};
 
 lista_expresiones_comma:
-		expresion 								{printf("Regla 37\n");}
-	| 	lista_expresiones_comma COMMA expresion {printf("Regla 38\n");}
+		expresion {
+			insertar_pila(&pila_asig_mult_exp, $1);
+			$$ = $1;
+			printf("Regla 37\n");
+		}
+	| 	lista_expresiones_comma COMMA expresion {
+			insertar_pila(&pila_asig_mult_exp, $3);
+			$$ = $3;
+			printf("Regla 38\n");
+		}
 	;
 
 seleccion:

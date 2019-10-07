@@ -8,7 +8,8 @@ typedef struct s_nodo {
 } t_nodo;
 typedef t_nodo* t_pila;
 
-void insertar_pila (t_pila*, int);
+int pila_vacia(t_pila*);
+void insertar_pila(t_pila*, int);
 int sacar_pila(t_pila*);
 void crear_pila(t_pila*);
 void destruir_pila(t_pila*);
