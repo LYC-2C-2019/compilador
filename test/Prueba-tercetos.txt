@@ -39,8 +39,3 @@ UNTIL (c>d) OR (f<g);
 
 PRINT A;
 READ B;
-
---/ inlist /--
-INLIST(VARIABLE, [3; 7*6; (((8 + c) + d) / (3.21))]);
-INLIST (a, [2*b+7 ; 12 ; a+b*(34+d) ; 48]);
-INLIST (z, [2.3 ; 1.22]);

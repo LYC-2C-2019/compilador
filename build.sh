@@ -26,7 +26,7 @@ read -p "Presione una tecla para continuar...";
 
 echo "";
 echo "Compilando procesador de lenguaje";
-gcc *.c -o "../bin/${entregas[$N]}.exe"
+gcc *.c lib/*.c -o "../bin/${entregas[$N]}.exe"
 read -p "Presione una tecla para continuar...";
 
 cd ..
