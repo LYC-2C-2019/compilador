@@ -29,6 +29,7 @@ int cantidadTiposId = 0;
 int cantidadIds = 0;
 char listaTiposId[MAX_SIM][MAX_TYPE];
 char listaIds[MAX_SIM][MAX_ID];
+int cantidadRepeat = 0;
 
 void guardarTipoId(char*);
 void guardarId(char*);
@@ -49,6 +50,8 @@ t_pila pila_operador_logico;
 t_pila pila_asig_mult_ids;
 /* Apila las expresiones del lado derecho en asignaciones multiples */
 t_pila pila_asig_mult_exp;
+/* Apila etiquetas para el bloque repeat */
+t_pila pila_repeat_etiq;
 
 %}
 
@@ -501,8 +504,52 @@ iteracion:
 		};
 
 repeat:
-		REPEAT bloque UNTIL condicion SCOLON
-		{printf("Regla 50\n");};
+		REPEAT {
+			/*
+			* Apilar el nro de terceto actual creando una etiqueta
+			*/
+			char etiq[10];
+			sprintf(etiq, "REPEAT_%d", ++cantidadRepeat);
+			int idx_etiq = crear_terceto(etiq, NULL, NULL);
+			insertar_pila(&pila_repeat_etiq, idx_etiq);
+		} bloque UNTIL condicion SCOLON {
+
+			/* Desapilo la etiqueta de inicio */
+			int idx_etiq = sacar_pila(&pila_repeat_etiq);
+
+			/* desapilo el operador logico utilizado */
+			int op_logico = sacar_pila(&pila_operador_logico);
+
+			/*
+			 * condicion derecha:
+			 * - Si no se cumple salto siempre al inicio del repeat
+			 */
+			int idx_right = sacar_pila(&pila);
+
+			strcpy(tercetos[idx_right]->t3, intToStr(idx_etiq + 1));
+
+			/*
+			 * condicion izquierda:
+			 * - AND: Si no se cumple salto siempre al inicio del repeat
+			 * - OR: Si se cumple salto al final del repeat. Si no,
+			 *   continuo a la siguiente condicion.
+			 */
+			int idx_left = -1;
+
+			if (op_logico == olAND) {
+				idx_left = sacar_pila(&pila);
+				strcpy(tercetos[idx_left]->t3, intToStr(idx_etiq + 1));
+			} else if (op_logico == olOR) {
+				idx_left = sacar_pila(&pila);
+				// salto por verdadero por simplicidad.
+				char *salto = tercetos[idx_left]->t1;
+				strcpy(tercetos[idx_left]->t1, salto_opuesto(salto));
+				strcpy(tercetos[idx_left]->t3, intToStr(idx_right + 1));
+			}
+
+			$$ = $5;
+			printf("Regla 50\n");
+		};
 
 impresion:
 		PRINT ID {printf("Regla 51\n");}

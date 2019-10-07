@@ -1,0 +1,30 @@
+--/ asignacion /--
+[a,b,c,d ] := [10.4,cont,hola, 3*4];
+
+--/ seleccion /--
+
+IF (a>b) THEN
+    b:=11;
+    b:=13;
+    IF(c>d) THEN
+        a := 0;
+    ENDIF
+ENDIF
+
+IF (a*7+b < b+c*4) THEN
+    a:= a+1;
+ELSE
+    a := 0;
+    b := 4;
+    b := 5;
+    b := 6;
+ENDIF
+
+--/ iteracion /--
+
+REPEAT
+    a := a+1;
+    REPEAT
+        b := b+1;
+    UNTIL NOT (z<w);
+UNTIL (c>d) OR (f<g);
