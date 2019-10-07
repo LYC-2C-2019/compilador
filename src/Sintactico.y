@@ -506,7 +506,10 @@ condicion:
 	;
 
 proposicion:
-		funcion		{printf("Regla 46\n");}
+		funcion		{
+			$$ = $1;
+			printf("Regla 46\n");
+		}
 	|	comparacion	{
 			$$ = $1;
 			printf("Regla 47\n");

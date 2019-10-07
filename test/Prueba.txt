@@ -4,7 +4,12 @@ VAR
     [Integer, Float, Integer] : [s, r, t]
 ENDVAR
 
---/ asignacion /--
+--/ asigncion simple y expresion /--
+
+a := (((8 + c) + d) / 3) + 10;
+
+--/ asignacion multiple /--
+
 [a,b,c,d ] := [10.4,cont,hola, 3*4];
 
 --/ seleccion /--
