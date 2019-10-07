@@ -18,7 +18,6 @@
 #include "lib/tabla.h"
 #include "lib/pila.h"
 #include "lib/tercetos.h"
-#include "lib/index.h"
 #include "lib/utils.h"
 
 int yystopparser=0;
