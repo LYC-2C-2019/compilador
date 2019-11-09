@@ -54,18 +54,7 @@ void guardarTablaDeSimbolos()
    }
 
    fclose(fp);
-}
-
-
-
-// FUNCIONES PRIVADAS
-
-int simboloEsConstante(const char* tipo)
-{
-   if (strcmp(tipo, tipos[tdConstString]) == 0 || strcmp(tipo, tipos[tdConstInteger]) == 0 || strcmp(tipo, tipos[tdConstFloat]) == 0)
-      return 1;
-
-   return 0;
+   
 }
 
 /*
@@ -88,5 +77,29 @@ int simboloEstaEnTabla(const char* nombre)
     }
 
     return 0;
+}
+
+/*
+ * int obtenerCantidadDeSimbolos()
+ *
+ * Devuelve la cantidad de simbolos, que funciona como una variable privada dentro
+ * del archivo tabla.c no se por que.
+ *
+ */
+
+int obtenerCantidadDeSimbolos()
+{
+   return cantidadSimbolos;
+}
+
+
+// FUNCIONES PRIVADAS
+
+int simboloEsConstante(const char* tipo)
+{
+   if (strcmp(tipo, tipos[tdConstString]) == 0 || strcmp(tipo, tipos[tdConstInteger]) == 0 || strcmp(tipo, tipos[tdConstFloat]) == 0)
+      return 1;
+
+   return 0;
 }
 

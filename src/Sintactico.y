@@ -18,6 +18,7 @@
 #include "lib/tabla.h"
 #include "lib/pila.h"
 #include "lib/tercetos.h"
+#include "lib/assembler.h"
 #include "lib/utils.h"
 
 int yystopparser=0;
@@ -634,6 +635,7 @@ lista_expresiones_scolon:
 int main(int argc,char *argv[])
 {
 	FILE *intermedia;
+	FILE *assembler;
 
 	if ((yyin = fopen(argv[1], "rt")) == NULL) {
 		printf("\nNo se puede abrir el archivo: %s\n", argv[1]);
@@ -642,7 +644,12 @@ int main(int argc,char *argv[])
 	}
 
 	if((intermedia = fopen("Intermedia.txt", "w"))==NULL){
-        printf("No se puede crear el archivo Intermedia.txt\n");
+        printf("No se puede crear el archivo \"Intermedia.txt\"\n");
+        exit(ERROR);
+    }
+
+	if((assembler = fopen("Final.asm", "w"))==NULL){
+        printf("No se puede crear el archivo \"Final.asm\"\n");
         exit(ERROR);
     }
 
@@ -652,10 +659,14 @@ int main(int argc,char *argv[])
     escribir_tercetos(intermedia);
     escribir_tercetos(stdout);
 
+	// Genero codigo assembler
+	escribir_assembler(assembler);
+
+	fclose(yyin);
+
     // libero memoria de tercetos
     limpiar_tercetos();
 
-	fclose(yyin);
 	return SUCCESS;
 }
 
