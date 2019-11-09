@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "tabla.h"
+#include "const.h"
 
 // FUNCIONES PUBLICAS
 
@@ -90,6 +91,27 @@ int simboloEstaEnTabla(const char* nombre)
 int obtenerCantidadDeSimbolos()
 {
    return cantidadSimbolos;
+}
+
+int obtenerTipoSimbolo(const char* nombre)
+{
+
+   int i;
+
+    for (i = 0; i < cantidadSimbolos; i++)
+    {
+          if (strcmp(tablaDeSimbolos[i].nombre, nombre) == 0)
+          {
+             if (strcmp(tablaDeSimbolos[i].tipo, tipos[tdString]) == 0 || strcmp(tablaDeSimbolos[i].tipo, tipos[tdConstString]) == 0)
+               return tdString;
+
+             if (strcmp(tablaDeSimbolos[i].tipo, tipos[tdInteger]) == 0 || strcmp(tablaDeSimbolos[i].tipo, tipos[tdConstInteger]) == 0)
+               return tdInteger;
+
+             if (strcmp(tablaDeSimbolos[i].tipo, tipos[tdFloat]) == 0 || strcmp(tablaDeSimbolos[i].tipo, tipos[tdConstFloat]) == 0)
+               return tdFloat;
+          }
+    }
 }
 
 

@@ -579,22 +579,22 @@ repeat:
 
 impresion:
 		PRINT ID {
-			/*
-			 * No se que deberia dejar preparado
-			 * para la generacion del assembler
-			 * en este tipo de instrucciones
-			 */
-			$$ = crear_terceto($1, $2, NULL);
+
+			if (!esIdDeclarado($2)) {
+				printf("\nERROR: ID no declarado\n");
+    			yyerror();
+			}
+			int idx = crear_terceto($2, NULL, NULL);
+			$$ = crear_terceto($1, intToStr(idx), NULL);
 			printf("Regla 51\n");
+
 		}
 	|	PRINT CTE_S {
-			/*
-			 * No se que deberia dejar preparado
-			 * para la generacion del assembler
-			 * en este tipo de instrucciones
-			 */
-			$$ = crear_terceto($1, $2, NULL);
+
+			int idx = crear_terceto($2, NULL, NULL);
+			$$ = crear_terceto($1, intToStr(idx), NULL);
 			printf("Regla 52\n");
+
 		}
 	;
 

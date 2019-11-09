@@ -24,5 +24,8 @@ int crear_terceto(const char* t1, const char* t2, const char* t3);
 void escribir_tercetos(FILE *);
 /* libera memoria pedida para tercetos */
 void limpiar_tercetos();
+/* devuelve la cantidad de tercetos, funciona como un get de una variable privada 
+si no se usa una funcion, no se puede acceder al valor de la variable no se por que */
+int obtenerCantidadDeTercetos();
 
 #endif

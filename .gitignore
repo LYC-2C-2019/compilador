@@ -2,6 +2,11 @@
 .DS_Store
 
 notas.txt
+Intermedia.txt
+ts.txt
+
+*.exe
+
 
 src/y.output
 src/y.tab.c

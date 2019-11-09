@@ -19,5 +19,6 @@ void guardarTablaDeSimbolos();
 int simboloEsConstante(const char*);
 int simboloEstaEnTabla(const char*);
 int obtenerCantidadDeSimbolos();
+int obtenerTipoSimbolo(const char*);
 
 #endif
