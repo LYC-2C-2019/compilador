@@ -292,40 +292,36 @@ void escribir_seccion_codigo(FILE* pf_asm)
 
 void escribir_operacion_unaria(FILE *pf_asm, int i)
 {
+    int tipo = 0;
 
     if (strcmp("PRINT", tercetos[i]->t1) == 0) 
-    {	
- 
-        int tipo = obtenerTipoSimbolo(tercetos[atoi(tercetos[i]->t2)]->t1);
+    {	 
+        tipo = obtenerTipoSimbolo(tercetos[i]->t2);
 
         if (tipo == tdFloat || tipo == tdInteger) 
         {
-            fprintf(pf_asm, "\t DisplayFloat %s,2 \n", asignar_nombre_variable_assembler(tercetos[atoi(tercetos[i]->t2)]->t1));
+            fprintf(pf_asm, "\t DisplayFloat %s,2 \n", asignar_nombre_variable_assembler(tercetos[i]->t2));
         }
         else 
         {
-            fprintf(pf_asm, "\t DisplayString %s \n", asignar_nombre_variable_assembler(tercetos[atoi(tercetos[i]->t2)]->t1));
+            fprintf(pf_asm, "\t DisplayString %s \n", asignar_nombre_variable_assembler(tercetos[i]->t2));
         }
         // Siempre inserto nueva linea despues de mostrar msj
         fprintf(pf_asm, "\t newLine \n");
     }
-    // else if (strcmp("GET", tercetos[i].uno) == 0) 
-    // {
-    //     int tipo = buscarTipoTS(tercetos[atoi(tercetos[i].dos)].uno);
-    //     if (tipo == Float) 
-    //     {
-    //         fprintf(pf_asm, "\t GetFloat %s\n", getNombreAsm(tercetos[atoi(tercetos[i].dos)].uno));
-    //     } 
-    //     else if (tipo == Integer) 
-    //     {
-    //         // pongo getfloat para manejar todo con fld en las operaciones
-    //         fprintf(pf_asm, "\t GetFloat %s\n", getNombreAsm(tercetos[atoi(tercetos[i].dos)].uno));
-    //     }	
-    //     else 
-    //     {
-    //         fprintf(pf_asm, "\t GetString %s\n", getNombreAsm(tercetos[atoi(tercetos[i].dos)].uno));
-    //     }
-    // }
+    else if (strcmp("READ", tercetos[i]->t1) == 0) 
+    {
+        tipo = obtenerTipoSimbolo(tercetos[i]->t2);
+
+        if (tipo == tdFloat || tipo == tdInteger)  
+        {
+            fprintf(pf_asm, "\t GetFloat %s\n", asignar_nombre_variable_assembler(tercetos[i]->t2));
+        } 
+        else 
+        {
+            fprintf(pf_asm, "\t GetString %s\n", asignar_nombre_variable_assembler(tercetos[i]->t2));
+        }
+    }
     // else // saltos
     // {
     //     char *codigo = getCodOp(tercetos[i].uno);
@@ -376,4 +372,35 @@ char* asignar_nombre_variable_assembler(char* cte_o_id) {
 	}
 	
 	return nombreAsm;
+}
+
+
+/** 
+ * char* obtener_instruccion_assembler(char*)
+ * 
+ * Obtiene la instruccion assembler correspondiente al token recibido por parametro.
+ * 
+ * **/
+char* obtener_instruccion_assembler(char* token)
+{
+	if(strcmp(token, "+") == 0)
+	{
+		return "FADD";
+	}
+	else if(strcmp(token, "=") == 0)
+	{
+		return "MOV";
+	}
+	else if(strcmp(token, "-") == 0)
+	{
+		return "FSUB";
+	}
+	else if(strcmp(token, "*") == 0)
+	{
+		return "FMUL";
+	}
+	else if(strcmp(token, "/") == 0)
+	{
+		return "FDIV";
+	}
 }
