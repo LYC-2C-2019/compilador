@@ -90,3 +90,22 @@ int simboloEstaEnTabla(const char* nombre)
     return 0;
 }
 
+int tipoDeSimbolo(const char * nombre)
+{
+    int i;
+
+    for (i = 0; i < MAX_SIM; i++)
+    {
+          if(strcmp(tablaDeSimbolos[i].nombre, nombre) == 0)
+          {
+            if(strcmp(tablaDeSimbolos[i].tipo,"INTEGER")==0)
+               return 1;
+            if(strcmp(tablaDeSimbolos[i].tipo,"FLOAT")==0)
+               return 2;
+            if(strcmp(tablaDeSimbolos[i].tipo,"STRING")==0)
+               return 3;
+          }
+    }
+
+    return 0;
+}
