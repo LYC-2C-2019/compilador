@@ -381,7 +381,7 @@ ifelse:
 			 */
 			int idx_right = sacar_pila(&pila);
 
-			strcpy(tercetos[idx_right]->t3, intToStr($4 + 1));
+			strcpy(tercetos[idx_right]->t2, intToStr($4 + 1));
 
 			/*
 			 * condicion izquierda:
@@ -422,7 +422,7 @@ ifelse:
 			 */
 			int idx_right = sacar_pila(&pila);
 
-			strcpy(tercetos[idx_right]->t3, intToStr($4 + 1));
+			strcpy(tercetos[idx_right]->t2, intToStr($4 + 1));			
 
 			/*
 			 * condicion izquierda:
@@ -434,13 +434,13 @@ ifelse:
 
 			if (op_logico == olAND) {
 				idx_left = sacar_pila(&pila);
-				strcpy(tercetos[idx_left]->t3, intToStr($4 + 1));
+				strcpy(tercetos[idx_left]->t2, intToStr($4 + 1));
 			} else if (op_logico == olOR) {
 				idx_left = sacar_pila(&pila);
 				// salto por verdadero por simplicidad.
 				char *salto = tercetos[idx_left]->t1;
 				strcpy(tercetos[idx_left]->t1, salto_opuesto(salto));
-				strcpy(tercetos[idx_left]->t3, intToStr(idx_right + 1));
+				strcpy(tercetos[idx_left]->t2, intToStr(idx_right + 1));
 			}
 
 			// salto incondicional al final del else
@@ -454,7 +454,7 @@ ifelse:
 			 *   Terceto actual: $7
 			 */
 			int idx = sacar_pila(&pila);
-			strcpy(tercetos[idx]->t3, intToStr($7 + 1));
+			strcpy(tercetos[idx]->t2, intToStr($7 + 1));
 			$$ = $7;
 			printf("Regla 41\n");
 		}
@@ -518,7 +518,7 @@ proposicion:
 
 comparacion:
 		BRA_O expresion COMP expresion BRA_C {
-			int idx = crear_terceto("CMP", intToStr($2), intToStr($4));
+			int idx = crear_terceto("CMP", intToStr($2), intToStr($4));		
 			$$ = crear_terceto($3, intToStr(idx), NULL);
 			printf("Regla 48\n");
 		};
@@ -552,7 +552,7 @@ repeat:
 			 */
 			int idx_right = sacar_pila(&pila);
 
-			strcpy(tercetos[idx_right]->t3, intToStr(idx_etiq + 1));
+			strcpy(tercetos[idx_right]->t2, intToStr(idx_etiq + 1));
 
 			/*
 			 * condicion izquierda:
@@ -564,13 +564,13 @@ repeat:
 
 			if (op_logico == olAND) {
 				idx_left = sacar_pila(&pila);
-				strcpy(tercetos[idx_left]->t3, intToStr(idx_etiq + 1));
+				strcpy(tercetos[idx_left]->t2, intToStr(idx_etiq + 1));				
 			} else if (op_logico == olOR) {
 				idx_left = sacar_pila(&pila);
 				// salto por verdadero por simplicidad.
 				char *salto = tercetos[idx_left]->t1;
 				strcpy(tercetos[idx_left]->t1, salto_opuesto(salto));
-				strcpy(tercetos[idx_left]->t3, intToStr(idx_right + 1));
+				strcpy(tercetos[idx_left]->t2, intToStr(idx_right + 1));				
 			}
 
 			$$ = $5;
