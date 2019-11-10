@@ -3,6 +3,7 @@ NOMBRE                            | TIPO          | VALOR                       
 a                                 | Integer       | Undefined                         |           
 b                                 | Float         | Undefined                         |           
 c                                 | Integer       | Undefined                         |           
+A                                 | String        | Undefined                         |           
 s                                 | Integer       | Undefined                         |           
 r                                 | Float         | Undefined                         |           
 t                                 | Integer       | Undefined                         |           
@@ -25,7 +26,6 @@ z                                 | Undefined     | Undefined                   
 w                                 | Undefined     | Undefined                         |           
 f                                 | Undefined     | Undefined                         |           
 g                                 | Undefined     | Undefined                         |           
-A                                 | Undefined     | Undefined                         |           
 B                                 | Undefined     | Undefined                         |           
 VARIABLE                          | Undefined     | Undefined                         |           
 3.21                              | ConstFloat    | 3.21                              | 4         

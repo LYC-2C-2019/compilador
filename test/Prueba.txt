@@ -1,10 +1,10 @@
 --/ declaraciones /--
 VAR
-    [Integer, Float, Integer] : [a, b, c],
+    [Integer, Float, Integer, String] : [a, b, c, A],
     [Integer, Float, Integer] : [s, r, t]
 ENDVAR
 
---/ asigncion simple y expresion /--
+--/ asignacion simple y expresion /--
 
 a := (((8 + c) + d) / 3) + 10;
 
@@ -44,6 +44,7 @@ UNTIL (c>d) OR (f<g);
 
 PRINT A;
 READ B;
+
 
 --/ inlist /--
 INLIST(VARIABLE, [3; 7*6; (((8 + c) + d) / (3.21))]);

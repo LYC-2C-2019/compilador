@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "tabla.h"
+#include "const.h"
 
 // FUNCIONES PUBLICAS
 
@@ -54,18 +55,7 @@ void guardarTablaDeSimbolos()
    }
 
    fclose(fp);
-}
-
-
-
-// FUNCIONES PRIVADAS
-
-int simboloEsConstante(const char* tipo)
-{
-   if (strcmp(tipo, tipos[tdConstString]) == 0 || strcmp(tipo, tipos[tdConstInteger]) == 0 || strcmp(tipo, tipos[tdConstFloat]) == 0)
-      return 1;
-
-   return 0;
+   
 }
 
 /*
@@ -88,5 +78,50 @@ int simboloEstaEnTabla(const char* nombre)
     }
 
     return 0;
+}
+
+/*
+ * int obtenerCantidadDeSimbolos()
+ *
+ * Devuelve la cantidad de simbolos, que funciona como una variable privada dentro
+ * del archivo tabla.c no se por que.
+ *
+ */
+
+int obtenerCantidadDeSimbolos()
+{
+   return cantidadSimbolos;
+}
+
+int obtenerTipoSimbolo(const char* nombre)
+{
+
+   int i;
+
+    for (i = 0; i < cantidadSimbolos; i++)
+    {
+          if (strcmp(tablaDeSimbolos[i].nombre, nombre) == 0)
+          {
+             if (strcmp(tablaDeSimbolos[i].tipo, tipos[tdString]) == 0 || strcmp(tablaDeSimbolos[i].tipo, tipos[tdConstString]) == 0)
+               return tdString;
+
+             if (strcmp(tablaDeSimbolos[i].tipo, tipos[tdInteger]) == 0 || strcmp(tablaDeSimbolos[i].tipo, tipos[tdConstInteger]) == 0)
+               return tdInteger;
+
+             if (strcmp(tablaDeSimbolos[i].tipo, tipos[tdFloat]) == 0 || strcmp(tablaDeSimbolos[i].tipo, tipos[tdConstFloat]) == 0)
+               return tdFloat;
+          }
+    }
+}
+
+
+// FUNCIONES PRIVADAS
+
+int simboloEsConstante(const char* tipo)
+{
+   if (strcmp(tipo, tipos[tdConstString]) == 0 || strcmp(tipo, tipos[tdConstInteger]) == 0 || strcmp(tipo, tipos[tdConstFloat]) == 0)
+      return 1;
+
+   return 0;
 }
 

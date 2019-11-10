@@ -7,7 +7,7 @@ echo COMPILACION BISON
 bison -dyv Sintactico.y
 REM pause
 echo COMPILACION GCC
-gcc.exe lib\*.c lex.yy.c y.tab.c -o ..\bin\Segunda.exe
+gcc.exe lib\*.c lex.yy.c y.tab.c -o ..\bin\Grupo04.exe
 REM pause
 cd ..
 echo EJECUCION DE PRUEBAS

@@ -18,6 +18,7 @@
 #include "lib/tabla.h"
 #include "lib/pila.h"
 #include "lib/tercetos.h"
+#include "lib/assembler.h"
 #include "lib/utils.h"
 
 int yystopparser=0;
@@ -157,15 +158,15 @@ lista_declaraciones:
 
 declaracion:
 		SBRA_O lista_tipos SBRA_C COLON SBRA_O lista_ids SBRA_C {
-			int idx_id = -1;
-			int idx_tipo = -1;
-			while(!pila_vacia(&pila_ids)) {
-				idx_id = sacar_pila(&pila_ids);
-				idx_tipo = sacar_pila(&pila);
-				strcpy(tercetos[idx_id]->t2, tercetos[idx_id]->t1);
-				strcpy(tercetos[idx_id]->t1, tipos[idx_tipo]);
-			}
-			$$ = $6;
+			// int idx_id = -1;
+			// int idx_tipo = -1;
+			// while(!pila_vacia(&pila_ids)) {
+			// 	idx_id = sacar_pila(&pila_ids);
+			// 	idx_tipo = sacar_pila(&pila);
+			// 	strcpy(tercetos[idx_id]->t2, tercetos[idx_id]->t1);
+			// 	strcpy(tercetos[idx_id]->t1, tipos[idx_tipo]);
+			// }
+			// $$ = $6;
 			printf("Regla 4\n");
 		}
 		;
@@ -380,7 +381,7 @@ ifelse:
 			 */
 			int idx_right = sacar_pila(&pila);
 
-			strcpy(tercetos[idx_right]->t3, intToStr($4 + 1));
+			strcpy(tercetos[idx_right]->t2, intToStr($4 + 1));
 
 			/*
 			 * condicion izquierda:
@@ -421,7 +422,7 @@ ifelse:
 			 */
 			int idx_right = sacar_pila(&pila);
 
-			strcpy(tercetos[idx_right]->t3, intToStr($4 + 1));
+			strcpy(tercetos[idx_right]->t2, intToStr($4 + 1));			
 
 			/*
 			 * condicion izquierda:
@@ -433,13 +434,13 @@ ifelse:
 
 			if (op_logico == olAND) {
 				idx_left = sacar_pila(&pila);
-				strcpy(tercetos[idx_left]->t3, intToStr($4 + 1));
+				strcpy(tercetos[idx_left]->t2, intToStr($4 + 1));
 			} else if (op_logico == olOR) {
 				idx_left = sacar_pila(&pila);
 				// salto por verdadero por simplicidad.
 				char *salto = tercetos[idx_left]->t1;
 				strcpy(tercetos[idx_left]->t1, salto_opuesto(salto));
-				strcpy(tercetos[idx_left]->t3, intToStr(idx_right + 1));
+				strcpy(tercetos[idx_left]->t2, intToStr(idx_right + 1));
 			}
 
 			// salto incondicional al final del else
@@ -453,7 +454,7 @@ ifelse:
 			 *   Terceto actual: $7
 			 */
 			int idx = sacar_pila(&pila);
-			strcpy(tercetos[idx]->t3, intToStr($7 + 1));
+			strcpy(tercetos[idx]->t2, intToStr($7 + 1));
 			$$ = $7;
 			printf("Regla 41\n");
 		}
@@ -517,7 +518,7 @@ proposicion:
 
 comparacion:
 		BRA_O expresion COMP expresion BRA_C {
-			int idx = crear_terceto("CMP", intToStr($2), intToStr($4));
+			int idx = crear_terceto("CMP", intToStr($2), intToStr($4));		
 			$$ = crear_terceto($3, intToStr(idx), NULL);
 			printf("Regla 48\n");
 		};
@@ -533,10 +534,11 @@ repeat:
 			/*
 			* Apilar el nro de terceto actual creando una etiqueta
 			*/
-			char etiq[10];
-			sprintf(etiq, "REPEAT_%d", ++cantidadRepeat);
-			int idx_etiq = crear_terceto(etiq, NULL, NULL);
-			insertar_pila(&pila_repeat_etiq, idx_etiq);
+			// char etiq[10];
+			// sprintf(etiq, "REPEAT_%d", ++cantidadRepeat);
+			// int idx_etiq = crear_terceto(etiq, NULL, NULL);
+			
+			insertar_pila(&pila_repeat_etiq, obtenerCantidadDeTercetos());
 		} bloque UNTIL condicion SCOLON {
 
 			/* Desapilo la etiqueta de inicio */
@@ -551,7 +553,7 @@ repeat:
 			 */
 			int idx_right = sacar_pila(&pila);
 
-			strcpy(tercetos[idx_right]->t3, intToStr(idx_etiq + 1));
+			strcpy(tercetos[idx_right]->t2, intToStr(idx_etiq + 1));
 
 			/*
 			 * condicion izquierda:
@@ -563,13 +565,13 @@ repeat:
 
 			if (op_logico == olAND) {
 				idx_left = sacar_pila(&pila);
-				strcpy(tercetos[idx_left]->t3, intToStr(idx_etiq + 1));
+				strcpy(tercetos[idx_left]->t2, intToStr(idx_etiq + 1));				
 			} else if (op_logico == olOR) {
 				idx_left = sacar_pila(&pila);
 				// salto por verdadero por simplicidad.
 				char *salto = tercetos[idx_left]->t1;
 				strcpy(tercetos[idx_left]->t1, salto_opuesto(salto));
-				strcpy(tercetos[idx_left]->t3, intToStr(idx_right + 1));
+				strcpy(tercetos[idx_left]->t2, intToStr(idx_right + 1));				
 			}
 
 			$$ = $5;
@@ -578,22 +580,20 @@ repeat:
 
 impresion:
 		PRINT ID {
-			/*
-			 * No se que deberia dejar preparado
-			 * para la generacion del assembler
-			 * en este tipo de instrucciones
-			 */
+
+			if (!esIdDeclarado($2)) {
+				printf("\nERROR: ID no declarado\n");
+    			yyerror();
+			}
 			$$ = crear_terceto($1, $2, NULL);
 			printf("Regla 51\n");
+
 		}
 	|	PRINT CTE_S {
-			/*
-			 * No se que deberia dejar preparado
-			 * para la generacion del assembler
-			 * en este tipo de instrucciones
-			 */
+
 			$$ = crear_terceto($1, $2, NULL);
 			printf("Regla 52\n");
+
 		}
 	;
 
@@ -634,6 +634,7 @@ lista_expresiones_scolon:
 int main(int argc,char *argv[])
 {
 	FILE *intermedia;
+	FILE *assembler;
 
 	if ((yyin = fopen(argv[1], "rt")) == NULL) {
 		printf("\nNo se puede abrir el archivo: %s\n", argv[1]);
@@ -642,7 +643,12 @@ int main(int argc,char *argv[])
 	}
 
 	if((intermedia = fopen("Intermedia.txt", "w"))==NULL){
-        printf("No se puede crear el archivo Intermedia.txt\n");
+        printf("No se puede crear el archivo \"Intermedia.txt\"\n");
+        exit(ERROR);
+    }
+
+	if((assembler = fopen("Final.asm", "w"))==NULL){
+        printf("No se puede crear el archivo \"Final.asm\"\n");
         exit(ERROR);
     }
 
@@ -652,10 +658,14 @@ int main(int argc,char *argv[])
     escribir_tercetos(intermedia);
     escribir_tercetos(stdout);
 
+	// Genero codigo assembler
+	escribir_assembler(assembler);
+
+	fclose(yyin);
+
     // libero memoria de tercetos
     limpiar_tercetos();
 
-	fclose(yyin);
 	return SUCCESS;
 }
 

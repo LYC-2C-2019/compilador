@@ -49,3 +49,9 @@ void limpiar_tercetos ()
     for (i = 0; i < cant_tercetos; i++)
         free(tercetos[i]);
 }
+
+
+int obtenerCantidadDeTercetos()
+{
+   return cant_tercetos;
+}
