@@ -6,7 +6,11 @@ ENDVAR
 
 --/ asigncion simple y expresion /--
 
-a := (((8 + c) + d) / 3) + 10;
+c := 4;
+
+t := 12;
+
+a := (((8 + c) + t) / 3) + 10;
 
 --/ asignacion multiple /--
 
@@ -14,15 +18,15 @@ a := (((8 + c) + d) / 3) + 10;
 
 --/ seleccion /--
 
-IF (a>b) THEN
+IF (a>c) THEN
     b:=11;
     b:=13;
-    IF(c>d) THEN
+    IF(c>t) THEN
         a := 0;
     ENDIF
 ENDIF
 
-IF (a*7+b < b+c*4) THEN
+IF (a*7+t < t+c*4) THEN
     a:= a+1;
 ELSE
     a := 0;
@@ -37,8 +41,8 @@ REPEAT
     a := a+1;
     REPEAT
         b := b+1;
-    UNTIL NOT (z<w);
-UNTIL (c>d) OR (f<g);
+    UNTIL NOT (t<c);
+UNTIL (c>a) OR (t<a);
 
 --/ print, read /--
 

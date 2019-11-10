@@ -33,6 +33,9 @@ int cantidadInlist = 0;
 int inicio_asignacion=0;
 int tipo_dato_asignacion=0;
 int tipo_dato_id_asignacion=0;
+int inicio_condicion=0;
+int tipo_dato_condicion=0;
+int tipo_dato_id_condicion=0;
 
 void guardarTipoId(const char*);
 void guardarId(char*);
@@ -42,6 +45,7 @@ void tercetosIfThen(int);
 int yylex();
 int yyerror();
 void validarTipoDatoAsignacion(int);
+void validarTipoDatoCondicion(int);
 
 // MENSAJES
 void success();
@@ -300,17 +304,21 @@ factor:
 		ID {
 			$$ = crear_terceto($1, NULL, NULL);
 			tipo_dato_id_asignacion = tipoDeSimbolo($1);
+			tipo_dato_id_condicion = tipoDeSimbolo($1);
 			validarTipoDatoAsignacion(tipo_dato_id_asignacion);
+			validarTipoDatoCondicion(tipo_dato_id_condicion);
 			printf("Regla 28\n");
 		}
 	|	CTE_I {
 			$$ = crear_terceto($1, NULL, NULL);
 			validarTipoDatoAsignacion(1);
+			validarTipoDatoCondicion(1);
 			printf("Regla 29\n");
         }
 	|	CTE_F {
 			$$ = crear_terceto($1, NULL, NULL);
 			validarTipoDatoAsignacion(2);
+			validarTipoDatoCondicion(2);
 			printf("Regla 30\n");
         }
 	|	BRA_O expresion BRA_C {
@@ -534,9 +542,10 @@ proposicion:
 	;
 
 comparacion:
-		BRA_O expresion COMP expresion BRA_C {
-			int idx = crear_terceto("CMP", intToStr($2), intToStr($4));
+		BRA_O expresion COMP {inicio_condicion = 1;tipo_dato_condicion = tipoDeSimbolo(intToStr($2));} expresion BRA_C {
+			int idx = crear_terceto("CMP", intToStr($2), intToStr($5));
 			$$ = crear_terceto($3, intToStr(idx), NULL);
+			inicio_condicion = 0;
 			printf("Regla 48\n");
 		};
 
@@ -794,6 +803,16 @@ void validarTipoDatoAsignacion(int tipoDeDato)
   if (inicio_asignacion == 1 && tipo_dato_asignacion != 2  && tipoDeDato != 1)
   {	  	
     printf("ERROR EN ASIGNACION DE DATOS DE DISTINTOS TIPOS\n");
+    system ("Pause");
+    exit (1);
+  }
+}
+
+void validarTipoDatoCondicion(int tipoDeDato)
+{
+  if (inicio_condicion == 1 && tipo_dato_condicion != 2  && tipoDeDato != 1)
+  {	  	
+    printf("ERROR EN COMPARACION DE DATOS DE DISTINTOS TIPOS\n");
     system ("Pause");
     exit (1);
   }
