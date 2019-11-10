@@ -1,10 +1,10 @@
 --/ declaraciones /--
 VAR
-    [Integer, Float, Integer, Integer] : [a, b, c, A],
+    [Integer, Float, Integer, String] : [a, b, c, A],
     [Integer, Float, Integer] : [s, r, t]
 ENDVAR
 
---/ asigncion simple y expresion /--
+--/ asignacion simple y expresion /--
 
 a := (((8 + c) + d) / 3) + 10;
 

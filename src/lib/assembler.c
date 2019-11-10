@@ -34,7 +34,7 @@ void escribir_assembler(FILE *archivo)
     escribir_seccion_codigo(archivo);
 
     // escribo trailer (fijo)
-    fprintf(archivo, "\t mov AX, 4C00h \t ; Genera la interrupcion 21h\n\t int 21h \t ; Genera la interrupcion 21h\nEND MAIN\n");
+    fprintf(archivo, "\t mov AX, 4C00h \t ; Genera la interrupcion 21h\n\t int 21h \t ; Genera la interrupcion 21h\nEND\n");
 
     fclose(archivo);
 }
@@ -177,7 +177,7 @@ void escribir_seccion_codigo(FILE *pf_asm)
             cant_op++;
             strcpy(lista_operandos_assembler[cant_op], tercetos[i]->t1);
 
-            printf("\nOPERACION SIMPLE TERCETO NRO %d: [%s, %s, %s]", i, tercetos[i]->t1, tercetos[i]->t2, tercetos[i]->t3);
+            // printf("\nOPERACION SIMPLE TERCETO NRO %d: [%s, %s, %s]", i, tercetos[i]->t1, tercetos[i]->t2, tercetos[i]->t3);
         }
         else if (opUnaria == 1)
         {
@@ -186,7 +186,7 @@ void escribir_seccion_codigo(FILE *pf_asm)
             // * PRINT
             // * READ
 
-            printf("\nOPERACION UNARIA TERCETO NRO %d: [%s, %s, %s]", i, tercetos[i]->t1, tercetos[i]->t2, tercetos[i]->t3);
+            // printf("\nOPERACION UNARIA TERCETO NRO %d: [%s, %s, %s]", i, tercetos[i]->t1, tercetos[i]->t2, tercetos[i]->t3);
 
             if (strcmp("PRINT", tercetos[i]->t1) == 0)
             {
@@ -235,7 +235,7 @@ void escribir_seccion_codigo(FILE *pf_asm)
             // * COMPARACION
             // * ASIGNACION
 
-            printf("\nOPERACION BINARIA TERCETO NRO %d: [%s, %s, %s]", i, tercetos[i]->t1, tercetos[i]->t2, tercetos[i]->t3);
+            // printf("\nOPERACION BINARIA TERCETO NRO %d: [%s, %s, %s]", i, tercetos[i]->t1, tercetos[i]->t2, tercetos[i]->t3);
 
             char *op2 = (char *)malloc(100 * sizeof(char));
             strcpy(op2, lista_operandos_assembler[cant_op]);
@@ -292,7 +292,7 @@ void escribir_seccion_codigo(FILE *pf_asm)
             {
                 tipo = obtenerTipoSimbolo(op1);
                 char *aux2;
-                if (tipo == tdString)
+                if (tipo == tdString && strcmp(":=", tercetos[i]->t1) != 0)
                 {
                     yyerror("Operacion no permitida\n");
                 }
