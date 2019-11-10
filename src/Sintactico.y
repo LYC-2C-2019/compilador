@@ -30,6 +30,9 @@ char listaTiposId[MAX_SIM][MAX_TYPE];
 char listaIds[MAX_SIM][MAX_ID];
 int cantidadRepeat = 0;
 int cantidadInlist = 0;
+int inicio_asignacion=0;
+int tipo_dato_asignacion=0;
+int tipo_dato_id_asignacion=0;
 
 void guardarTipoId(const char*);
 void guardarId(char*);
@@ -38,6 +41,7 @@ void asignarTipoIds();
 void tercetosIfThen(int);
 int yylex();
 int yyerror();
+void validarTipoDatoAsignacion(int);
 
 // MENSAJES
 void success();
@@ -139,7 +143,7 @@ t_pila pila_saltos;
 %type <entero> inlist
 %type <entero> funcion
 
-%start bloque
+%start programa
 
 %%
 programa: declaraciones bloque
@@ -295,15 +299,19 @@ termino:
 factor:
 		ID {
 			$$ = crear_terceto($1, NULL, NULL);
+			tipo_dato_id_asignacion = tipoDeSimbolo($1);
+			validarTipoDatoAsignacion(tipo_dato_id_asignacion);
 			printf("Regla 28\n");
 		}
 	|	CTE_I {
 			$$ = crear_terceto($1, NULL, NULL);
-			{printf("Regla 29\n");}
+			validarTipoDatoAsignacion(1);
+			printf("Regla 29\n");
         }
 	|	CTE_F {
 			$$ = crear_terceto($1, NULL, NULL);
-			{printf("Regla 30\n");}
+			validarTipoDatoAsignacion(2);
+			printf("Regla 30\n");
         }
 	|	BRA_O expresion BRA_C {
 			$$ = $2;
@@ -323,12 +331,17 @@ asignacion:
 	;
 
 asignacion_simple:
-		ID ASSIG expresion {
-			$$ = crear_terceto($2, $1, intToStr($3));
+		ID ASSIG{inicio_asignacion = 1;tipo_dato_asignacion = tipoDeSimbolo($1);} expresion {
+			$$ = crear_terceto($2, $1, intToStr($4));
+			inicio_asignacion=0;
 			printf("Regla 34\n");
 		}
 	|	ID ASSIG CTE_S {
 			$$ = crear_terceto($2, $1, $3);
+			inicio_asignacion=1;
+			tipo_dato_asignacion=tipoDeSimbolo($1);
+			validarTipoDatoAsignacion(3);
+			inicio_asignacion=0;
 			printf("Regla 35\n");
 		}
 	;
@@ -774,4 +787,14 @@ void asignarTipoIds()
 		}
 
 	}
+}
+
+void validarTipoDatoAsignacion(int tipoDeDato)
+{
+  if (inicio_asignacion == 1 && tipo_dato_asignacion != 2  && tipoDeDato != 1)
+  {	  	
+    printf("ERROR EN ASIGNACION DE DATOS DE DISTINTOS TIPOS\n");
+    system ("Pause");
+    exit (1);
+  }
 }

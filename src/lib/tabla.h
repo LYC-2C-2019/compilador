@@ -18,5 +18,6 @@ void insertarSimbolo(const char*, const char*);
 void guardarTablaDeSimbolos();
 int simboloEsConstante(const char*);
 int simboloEstaEnTabla(const char*);
+int tipoDeSimbolo(const char*);
 
 #endif

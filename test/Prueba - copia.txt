@@ -1,0 +1,51 @@
+--/ declaraciones /--
+VAR
+    [Integer, Float, Integer] : [a, b, c],
+    [Integer, Float, Integer] : [s, r, t]
+ENDVAR
+
+--/ asigncion simple y expresion /--
+
+a := (((8 + c) + d) / 3) + 10;
+
+--/ asignacion multiple /--
+
+[a,b,c,d ] := [10,4,5, 3*4];
+
+--/ seleccion /--
+
+IF (a>b) THEN
+    b:=11;
+    b:=13;
+    IF(c>d) THEN
+        a := 0;
+    ENDIF
+ENDIF
+
+IF (a*7+b < b+c*4) THEN
+    a:= a+1;
+ELSE
+    a := 0;
+    b := 4;
+    b := 5;
+    b := 6;
+ENDIF
+
+--/ iteracion /--
+
+REPEAT
+    a := a+1;
+    REPEAT
+        b := b+1;
+    UNTIL NOT (z<w);
+UNTIL (c>d) OR (f<g);
+
+--/ print, read /--
+
+PRINT A;
+READ B;
+
+--/ inlist /--
+INLIST(VARIABLE, [3; 7*6; (((8 + c) + d) / (3.21))]);
+INLIST (a, [2*b+7 ; 12 ; a+b*(34+d) ; 48]);
+INLIST (z, [2.3 ; 1.22]);
