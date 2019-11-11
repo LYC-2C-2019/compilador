@@ -22,6 +22,7 @@ int validateID(char *id);
 int validateString(char *str);
 int validateInteger(char *);
 int validateFloat(char *);
+int validateComment();
 %}
 %option noyywrap
 %option yylineno
@@ -42,7 +43,6 @@ ANYCHAR  .*
 COMM_O   --\/
 COMM_C   \/--
 
-NESTED_COMMENT {COMM_O}{COMMENT}{COMM_C}
 COMMENT  {COMM_O}{ANYCHAR}{COMM_C}
 ID       ({ALPHA}|_)({ALPHA}|{DIGIT}|_)*
 CTE_S    \"{ANYCHAR}\"
@@ -94,9 +94,6 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 "{"   { return CBRA_O; }
 "}"   { return CBRA_C; }
 
-{COMMENT}
-{NESTED_COMMENT}
-
 {EQ} { strcpy(yylval.texto, /* salto opuesto */ saltos[tsJNE]); return COMP; }
 {NE} { strcpy(yylval.texto, /* salto opuesto */ saltos[tsJE]); return COMP; }
 {LT} { strcpy(yylval.texto, /* salto opuesto */ saltos[tsJGE]); return COMP; }
@@ -134,6 +131,16 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
                     return CTE_F;
                 }
             }
+{COMMENT}   {
+                if (validateComment())
+                {
+                    fprintf(stderr, "LEXICAL ERROR (line %d): Comment exceed\n", yylineno);
+                    system("PAUSE");
+                    exit(ERROR);	
+                }
+            }
+
+
 <<EOF>>     {
                guardarTablaDeSimbolos();
                yyterminate();
@@ -189,5 +196,18 @@ int validateID(char *id) {
         system("PAUSE");
         exit(ERROR);
     }
+}
+
+int validateComment(){
+    char *comentario_1;
+	char *comentario_2;
+	comentario_1 = strstr(yytext,"--/");
+	comentario_2 = strstr(comentario_1 + 3,"--/");
+	if(comentario_2 != NULL){
+		if ( strstr(comentario_2 + 3,"--/") != NULL){
+			return 1;							
+		}
+	}
+    return 0;
 }
 
