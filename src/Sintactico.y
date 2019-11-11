@@ -30,6 +30,13 @@ int cantidadIds = 0;
 char listaTiposId[MAX_SIM][MAX_TYPE];
 char listaIds[MAX_SIM][MAX_ID];
 int cantidadRepeat = 0;
+int cantidadInlist = 0;
+int inicio_asignacion=0;
+int tipo_dato_asignacion=0;
+int tipo_dato_id_asignacion=0;
+int inicio_condicion=0;
+int tipo_dato_condicion=0;
+int tipo_dato_id_condicion=0;
 
 void guardarTipoId(const char*);
 void guardarId(char*);
@@ -38,20 +45,26 @@ void asignarTipoIds();
 void tercetosIfThen(int);
 int yylex();
 int yyerror();
+void validarTipoDatoAsignacion(int);
+void validarTipoDatoCondicion(int);
 
 // MENSAJES
 void success();
 
 /* apunta al ultimo elemento terceto de salto */
 t_pila pila;
-/* Apila los tipos de condicion (and, or, not) cuando hay anidamiento */
+/* Apila los valores de enumeracion de tipos de condicion (and, or, not) cuando hay anidamiento */
 t_pila pila_operador_logico;
-/* Apila los ids en declaraciones y en asignaciones multiples */
+/* Apila los valores de enumeracion de tipos de dato para delaraciones */
+t_pila pila_operador_logico;
+/* Apila los indices de tercetos ids, para listas de ids*/
 t_pila pila_ids;
-/* Apila las expresiones del lado derecho en asignaciones multiples */
-t_pila pila_asig_mult_exp;
-/* Apila etiquetas para el bloque repeat */
+/* Apila los indices a tercetos de expresiones, para listas de expresiones*/
+t_pila pila_exp;
+/* Apila indice de tercetos de etiquetas para el bloque repeat */
 t_pila pila_repeat_etiq;
+/* Apila los indices de tercetos de salto que quedaron por completar */
+t_pila pila_saltos;
 
 %}
 
@@ -248,10 +261,6 @@ sentencia:
 	|	lectura SCOLON {
 			$$ = $1;
 			printf("Regla 19\n");}
-	|	funcion SCOLON		{
-			$$ = $1;
-			printf("Regla 20\n");
-		}
 	;
 
 expresion:
@@ -291,15 +300,23 @@ termino:
 factor:
 		ID {
 			$$ = crear_terceto($1, NULL, NULL);
+			tipo_dato_id_asignacion = obtenerTipoSimbolo($1);
+			tipo_dato_id_condicion = obtenerTipoSimbolo($1);
+			validarTipoDatoAsignacion(tipo_dato_id_asignacion);
+			validarTipoDatoCondicion(tipo_dato_id_condicion);
 			printf("Regla 28\n");
 		}
 	|	CTE_I {
 			$$ = crear_terceto($1, NULL, NULL);
-			{printf("Regla 29\n");}
+			validarTipoDatoAsignacion(tdInteger);
+			validarTipoDatoCondicion(tdInteger);
+			printf("Regla 29\n");
         }
 	|	CTE_F {
 			$$ = crear_terceto($1, NULL, NULL);
-			{printf("Regla 30\n");}
+			validarTipoDatoAsignacion(tdFloat);
+			validarTipoDatoCondicion(tdFloat);
+			printf("Regla 30\n");
         }
 	|	BRA_O expresion BRA_C {
 			$$ = $2;
@@ -319,12 +336,17 @@ asignacion:
 	;
 
 asignacion_simple:
-		ID ASSIG expresion {
-			$$ = crear_terceto($2, $1, intToStr($3));
+		ID ASSIG{inicio_asignacion = 1;tipo_dato_asignacion = obtenerTipoSimbolo($1);} expresion {
+			$$ = crear_terceto($2, $1, intToStr($4));
+			inicio_asignacion=0;
 			printf("Regla 34\n");
 		}
 	|	ID ASSIG CTE_S {
 			$$ = crear_terceto($2, $1, $3);
+			inicio_asignacion=1;
+			tipo_dato_asignacion=obtenerTipoSimbolo($1);
+			validarTipoDatoAsignacion(tdString);
+			inicio_asignacion=0;
 			printf("Regla 35\n");
 		}
 	;
@@ -337,7 +359,7 @@ asignacion_multiple:
 			int idx = -1;
 			while(!pila_vacia(&pila_ids)) {
 				idx_id = sacar_pila(&pila_ids);
-				idx_exp = sacar_pila(&pila_asig_mult_exp);
+				idx_exp = sacar_pila(&pila_exp);
 				idx = crear_terceto($4, intToStr(idx_id), intToStr(idx_exp));
 			}
 			$$ = idx;
@@ -346,12 +368,12 @@ asignacion_multiple:
 
 lista_expresiones_comma:
 		expresion {
-			insertar_pila(&pila_asig_mult_exp, $1);
+			insertar_pila(&pila_exp, $1);
 			$$ = $1;
 			printf("Regla 37\n");
 		}
 	| 	lista_expresiones_comma COMMA expresion {
-			insertar_pila(&pila_asig_mult_exp, $3);
+			insertar_pila(&pila_exp, $3);
 			$$ = $3;
 			printf("Regla 38\n");
 		}
@@ -506,7 +528,7 @@ condicion:
 	;
 
 proposicion:
-		funcion		{
+		funcion	{
 			$$ = $1;
 			printf("Regla 46\n");
 		}
@@ -517,9 +539,10 @@ proposicion:
 	;
 
 comparacion:
-		BRA_O expresion COMP expresion BRA_C {
-			int idx = crear_terceto("CMP", intToStr($2), intToStr($4));		
+		BRA_O expresion COMP {inicio_condicion = 1;tipo_dato_condicion = obtenerTipoSimbolo(intToStr($2));} expresion BRA_C {
+			int idx = crear_terceto("CMP", intToStr($2), intToStr($5));
 			$$ = crear_terceto($3, intToStr(idx), NULL);
+			inicio_condicion = 0;
 			printf("Regla 48\n");
 		};
 
@@ -607,24 +630,83 @@ lectura:
 			$$ = crear_terceto($1, $2, NULL);
 			printf("Regla 52\n");
         }
+		;
+
 funcion:
-		inlist {
-			$$ = $1;
+		BRA_O inlist BRA_C {
+			int idx = -1;
+			int idx_jmp= -1;
+			while(!pila_vacia(&pila_saltos)) {
+				idx_jmp = sacar_pila(&pila_saltos);
+
+				/*
+				 * - Si se cumple por verdadero, salto al terceto actual - 2
+				 * - si se cumple por falso, salto al siguiente terceto de comparacion
+				 */
+				if (strcmp(tercetos[idx_jmp]->t1, saltos[tsJE]) == 0) {
+					strcpy(tercetos[idx_jmp]->t3, intToStr($2));
+				} else {
+					strcpy(tercetos[idx_jmp]->t3, intToStr(idx_jmp + 2));
+				}
+			}
+
+			$$ = $2;
 			printf("Regla 53\n");
 		};
 
 inlist:
 		INLIST BRA_O ID COMMA SBRA_O lista_expresiones_scolon SBRA_C BRA_C {
-			$$ = $6;
+			int idx = -1;
+			int idx_exp = -1;
+			while(!pila_vacia(&pila_exp)) {
+				idx_exp = sacar_pila(&pila_exp);
+
+				/*
+				 * Creo un terceto de comparacion y dos tercetos de salto
+				 *  n-2 (CMP, ID, EXPRESION)
+				 * 	n-1 (JNE, n-2, NULL) -> completar
+				 * 	n   (JE, n-1, NULL) -> completar
+				 */
+				int cmp = crear_terceto("CMP", $3, intToStr(idx_exp));
+
+				idx = crear_terceto(saltos[tsJNE], intToStr(cmp), NULL);
+				insertar_pila(&pila_saltos, idx);
+
+				idx = crear_terceto(saltos[tsJE], intToStr(cmp), NULL);
+				insertar_pila(&pila_saltos, idx);
+			}
+
+			/*
+			 * Creo una variable de apoyo con falso
+			 * Si no se encuentra el valor en la lista
+			 * saltará a este terceto.
+			 * debe guardarse en la tabla de simbolos
+			 */
+			char aux[20];
+			sprintf(aux, "_INLIST_%d", ++cantidadInlist);
+
+			/* terceto resultado falso */
+			idx = crear_terceto(":=", aux, "false");
+
+			/* salteo un terceto */
+			idx = crear_terceto(saltos[tsJMP], NULL , intToStr(idx + 2));
+
+			/* terceto resultado verdadero */
+			idx = crear_terceto(":=", aux, "true");
+
+			// devuelvo el ultimo terceto creado */
+			$$ = idx;
 			printf("Regla 54\n");
 		};
 
 lista_expresiones_scolon:
 		expresion {
+			insertar_pila(&pila_exp, $1);
 			$$ = $1;
 			printf("Regla 55\n");
 		}
 	|	lista_expresiones_scolon SCOLON expresion	{
+			insertar_pila(&pila_exp, $3);
 			$$ = $3;
 			printf("Regla 56\n");
 		}
@@ -722,4 +804,24 @@ void asignarTipoIds()
 		}
 
 	}
+}
+
+void validarTipoDatoAsignacion(int tipoDeDato)
+{
+  if (inicio_asignacion == 1 && tipo_dato_asignacion != tdFloat  && tipoDeDato != tdInteger)
+  {	  	
+    printf("ERROR EN ASIGNACION DE DATOS DE DISTINTOS TIPOS\n");
+    system ("Pause");
+    exit (1);
+  }
+}
+
+void validarTipoDatoCondicion(int tipoDeDato)
+{
+  if (inicio_condicion == 1 && tipo_dato_condicion != tdFloat  && tipoDeDato != tdInteger)
+  {	  	
+    printf("ERROR EN COMPARACION DE DATOS DE DISTINTOS TIPOS\n");
+    system ("Pause");
+    exit (1);
+  }
 }

@@ -7,8 +7,9 @@ A                                 | String        | Undefined                   
 s                                 | Integer       | Undefined                         |           
 r                                 | Float         | Undefined                         |           
 t                                 | Integer       | Undefined                         |           
+4                                 | ConstInteger  | 4                                 | 1         
+12                                | ConstInteger  | 12                                | 2         
 8                                 | ConstInteger  | 8                                 | 1         
-d                                 | Undefined     | Undefined                         |           
 3                                 | ConstInteger  | 3                                 | 1         
 10                                | ConstInteger  | 10                                | 2         
 10.4                              | ConstFloat    | 10.4                              | 4         

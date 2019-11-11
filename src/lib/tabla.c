@@ -125,3 +125,27 @@ int simboloEsConstante(const char* tipo)
    return 0;
 }
 
+int tipoDeSimbolo(const char* nombre)
+{
+    int i;
+
+    for (i = 0; i < MAX_SIM; i++)
+    {
+          if(strcmp(tablaDeSimbolos[i].nombre, nombre) == 0)
+          {
+            if(strcmp(tablaDeSimbolos[i].tipo,"Integer")==0)
+            {
+               return 1;
+            }
+            if(strcmp(tablaDeSimbolos[i].tipo,"Float")==0)
+            {
+               return 2;
+            }
+            if(strcmp(tablaDeSimbolos[i].tipo,"String")==0)
+            {
+               return 3;
+            }
+          }
+    }
+   return 0;
+}
