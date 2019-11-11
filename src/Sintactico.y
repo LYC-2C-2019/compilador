@@ -644,9 +644,9 @@ funcion:
 				 * - si se cumple por falso, salto al siguiente terceto de comparacion
 				 */
 				if (strcmp(tercetos[idx_jmp]->t1, saltos[tsJE]) == 0) {
-					strcpy(tercetos[idx_jmp]->t3, intToStr($2));
+					strcpy(tercetos[idx_jmp]->t2, intToStr($2));
 				} else {
-					strcpy(tercetos[idx_jmp]->t3, intToStr(idx_jmp + 2));
+					strcpy(tercetos[idx_jmp]->t2, intToStr(idx_jmp + 2));
 				}
 			}
 
@@ -669,10 +669,10 @@ inlist:
 				 */
 				int cmp = crear_terceto("CMP", $3, intToStr(idx_exp));
 
-				idx = crear_terceto(saltos[tsJNE], intToStr(cmp), NULL);
+				idx = crear_terceto(saltos[tsJNE], NULL, NULL);
 				insertar_pila(&pila_saltos, idx);
 
-				idx = crear_terceto(saltos[tsJE], intToStr(cmp), NULL);
+				idx = crear_terceto(saltos[tsJE], NULL, NULL);
 				insertar_pila(&pila_saltos, idx);
 			}
 

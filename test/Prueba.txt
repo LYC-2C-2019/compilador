@@ -4,16 +4,19 @@ VAR
     [Integer, Float, Integer] : [s, r, t]
 ENDVAR
 
---/ asignacion simple y expresion /--
+--/ asigncion simple y expresion /--
 
 c := 4;
 
-t := 12;
+a := 2;
 
-a := (((8 + c) + t) / 3) + 10;
+t := 6;
 
---/ seleccion /--
+IF (a<c) THEN
+  c:=5;
+ENDIF
 
-IF (INLIST (a, [18 ; 9])) THEN
-  a := 10;
+
+IF (INLIST (a,[2;4])) THEN
+    a:=4;
 ENDIF

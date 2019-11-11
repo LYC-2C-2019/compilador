@@ -9,6 +9,7 @@
 char lista_operandos_assembler[100][100];
 int cant_op = 0;
 int lista_etiquetas[1000];
+int yyerror();
 
 // FUNCIONES PUBLICAS
 
