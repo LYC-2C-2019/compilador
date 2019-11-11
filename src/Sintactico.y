@@ -171,15 +171,15 @@ lista_declaraciones:
 
 declaracion:
 		SBRA_O lista_tipos SBRA_C COLON SBRA_O lista_ids SBRA_C {
-			// int idx_id = -1;
-			// int idx_tipo = -1;
-			// while(!pila_vacia(&pila_ids)) {
-			// 	idx_id = sacar_pila(&pila_ids);
-			// 	idx_tipo = sacar_pila(&pila);
-			// 	strcpy(tercetos[idx_id]->t2, tercetos[idx_id]->t1);
-			// 	strcpy(tercetos[idx_id]->t1, tipos[idx_tipo]);
-			// }
-			// $$ = $6;
+			int idx_id = -1;
+			int idx_tipo = -1;
+			while(!pila_vacia(&pila_ids)) {
+				idx_id = sacar_pila(&pila_ids);
+				idx_tipo = sacar_pila(&pila);
+				strcpy(tercetos[idx_id]->t2, tercetos[idx_id]->t1);
+				strcpy(tercetos[idx_id]->t1, tipos[idx_tipo]);
+			}
+			$$ = $6;
 			printf("Regla 4\n");
 		}
 		;

@@ -1,21 +1,61 @@
---/ --/  PRUEBA  /-- /--
+--/ declaraciones /--
 VAR
     [Integer, Float, Integer, String] : [a, b, c, A],
     [Integer, Float, Integer] : [s, r, t]
 ENDVAR
 
---/ asigncion simple y expresion /--
 
-c := a;
+--/ asignacion simple y expresion /--
 
-a := 2;
+c := 4;
 
-t := 6;
+t := 12;
 
-IF (a<c) THEN
-  c:=5;
+a := (((8 + c) + t) / 3) + 10;
+
+
+--/ asignacion multiple /--
+
+[a,b,c,d ] := [10,4,5, 3*4];
+
+
+--/ seleccion /--
+
+IF (a>c) THEN
+    b:=11;
+    b:=13;
+    IF(c>t) THEN
+        a := 0;
+    ENDIF
 ENDIF
 
+IF (a*7+t < t+c*4) THEN
+    a:= a+1;
+ELSE
+    a := 0;
+    b := 4;
+    b := 5;
+    b := 6;
+ENDIF
+
+
+--/ iteracion /--
+
+REPEAT
+    a := a+1;
+    REPEAT
+        b := b+1;
+    UNTIL NOT (t<c);
+UNTIL (c>a) OR (t<a);
+
+
+--/ print, read /--
+
+PRINT A;
+READ B;
+
+
+--/ inlist /--
 
 IF (INLIST (a,[2;4])) THEN
     a:=4;

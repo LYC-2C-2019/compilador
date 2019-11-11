@@ -7,7 +7,18 @@ A                                 | String        | Undefined                   
 s                                 | Integer       | Undefined                         |           
 r                                 | Float         | Undefined                         |           
 t                                 | Integer       | Undefined                         |           
-2                                 | ConstInteger  | 2                                 | 1         
-6                                 | ConstInteger  | 6                                 | 1         
-5                                 | ConstInteger  | 5                                 | 1         
 4                                 | ConstInteger  | 4                                 | 1         
+12                                | ConstInteger  | 12                                | 2         
+8                                 | ConstInteger  | 8                                 | 1         
+3                                 | ConstInteger  | 3                                 | 1         
+10                                | ConstInteger  | 10                                | 2         
+d                                 | Undefined     | Undefined                         |           
+5                                 | ConstInteger  | 5                                 | 1         
+11                                | ConstInteger  | 11                                | 2         
+13                                | ConstInteger  | 13                                | 2         
+0                                 | ConstInteger  | 0                                 | 1         
+7                                 | ConstInteger  | 7                                 | 1         
+1                                 | ConstInteger  | 1                                 | 1         
+6                                 | ConstInteger  | 6                                 | 1         
+B                                 | Undefined     | Undefined                         |           
+2                                 | ConstInteger  | 2                                 | 1         

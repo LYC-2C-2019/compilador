@@ -1,0 +1,22 @@
+--/ --/  PRUEBA  /-- /--
+VAR
+    [Integer, Float, Integer, String] : [a, b, c, A],
+    [Integer, Float, Integer] : [s, r, t]
+ENDVAR
+
+--/ asigncion simple y expresion /--
+
+c := a;
+
+a := 2;
+
+t := 6;
+
+IF (a<c) THEN
+  c:=5;
+ENDIF
+
+
+IF (INLIST (a,[2;4])) THEN
+    a:=4;
+ENDIF

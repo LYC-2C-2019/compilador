@@ -140,6 +140,12 @@ void escribir_seccion_codigo(FILE *pf_asm)
 
     for (i = 0; i < cantTercetos; i++)
     {
+        int procesar = 1;
+        
+        if ( strcmp("Integer", tercetos[i]->t1) == 0 || strcmp("Float", tercetos[i]->t1) == 0 || strcmp("String", tercetos[i]->t1) == 0)
+            procesar = 0;
+
+
         if (strcmp("", tercetos[i]->t2) == 0)
         {
             opSimple = 1;
@@ -168,7 +174,7 @@ void escribir_seccion_codigo(FILE *pf_asm)
             }
         }
 
-        if (opSimple == 1)
+        if (opSimple == 1 && procesar)
         {
 
             // OPERACION SIMPLE:
@@ -180,7 +186,7 @@ void escribir_seccion_codigo(FILE *pf_asm)
 
             // printf("\nOPERACION SIMPLE TERCETO NRO %d: [%s, %s, %s]", i, tercetos[i]->t1, tercetos[i]->t2, tercetos[i]->t3);
         }
-        else if (opUnaria == 1)
+        else if (opUnaria == 1 && procesar)
         {
             // OPERACION UNARIA:
             // * SALTO
@@ -229,7 +235,7 @@ void escribir_seccion_codigo(FILE *pf_asm)
                 fprintf(pf_asm, "\t %s %s \t; si se cumple la condicion se produce un salto a la etiqueta\n", codigo, etiqueta_aux);
             }
         }
-        else
+        else if (procesar)
         {
             // OPERACION BINARIA:
             // * EXPRESION
@@ -252,19 +258,19 @@ void escribir_seccion_codigo(FILE *pf_asm)
                 cant_op--;
                 strcpy(op1_guardado, op1);
             }
-            if (strcmp(tercetos[i]->t1, "=") == 0)
+            if (strcmp(tercetos[i]->t1, ":=") == 0)
             {
-                tipo = obtenerTipoSimbolo(tercetos[atoi(tercetos[i]->t2)]->t1);
+                tipo = obtenerTipoSimbolo(tercetos[i]->t2);
 
                 if (tipo == tdFloat || tipo == tdInteger)
                 {
-                    fprintf(pf_asm, "\t FLD %s \t; se carga el valor en la pila \n", asignar_nombre_variable_assembler(op1));
-                    fprintf(pf_asm, "\t FSTP %s \t; se asigna el valor a la variable \n", asignar_nombre_variable_assembler(op2));
+                    fprintf(pf_asm, "\t FLD %s \t; se carga el valor en la pila \n", asignar_nombre_variable_assembler(tercetos[atoi(tercetos[i]->t3)]->t1));
+                    fprintf(pf_asm, "\t FSTP %s \t; se asigna el valor a la variable \n", asignar_nombre_variable_assembler(tercetos[i]->t2));
                 }
-                else
+                else if (tipo == tdString)
                 {
-                    fprintf(pf_asm, "\t mov si,OFFSET %s \t; se carga el origen en si\n", asignar_nombre_variable_assembler(op1));
-                    fprintf(pf_asm, "\t mov di,OFFSET %s \t; se carga el destino en di\n", asignar_nombre_variable_assembler(op2));
+                    fprintf(pf_asm, "\t mov si,OFFSET %s \t; se carga el origen en si\n", tercetos[atoi(tercetos[i]->t3)]->t1);
+                    fprintf(pf_asm, "\t mov di,OFFSET %s \t; se carga el destino en di\n", tercetos[i]->t2);
                     fprintf(pf_asm, "\t STRCPY\t; se ejecuta macro para copiar \n");
                 }
             }
@@ -293,7 +299,7 @@ void escribir_seccion_codigo(FILE *pf_asm)
             {
                 tipo = obtenerTipoSimbolo(op1);
                 char *aux2;
-                if (tipo == tdString && strcmp(":=", tercetos[i]->t1) != 0)
+                if (tipo == tdString)
                 {
                     yyerror("Operacion no permitida\n");
                 }
