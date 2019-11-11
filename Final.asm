@@ -12,10 +12,10 @@ include number.asm
 	@s dd ?	 ; declaracion de variable numerica
 	@r dd ?	 ; declaracion de variable numerica
 	@t dd ?	 ; declaracion de variable numerica
-	@4 dd 4.0	; declaracion de constante Integer
 	@2 dd 2.0	; declaracion de constante Integer
 	@6 dd 6.0	; declaracion de constante Integer
 	@5 dd 5.0	; declaracion de constante Integer
+	@4 dd 4.0	; declaracion de constante Integer
 
 .CODE
 .startup
@@ -25,7 +25,7 @@ include number.asm
 	FINIT
 
 	 FLD @t 	; se carga operando 1
-	 FLD @4 	; se carga operando 2
+	 FLD @a 	; se carga operando 2
 	 FSTP @_aux8 	; se almacena resultado en una variable auxiliar
 	 FLD @_aux8 	; se carga operando 1
 	 FLD @2 	; se carga operando 2

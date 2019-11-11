@@ -7,7 +7,7 @@ A                                 | String        | Undefined                   
 s                                 | Integer       | Undefined                         |           
 r                                 | Float         | Undefined                         |           
 t                                 | Integer       | Undefined                         |           
-4                                 | ConstInteger  | 4                                 | 1         
 2                                 | ConstInteger  | 2                                 | 1         
 6                                 | ConstInteger  | 6                                 | 1         
 5                                 | ConstInteger  | 5                                 | 1         
+4                                 | ConstInteger  | 4                                 | 1         
