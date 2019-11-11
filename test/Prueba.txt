@@ -14,6 +14,6 @@ a := (((8 + c) + t) / 3) + 10;
 
 --/ seleccion /--
 
-IF (INLIST (a, [4 ; 9])) THEN
+IF (INLIST (a, [18 ; 9])) THEN
   a := 10;
 ENDIF

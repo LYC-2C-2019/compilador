@@ -11,4 +11,5 @@ t                                 | Integer       | Undefined                   
 8                                 | ConstInteger  | 8                                 | 1         
 3                                 | ConstInteger  | 3                                 | 1         
 10                                | ConstInteger  | 10                                | 2         
+18                                | ConstInteger  | 18                                | 2         
 9                                 | ConstInteger  | 9                                 | 1         
