@@ -260,10 +260,6 @@ sentencia:
 	|	lectura SCOLON {
 			$$ = $1;
 			printf("Regla 19\n");}
-	|	funcion SCOLON {
-			$$ = $1;
-			printf("Regla 20\n");
-	}
 	;
 
 expresion:
