@@ -100,21 +100,17 @@ int tipoDeSimbolo(const char* nombre)
           {
             if(strcmp(tablaDeSimbolos[i].tipo,"Integer")==0)
             {
-               printf("entero\n");
                return 1;
             }
             if(strcmp(tablaDeSimbolos[i].tipo,"Float")==0)
             {
-               printf("float\n");
                return 2;
             }
             if(strcmp(tablaDeSimbolos[i].tipo,"String")==0)
             {
-               printf("String\n");
                return 3;
             }
           }
     }
-   printf("No paso\n");
    return 0;
 }

@@ -260,10 +260,10 @@ sentencia:
 	|	lectura SCOLON {
 			$$ = $1;
 			printf("Regla 19\n");}
-	|	funcion SCOLON		{
+	|	funcion SCOLON {
 			$$ = $1;
 			printf("Regla 20\n");
-		}
+	}
 	;
 
 expresion:
@@ -531,7 +531,7 @@ condicion:
 	;
 
 proposicion:
-		funcion		{
+		funcion	{
 			$$ = $1;
 			printf("Regla 46\n");
 		}
@@ -634,8 +634,10 @@ lectura:
 			$$ = crear_terceto($1, $2, NULL);
 			printf("Regla 52\n");
         }
+		;
+
 funcion:
-		inlist {
+		BRA_O inlist BRA_C {
 			int idx = -1;
 			int idx_jmp= -1;
 			while(!pila_vacia(&pila_saltos)) {
@@ -646,13 +648,13 @@ funcion:
 				 * - si se cumple por falso, salto al siguiente terceto de comparacion
 				 */
 				if (strcmp(tercetos[idx_jmp]->t1, saltos[tsJE]) == 0) {
-					strcpy(tercetos[idx_jmp]->t3, intToStr($1));
+					strcpy(tercetos[idx_jmp]->t3, intToStr($2));
 				} else {
 					strcpy(tercetos[idx_jmp]->t3, intToStr(idx_jmp + 2));
 				}
 			}
 
-			$$ = $1;
+			$$ = $2;
 			printf("Regla 53\n");
 		};
 

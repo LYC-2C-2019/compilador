@@ -12,12 +12,8 @@ t := 12;
 
 a := (((8 + c) + t) / 3) + 10;
 
---/ asignacion multiple /--
-
-[a,b,c,d ] := [10,4,5, 3*4];
-
 --/ seleccion /--
 
-IF (a>10.4) THEN
+IF (INLIST (a, [4 ; 9])) THEN
   a := 10;
 ENDIF
