@@ -4,54 +4,36 @@
 
 #include "tercetos.h"
 
-/** crea una estructura de datos de terceto */
-t_terceto* nuevo_terceto (const char* t1, const char* t2, const char* t3)
+int  crear_terceto(char* p_ope, char* p_te1, char* p_te2)
 {
-    t_terceto* terceto = (t_terceto*) malloc(sizeof(t_terceto));
-    // completo sus atributos
-    strcpy(terceto->t1, t1);
-
-    if (t2)
-        strcpy(terceto->t2, t2);
-    else
-        *(terceto->t2) = '\0';
-
-    if (t3)
-        strcpy(terceto->t3, t3);
-    else
-        *(terceto->t3) = '\0';
-    return terceto;
+	terceto res;
+	res.nroTerceto = indice_terceto;
+	strcpy(res.ope, p_ope);
+	strcpy(res.te1, p_te1);
+	strcpy(res.te2, p_te2);
+	strcpy(res.resultado_aux,"_");
+	vector_tercetos[indice_terceto] = res;
+	indice_terceto++;
+	return indice_terceto-1;
 }
 
-int crear_terceto(const char* t1, const char* t2, const char* t3)
+void escribir_tercetos()
 {
-    // creo un nuevo terceto y lo agrego a la coleccion de tercetos
-    int numero = cant_tercetos;
-    tercetos[numero] = nuevo_terceto(t1, t2, t3);
-    cant_tercetos++;
-    // devuelvo numero de terceto
-    return numero;
+	FILE* arch;
+	int i;
+	terceto aux;
+	arch = fopen("intermedia.txt", "w+");
+
+	for(i = 0; i < indice_terceto; i++)
+	{	
+		aux =  vector_tercetos[i];
+		fprintf(arch, "[%d] (%s,%s,%s)\n", aux.nroTerceto, aux.ope,aux.te1, aux.te2 );
+		
+	}
+	fclose(arch);
 }
 
-void escribir_tercetos (FILE* archivo)
+int obtenerIndiceTercetos()
 {
-    int i;
-    for (i = 0; i < cant_tercetos; i++)
-        fprintf(archivo, "%d (%s, %s, %s)\n", i,
-                                              tercetos[i]->t1,
-                                              tercetos[i]->t2,
-                                              tercetos[i]->t3);
-}
-
-void limpiar_tercetos ()
-{
-    int i;
-    for (i = 0; i < cant_tercetos; i++)
-        free(tercetos[i]);
-}
-
-
-int obtenerCantidadDeTercetos()
-{
-   return cant_tercetos;
+   return indice_terceto;
 }

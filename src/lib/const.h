@@ -17,6 +17,13 @@
 #define TD_CTE_F "ConstFloat"
 #define TD_UNDEFINED "Undefined"
 
+#define variableEntera 1
+#define	variableFloat 2
+#define variableString 3
+#define constanteEntera 4
+#define constanteFloat 5
+#define constanteString 6
+
 static const char * tipos[] = {
     TD_S,
     TD_I,

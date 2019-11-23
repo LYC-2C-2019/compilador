@@ -1,14 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <conio.h>
 
 #include "assembler.h"
 #include "tabla.h"
 #include "tercetos.h"
+#include "const.h"
 
-char lista_operandos_assembler[100][100];
+char bufferaux1[20];
 int cant_op = 0;
-int lista_etiquetas[1000];
 int yyerror();
 
 // FUNCIONES PUBLICAS
@@ -20,13 +22,20 @@ int yyerror();
  * utilizando el contenido de la tabla de simbolos y de los tercetos generados en los pasos anteriores.
  * 
  * **/
-void escribir_assembler(FILE *archivo)
+void escribir_assembler(int cant_ctes)
 {
+    FILE *archivo;
+
+    	if((archivo = fopen("Final.asm", "w"))==NULL){
+        printf("No se puede crear el archivo \"Final.asm\"\n");
+        exit(ERROR);
+    }
+
     // escribo header (fijo)
-    fprintf(archivo, "include macros2.asm\ninclude number.asm\n.MODEL LARGE\n.386\n.STACK 200h\n");
+    fprintf(archivo, "include macros2.asm\ninclude number.asm\n.MODEL LARGE\n.386\n.STACK 200h\n\nMAXTEXTSIZE EQU 32\n\n");
 
     // escribo seccion de datos, usando la tabla de simbolos
-    escribir_seccion_datos(archivo);
+    escribir_seccion_datos(archivo, cant_ctes);
 
     // escribo header de seccion de codigo
     fprintf(archivo, "\n.CODE\n.startup\n\tmov AX,@DATA\n\tmov DS,AX\n\n\tFINIT\n\n");
@@ -35,372 +44,341 @@ void escribir_assembler(FILE *archivo)
     escribir_seccion_codigo(archivo);
 
     // escribo trailer (fijo)
-    fprintf(archivo, "\t mov AX, 4C00h \t ; Genera la interrupcion 21h\n\t int 21h \t ; Genera la interrupcion 21h\nEND\n");
+    fprintf(archivo, "\nMOV AH, 1\nINT 21h\nMOV AX, 4C00h\nINT 21h\n\nEND START\n");
 
     fclose(archivo);
 }
 
 // FUNCIONES PRIVADAS
 
-/** 
- * void escribir_seccion_datos(FILE*)
- * 
- * Escribe la parte .DATA correspondiente al archivo .asm, donde se declaran todas las variables.
- * 
- * **/
-void escribir_seccion_datos(FILE *pf_asm)
-{
+void escribir_seccion_datos(FILE *archivoAssembler, int cant_ctes) {
     int i;
+	char valorAuxiliar[100];
 
-    fprintf(pf_asm, "\n.DATA\n");
+	fprintf(archivoAssembler, ".DATA\n");
+	
+	for(i=0; i < cant_ctes; i++)
+	{
+		char nombre [100];
+		
+		strcpy(nombre,  tablaDeSimbolos[i].nombre);
+		if(tablaDeSimbolos[i].TipodeDato_numerico==constanteFloat){
+			replace_char(nombre,'.', '_');
+		}
+		
+		fprintf(archivoAssembler, "%s ", nombre);
+		strcpy(valorAuxiliar, tablaDeSimbolos[i].valor);
 
-    int cantSimbolos = obtenerCantidadDeSimbolos();
+		switch(tablaDeSimbolos[i].TipodeDato_numerico){
+		case variableEntera:
+			fprintf(archivoAssembler, "dd %s?\n", valorAuxiliar);
+			break;
 
-    for (i = 0; i < cantSimbolos; i++)
-    {
+		case variableFloat:
+			fprintf(archivoAssembler, "dd %s?\n", valorAuxiliar);
+			break;
 
-        simbolo_t simbolo = tablaDeSimbolos[i];
+		case variableString:
+			fprintf(archivoAssembler, "dd %s?\n", valorAuxiliar);        
+			break;
 
-        if (strcmpi(simbolo.tipo, "Float") == 0 || strcmpi(simbolo.tipo, "Integer") == 0)
-        {
-            fprintf(pf_asm, "\t%s dd ?\t ; declaracion de variable numerica\n", asignar_nombre_variable_assembler(simbolo.nombre));
-        }
-        else if (strcmpi(simbolo.tipo, "String") == 0)
-        {
-            fprintf(pf_asm, "\t%s db 30 dup (?),\"$\"\t; declaracion de variable String\n", asignar_nombre_variable_assembler(simbolo.nombre));
-        }
-        else if (strcmpi(simbolo.tipo, "ConstString") == 0)
-        {
-            fprintf(pf_asm, "\t%s db %s, \"$\", 30 dup (?)\t; declaracion de constante String\n", asignar_nombre_variable_assembler(simbolo.nombre), simbolo.valor);
-        }
-        else if (strcmpi(simbolo.tipo, "ConstInteger") == 0 || strcmpi(simbolo.tipo, "ConstFloat") == 0)
-        {
-            // Si se encuentra el caracter "." dentro del valor, es porque es una constante Float,
-            // de lo contrario es una constate Integer
-            if (strstr(simbolo.valor, "."))
-            {
-                fprintf(pf_asm, "\t%s dd %s\t; declaracion de constante Float\n", asignar_nombre_variable_assembler(simbolo.nombre), simbolo.valor);
-            }
-            else
-            {
-                fprintf(pf_asm, "\t%s dd %s.0\t; declaracion de constante Integer\n", asignar_nombre_variable_assembler(simbolo.nombre), simbolo.valor);
-            }
-        }
-    }
+		case constanteEntera:
+			strcpy(bufferaux1,".0");				// transformo la constante int en un float para poder usar FLD en el coProcesador
+			strcat(valorAuxiliar,bufferaux1);
+			fprintf(archivoAssembler, "dd %s\n", valorAuxiliar);
+			break;
+
+		case constanteFloat:
+			fprintf(archivoAssembler, "dd %s\n", valorAuxiliar);
+			break;
+
+		case constanteString:
+			fprintf(archivoAssembler, "db \"%s\", '$'\n", valorAuxiliar);
+			break;
+
+		default: //Es una variable int, float o puntero a string
+			fprintf(archivoAssembler, "dd ?\n");
+		}
+	}
+
+	fprintf(archivoAssembler, "\n");
+	fprintf(archivoAssembler, ".CODE\n\nSTART:\n\nMOV AX,@DATA\nMOV DS, AX\nFINIT\n\n");
 }
 
-void escribir_seccion_codigo(FILE *pf_asm)
+void escribir_seccion_codigo(FILE *archivoAssembler)
 {
+	int i;
+    int indice_terceto = obtenerIndiceTercetos();
 
-    int i,
-        j,
-        opSimple,  // Formato terceto (x,  ,  )
-        opUnaria,  // Formato terceto (x, x,  )
-        opBinaria, // Formato terceto (x, x, x)
-        cantTercetos,
-        tipo,
-        cant_etiquetas = 0,
-        agregar_etiqueta_final_nro = -1;
+	for(i=0;i< indice_terceto;i++)
+	{		        
 
-    char etiqueta_aux[10];
+		if(vector_tercetos[i].esEtiqueta == 99)
+		{
+            // printf("\nVALOR i: %d", i);
+            // printf("\nES ETIQUETA[%s, %s, %s]", vector_tercetos[i].te1, vector_tercetos[i].te2, vector_tercetos[i].resultado_aux);
+			fprintf(archivoAssembler,"etiqueta_%d:\n",i);		
+		}
 
-    char ult_op1_cmp[30];
-    char op1_guardado[30];
-    char aux[10];
-
-    strcpy(ult_op1_cmp, "");
-
-    // escribo el contenido de la seccion de codigo
-    cantTercetos = obtenerCantidadDeTercetos();
-
-    // Guardo todos los tercetos donde tendria que poner etiquetas
-    for (i = 0; i < cantTercetos; i++)
-    {
-        if (strcmp(tercetos[i]->t2, "") != 0 && strcmp(tercetos[i]->t3, "") == 0)
-        {
-            if (strcmp(tercetos[i]->t1, "READ") != 0 && strcmp(tercetos[i]->t1, "PRINT") != 0)
-            {
-                int found = -1;
-                int j;
-                for (j = 1; j <= cant_etiquetas; j++)
-                {
-                    if (lista_etiquetas[j] == atoi(tercetos[i]->t2))
-                    {
-                        found = 1;
-                    }
-                }
-                if (found == -1)
-                {
-                    cant_etiquetas++;
-                    lista_etiquetas[cant_etiquetas] = atoi(tercetos[i]->t2);
-                }
-            }
-        }
-    }
-
-    for (i = 0; i < cantTercetos; i++)
-    {
-        int procesar = 1;
-        
-        if ( strcmp("Integer", tercetos[i]->t1) == 0 || strcmp("Float", tercetos[i]->t1) == 0 || strcmp("String", tercetos[i]->t1) == 0)
-            procesar = 0;
-
-
-        if (strcmp("", tercetos[i]->t2) == 0)
-        {
-            opSimple = 1;
-            opUnaria = 0;
-            opBinaria = 0;
-        }
-        else if (strcmp("", tercetos[i]->t3) == 0)
-        {
-            opSimple = 0;
-            opUnaria = 1;
-            opBinaria = 0;
-        }
-        else
-        {
-            opSimple = 0;
-            opUnaria = 0;
-            opBinaria = 1;
-        }
-
-        for (j = 1; j <= cant_etiquetas; j++)
-        {
-            if (i == lista_etiquetas[j])
-            {
-                sprintf(etiqueta_aux, "ETIQ_%d", lista_etiquetas[j]);
-                fprintf(pf_asm, "%s: \n", etiqueta_aux);
-            }
-        }
-
-        if (opSimple == 1 && procesar)
-        {
-
-            // OPERACION SIMPLE:
-            // * ID
-            // * CONSTANTE
-
-            cant_op++;
-            strcpy(lista_operandos_assembler[cant_op], tercetos[i]->t1);
-
-            // printf("\nOPERACION SIMPLE TERCETO NRO %d: [%s, %s, %s]", i, tercetos[i]->t1, tercetos[i]->t2, tercetos[i]->t3);
-        }
-        else if (opUnaria == 1 && procesar)
-        {
-            // OPERACION UNARIA:
-            // * SALTO
-            // * PRINT
-            // * READ
-
-            // printf("\nOPERACION UNARIA TERCETO NRO %d: [%s, %s, %s]", i, tercetos[i]->t1, tercetos[i]->t2, tercetos[i]->t3);
-
-            if (strcmp("PRINT", tercetos[i]->t1) == 0)
-            {
-                tipo = obtenerTipoSimbolo(tercetos[i]->t2);
-
-                if (tipo == tdFloat || tipo == tdInteger)
-                {
-                    fprintf(pf_asm, "\t DisplayFloat %s,2 \n", asignar_nombre_variable_assembler(tercetos[i]->t2));
-                }
-                else
-                {
-                    fprintf(pf_asm, "\t DisplayString %s \n", asignar_nombre_variable_assembler(tercetos[i]->t2));
-                }
-                // Siempre inserto nueva linea despues de mostrar msj
-                fprintf(pf_asm, "\t newLine \n");
-            }
-            else if (strcmp("READ", tercetos[i]->t1) == 0)
-            {
-                tipo = obtenerTipoSimbolo(tercetos[i]->t2);
-
-                if (tipo == tdFloat || tipo == tdInteger)
-                {
-                    fprintf(pf_asm, "\t GetFloat %s\n", asignar_nombre_variable_assembler(tercetos[i]->t2));
-                }
-                else
-                {
-                    fprintf(pf_asm, "\t GetString %s\n", asignar_nombre_variable_assembler(tercetos[i]->t2));
-                }
-            }
-            else // saltos
-            {
-                char *codigo = obtener_instruccion_assembler(tercetos[i]->t1);
-                sprintf(etiqueta_aux, "ETIQ_%d", atoi(tercetos[i]->t2));
-                if (atoi(tercetos[i]->t2) >= cantTercetos)
-                {
-                    agregar_etiqueta_final_nro = atoi(tercetos[i]->t2);
-                }
-                fflush(pf_asm);
-                fprintf(pf_asm, "\t %s %s \t; si se cumple la condicion se produce un salto a la etiqueta\n", codigo, etiqueta_aux);
-            }
-        }
-        else if (procesar)
-        {
-            // OPERACION BINARIA:
-            // * EXPRESION
-            // * COMPARACION
-            // * ASIGNACION
-
-            // printf("\nOPERACION BINARIA TERCETO NRO %d: [%s, %s, %s]", i, tercetos[i]->t1, tercetos[i]->t2, tercetos[i]->t3);
-
-            char *op2 = (char *)malloc(100 * sizeof(char));
-            strcpy(op2, lista_operandos_assembler[cant_op]);
-            cant_op--;
-            char *op1 = (char *)malloc(100 * sizeof(char));
-            if (strcmp(tercetos[i]->t1, "CMP") == 0 && strcmp(ult_op1_cmp, tercetos[i]->t2) == 0)
-            {
-                strcpy(op1, op1_guardado);
-            }
-            else
-            {
-                strcpy(op1, lista_operandos_assembler[cant_op]);
-                cant_op--;
-                strcpy(op1_guardado, op1);
-            }
-            if (strcmp(tercetos[i]->t1, ":=") == 0)
-            {
-                tipo = obtenerTipoSimbolo(tercetos[i]->t2);
-
-                if (tipo == tdFloat || tipo == tdInteger)
-                {
-                    fprintf(pf_asm, "\t FLD %s \t; se carga el valor en la pila \n", asignar_nombre_variable_assembler(tercetos[atoi(tercetos[i]->t3)]->t1));
-                    fprintf(pf_asm, "\t FSTP %s \t; se asigna el valor a la variable \n", asignar_nombre_variable_assembler(tercetos[i]->t2));
-                }
-                else if (tipo == tdString)
-                {
-                    fprintf(pf_asm, "\t mov si,OFFSET %s \t; se carga el origen en si\n", tercetos[atoi(tercetos[i]->t3)]->t1);
-                    fprintf(pf_asm, "\t mov di,OFFSET %s \t; se carga el destino en di\n", tercetos[i]->t2);
-                    fprintf(pf_asm, "\t STRCPY\t; se ejecuta macro para copiar \n");
-                }
-            }
-            else if (strcmp(tercetos[i]->t1, "CMP") == 0)
-            {
-                tipo = obtenerTipoSimbolo(op1);
-                if (tipo == tdFloat || tipo == tdInteger)
-                {
-                    fprintf(pf_asm, "\t FLD %s\t\t; se carga operando1 para comparacion\n", asignar_nombre_variable_assembler(op1));
-                    fprintf(pf_asm, "\t FLD %s\t\t; se carga operando 2 para comparacion\n", asignar_nombre_variable_assembler(op2));
-                    fprintf(pf_asm, "\t FCOMP\t\t; se compara ST(0) con ST(1) \n");
-                    fprintf(pf_asm, "\t FFREE ST(0) \t; se libera ST(0)\n");
-                    fprintf(pf_asm, "\t FSTSW AX \t\t; se mueve la palabra de estado al registro AX\n");
-                    fprintf(pf_asm, "\t SAHF \t\t\t; se mueve el contenido del registro AX al registro FLAGS\n");
-                }
-                else
-                {
-                    fprintf(pf_asm, "\t mov si,OFFSET %s \t; se carga operando1\n", asignar_nombre_variable_assembler(op1));
-                    fprintf(pf_asm, "\t mov di,OFFSET %s \t; se carga operando2 \n", asignar_nombre_variable_assembler(op2));
-                    fprintf(pf_asm, "\t STRCMP\t; se ejecuta macro para comparar \n");
-                }
-
-                strcpy(ult_op1_cmp, tercetos[i]->t2);
-            }
-            else
-            {
-                tipo = obtenerTipoSimbolo(op1);
-                char *aux2;
-                if (tipo == tdString)
-                {
-                    yyerror("Operacion no permitida\n");
-                }
-                sprintf(aux, "_aux%d", i); // auxiliar relacionado al terceto
-                insertarSimbolo(aux, tipos[tdFloat]);
-                fflush(pf_asm);
-                fprintf(pf_asm, "\t FLD %s \t; se carga operando 1\n", asignar_nombre_variable_assembler(op1));
-                fprintf(pf_asm, "\t FLD %s \t; se carga operando 2\n", asignar_nombre_variable_assembler(op2));
-                fflush(pf_asm);
-
-                char *codigo = obtener_instruccion_assembler(tercetos[i]->t1);
-                if (strcmp(codigo, "MOV") != 0)
-                    fprintf(pf_asm, "\t %s \t\t; se realiza la operacion\n", codigo);
-                fprintf(pf_asm, "\t FSTP %s \t; se almacena resultado en una variable auxiliar\n", asignar_nombre_variable_assembler(aux));
-                cant_op++;
-                strcpy(lista_operandos_assembler[cant_op], aux);
-            }
-        } // END OPERACION BINARIA
-
-    } // END for
-
-    if (agregar_etiqueta_final_nro != -1)
-    {
-        sprintf(etiqueta_aux, "ETIQ_%d", agregar_etiqueta_final_nro);
-        fprintf(pf_asm, "%s: \n", etiqueta_aux);
-    }
+        // printf("ES OPERACION %d", esOperacion(i));
+        // printf("\n[%s, %s, %s]", vector_tercetos[i].te1, vector_tercetos[i].te2, vector_tercetos[i].resultado_aux);
+		
+		switch(esOperacion(i))
+		{
+		case 1:
+			fprintf(archivoAssembler,"fld %s\nfld %s\nfadd\nfstp %s\n",vector_tercetos[i].te1,vector_tercetos[i].te2, vector_tercetos[i].resultado_aux);
+			break;
+			
+		case 2:
+			fprintf(archivoAssembler,"fld %s\nfld %s\nfsub\nfstp %s\n", vector_tercetos[i].te1,vector_tercetos[i].te2, vector_tercetos[i].resultado_aux);
+			break;
+			
+		case 3:
+			fprintf(archivoAssembler,"fld %s\nfld %s\nfmul\nfstp %s\n", vector_tercetos[i].te1,vector_tercetos[i].te2, vector_tercetos[i].resultado_aux);
+			break;
+			
+		case 4:
+			fprintf(archivoAssembler,"fld %s\nfld %s\nfdiv\nfstp %s\n", vector_tercetos[i].te1,vector_tercetos[i].te2, vector_tercetos[i].resultado_aux);
+			break;
+			
+		case 5:
+			fprintf(archivoAssembler,"fld %s\nfstp %s\n", vector_tercetos[i].te2, vector_tercetos[i].te1);
+			break;
+			
+		case 6:
+			fprintf(archivoAssembler,"DisplayFloat %s,1\nnewLine\n\n", vector_tercetos[i].te1);
+			break;
+			
+		case 7:
+			fprintf(archivoAssembler,"DisplayString %s,1\nnewLine\n\n", vector_tercetos[i].te1);
+			break;
+			
+		case 8: //Read enteros
+			fprintf(archivoAssembler,"DisplayString @msj_entero \n");
+			fprintf(archivoAssembler,"int 21h \n");
+			fprintf(archivoAssembler,"newLine 1\n");
+			fprintf(archivoAssembler,"GetFloat %s \n",vector_tercetos[i].te1);
+			break;
+			
+		case 9: //Read Real
+			fprintf(archivoAssembler,"DisplayString @msj_real \n");
+			fprintf(archivoAssembler,"int 21h \n");
+			fprintf(archivoAssembler,"newLine 1\n");
+			fprintf(archivoAssembler,"GetFloat %s \n",vector_tercetos[i].te1);
+			break;
+			
+		case 10:
+			fprintf(archivoAssembler,"LEA EAX, %s\n MOV %s , EAX\n", vector_tercetos[i].te2, vector_tercetos[i].te1);
+			break;
+			
+		case 11:
+			fprintf(archivoAssembler,"DisplayFloat %s,3\nnewLine\n\n", vector_tercetos[i].te1);
+			break;
+			
+		}
+		
+		
+		if(strcmp(vector_tercetos[i].ope,"CMP")==0)						// terceto de COMPARACION
+		fprintf(archivoAssembler,"fld %s\nfld %s\nfxch\nfcomp\nfstsw ax\nsahf\n", vector_tercetos[i].te1,vector_tercetos[i].te2);
+		
+		
+		switch(esSalto(i))
+		{		
+		case 1:
+			fprintf(archivoAssembler,"JNA %s\n\n", vector_tercetos[i].te1);			// condicion >
+			break;
+			
+		case 2:
+			fprintf(archivoAssembler,"JAE %s\n\n", vector_tercetos[i].te1);			// condicion <
+			break;
+			
+		case 3:
+			fprintf(archivoAssembler,"JNAE %s\n\n", vector_tercetos[i].te1);			// condicion >=
+			break;
+			
+		case 4:
+			fprintf(archivoAssembler,"JA %s\n\n", vector_tercetos[i].te1);			// condicion <=
+			break;
+			
+		case 5:
+			fprintf(archivoAssembler,"JNE %s\n\n", vector_tercetos[i].te1);			// condicion ==
+			break;
+			
+		case 6:
+			fprintf(archivoAssembler,"JE %s\n\n", vector_tercetos[i].te1);			// condicion !=
+			break;
+			
+		case 7:
+			fprintf(archivoAssembler,"JMP %s\n\n", vector_tercetos[i].te1);			// salto incondicional
+			break;
+		}
+		
+		
+	}
 }
 
-/** 
- * char* asignar_nombre_variable_assembler(char*)
- * 
- * Obtiene el nombre de la variable o la constante de la tabla de simbolos, y retorna
- * el nombre de la misma variable pero en formato adecuado para el codigo assembler.
- * 
- * **/
-char *asignar_nombre_variable_assembler(char *cte_o_id)
+
+void preparar_assembler()
 {
-    char *nombreAsm = (char *)malloc(sizeof(char) * 200);
-    nombreAsm[0] = '\0';
+	char etiqueta[20] = "etiqueta_";
+	int entero_aux;
+    int i;
+    int j;
+    int indice_terceto = obtenerIndiceTercetos();
+	
+	/*printf("ANTES: \n\n");
+	for(i=0;i<indice_terceto;i++)
+	{
+		printf("%-5s%-5s%-5s%-5s%-5d%\n",vector_tercetos[i].ope,vector_tercetos[i].te1,vector_tercetos[i].te2,vector_tercetos[i].resultado_aux,vector_tercetos[i].esEtiqueta);
+	}*/
 
-    // se agrega prefijo para distinguir de variables de usuario
-    strcat(nombreAsm, "@");
-
-    if (!simboloEstaEnTabla(cte_o_id))
-    {
-        char *nomCte = (char *)malloc(31 * sizeof(char));
-        *nomCte = '\0';
-        strcat(nomCte, "_");
-        strcat(nomCte, cte_o_id);
-
-        char *original = nomCte;
-        while (*nomCte != '\0')
-        {
-            if (*nomCte == ' ' || *nomCte == '"' || *nomCte == '!' || *nomCte == '.')
-            {
-                *nomCte = '_';
-            }
-            nomCte++;
-        }
-        nomCte = original;
-        strcat(nombreAsm, nomCte);
-    }
-    else
-    {
-        strcat(nombreAsm, cte_o_id);
-    }
-
-    return nombreAsm;
+	for(i=0;i<indice_terceto;i++)
+	{
+		
+		if(strcmp(vector_tercetos[i].te1,"_")==0 && strcmp(vector_tercetos[i].te2,"_")==0 && vector_tercetos[i].esEtiqueta!=99 )
+		{
+			//printf("ESTOY EN _ , _ : %d\n",i);
+			//printf("OPE: %s - TE1: %s - TE2: %s\n",vector_tercetos[i].ope,vector_tercetos[i].te1,vector_tercetos[i].te2);
+			for(j=i+1;j< indice_terceto;j++)
+			{
+				itoa(i,bufferaux1,10);
+				if(strcmp(vector_tercetos[j].te1,bufferaux1)==0)
+				{
+					strcpy(vector_tercetos[j].te1,vector_tercetos[i].ope);
+				}
+				if(strcmp(vector_tercetos[j].te2,bufferaux1)==0)
+				{
+					strcpy(vector_tercetos[j].te2,vector_tercetos[i].ope);
+				}
+			}
+		}
+		
+		if(strcmp(vector_tercetos[i].te1,"_")==0 && strcmp(vector_tercetos[i].te2,"_")==0 && vector_tercetos[i].esEtiqueta==99 )
+		{
+			//printf("ETIQUETA + TERCETO _ _\n");
+			j=i+1;
+			itoa(i,bufferaux1,10);
+			while(strcmp(vector_tercetos[j].te1,bufferaux1)!=0 && strcmp(vector_tercetos[j].te2,bufferaux1)!=0)
+			j++;
+			if(strcmp(vector_tercetos[j].te1,bufferaux1)==0)
+			strcpy(vector_tercetos[j].te1,vector_tercetos[i].ope);
+			else
+			strcpy(vector_tercetos[j].te2,vector_tercetos[i].ope);
+			
+		}
+		
+		if(esOperacion(i))
+		{
+			//printf("ESTOY EN esOperacion : %d\n",i);
+			for(j=i+1;j< indice_terceto;j++)
+			{	
+				itoa(i,bufferaux1,10);
+				if(strcmp(vector_tercetos[j].te1,bufferaux1)==0)
+				{
+					strcpy(vector_tercetos[j].te1,vector_tercetos[i].resultado_aux);
+				}
+				
+				if(strcmp(vector_tercetos[j].te2,bufferaux1)==0)
+				{
+					strcpy(vector_tercetos[j].te2,vector_tercetos[i].resultado_aux);
+				}
+				
+			}
+			
+		}
+		
+		if(esSalto(i))
+		{	
+			//printf("OPE: %s - TE1: %s - TE2: %s\n",vector_tercetos[i].ope,vector_tercetos[i].te1,vector_tercetos[i].te2);
+			entero_aux = atoi(vector_tercetos[i].te1);
+			//printf("entero_aux: %d\n",entero_aux);
+			vector_tercetos[entero_aux].esEtiqueta = 99;
+			strcat(etiqueta,vector_tercetos[i].te1);
+			//printf("ETIQUETA: %s\n",etiqueta);
+			strcpy(vector_tercetos[i].te1,etiqueta);
+			//printf("vector_tercetos[%d].te1: %s\n",i,vector_tercetos[i].te1);
+			strcpy(etiqueta,"etiqueta_");
+		}
+		
+	}
+	
+	/*printf("DESPUES: \n\n");
+	for(i=0;i<indice_terceto;i++)
+	{
+		printf("%-5s%-5s%-5s%-5s%-5d%\n",vector_tercetos[i].ope,vector_tercetos[i].te1,vector_tercetos[i].te2,vector_tercetos[i].resultado_aux,vector_tercetos[i].esEtiqueta);
+	}*/
 }
 
-/** 
- * char* obtener_instruccion_assembler(char*)
- * 
- * Obtiene la instruccion assembler correspondiente al token recibido por parametro.
- * 
- * **/
-char *obtener_instruccion_assembler(char *token)
+int esOperacion(int indice)
 {
+	if(strcmp(vector_tercetos[indice].ope,"+")==0)
+	return 1;	
+	if(strcmp(vector_tercetos[indice].ope,"-")==0)
+	return 2;
+	if(strcmp(vector_tercetos[indice].ope,"*")==0)
+	return 3;
+	if(strcmp(vector_tercetos[indice].ope,"/")==0)
+	return 4;
+	if(strcmp(vector_tercetos[indice].ope,"=")==0){
+		validaTipo(vector_tercetos[indice].te1);
+		if(aux_tiponumerico==3 || aux_tiponumerico==6){				// asignacion de una CADENA
+			return 10;
+		}
+		
+		return 5;
+	}
+	
+	if(strcmp(vector_tercetos[indice].ope,"PRINT")==0)
+	{
+		validaTipo(vector_tercetos[indice].te1);
+		if(aux_tiponumerico==1 || aux_tiponumerico==4)		// se trata de variables o ctes int
+		return 6;
+		if(aux_tiponumerico==2 || aux_tiponumerico==5)		// se trata de una variable o cte float
+		return 11;
+		else
+		return 7;											// sino es de tipo CADENA
+	}
+	if(strcmp(vector_tercetos[indice].ope,"READ")==0){
+		validaTipo(vector_tercetos[indice].te1);
+		if(aux_tiponumerico==1){ //Variable Entera
+			return 8;
+		}
+		if(aux_tiponumerico==2){ //Variable Float
+			return 9;
+		}
+	}
+	
+	//OJO NO USAR 10 YA HAY UN 10 en la sentencia que devuelve 5
+	return 0;
+}
 
-    if (strcmp(token, "+") == 0)
-    {
-        return "FADD";
-    }
-    else if (strcmp(token, ":=") == 0)
-    {
-        return "MOV";
-    }
-    else if (strcmp(token, "-") == 0)
-    {
-        return "FSUB";
-    }
-    else if (strcmp(token, "*") == 0)
-    {
-        return "FMUL";
-    }
-    else if (strcmp(token, "/") == 0)
-    {
-        return "FDIV";
-    }
-    else
-    {
-        return token;
-    }
+int esSalto(int indice)
+{	
+	if(strcmp(vector_tercetos[indice].ope,"JNA")==0)		// >
+	return 1;
+	
+	if(strcmp(vector_tercetos[indice].ope,"JAE")==0)		// <
+	return 2;
+	
+	if(strcmp(vector_tercetos[indice].ope,"JNAE")==0)		// >=
+	return 3;
+	
+	if(strcmp(vector_tercetos[indice].ope,"JA")==0)			// <=
+	return 4;
+	
+	if(strcmp(vector_tercetos[indice].ope,"JNE")==0)		// ==
+	return 5;
+	
+	if(strcmp(vector_tercetos[indice].ope,"JE")==0)			// !=
+	return 6;
+	
+	if(strcmp(vector_tercetos[indice].ope,"JMP")==0)		// salto incondicional
+	return 7;
+	
+	return 0;
+}
+
+int obteneraux_tiponumerico()
+{
+   return aux_tiponumerico;
 }

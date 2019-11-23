@@ -1,17 +1,22 @@
-#ifndef PILA_H
-#define PILA_H
+#include <string.h>
 
-/* Pila */
-typedef struct s_nodo {
-    int valor;
-    struct s_nodo *sig;
-} t_nodo;
-typedef t_nodo* t_pila;
+typedef struct _nodoP {
+   int valor;
+   struct _nodoP *anterior;
+} tipoNodoPila;
 
-int pila_vacia(t_pila*);
-void insertar_pila(t_pila*, int);
-int sacar_pila(t_pila*);
-void crear_pila(t_pila*);
-void destruir_pila(t_pila*);
+typedef tipoNodoPila *pNodoPila;
 
-#endif
+typedef struct _pila {
+   pNodoPila tope;
+   pNodoPila base;
+} Pila;
+
+
+/* Funciones con pila: */
+void apilar(Pila *p, int v);
+int desapilar(Pila *p);
+void mostrarPila(Pila *p);
+int buscarEnPila(Pila *p, int v);
+Pila crearPila();
+void vaciarPila(Pila *p);
