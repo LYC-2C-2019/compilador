@@ -18,22 +18,21 @@
 
 // VARIABLES GLOBALES
 char *end;
+char auxS[100];
 int validateID(char *id);
 int validateString(char *str);
 int validateInteger(char *);
 int validateFloat(char *);
 int validateComment();
+int finDeclaraciones = 0;
+int validarVariableDeclarada(char* nombre);
+void quitarComillas();
+
 %}
 %option noyywrap
 %option yylineno
 
 /* TAGS */
-LT       <
-LE       <=
-GT       >
-GE       >=
-EQ       ==
-NE       <>
 D1TO9    [1-9]
 DIGIT    [0-9]
 ALPHA    [a-zA-Z]
@@ -50,43 +49,35 @@ CTE_I    ([1-9]{DIGIT}+|{DIGIT})
 CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 
 %%
-"Integer"   {
-                strcpy(yylval.texto, yytext);
-                yylval.entero = tdInteger;
-                return INTEGER; }
-"Float"     {
-                strcpy(yylval.texto, yytext);
-                yylval.entero = tdFloat;
-                return FLOAT;
-            }
-"String"    {
-                strcpy(yylval.texto, yytext);
-                yylval.entero = tdString;
-                return STRING;
-            }
+"Integer"   { return INTEGER; }
+"Float"     { return FLOAT; }
+"String"    { return STRING; }
 "REPEAT"    { return REPEAT; }
 "UNTIL"     { return UNTIL; }
 "IF"        { return IF; }
 "THEN"      { return THEN; }
 "ELSE"      { return ELSE; }
 "ENDIF"     { return ENDIF; }
-"AND"       { yylval.entero = olAND; return AND; }
-"OR"        { yylval.entero = olOR; return OR; }
-"NOT"       { yylval.entero = olNOT; return NOT; }
-"PRINT"     { strcpy(yylval.texto, yytext); return PRINT; }
-"READ"      { strcpy(yylval.texto, yytext); return READ; }
+"AND"       { return AND; }
+"OR"        { return OR; }
+"NOT"       { return NOT; }
+"PRINT"     { return PRINT; }
+"READ"      { return READ; }
 "VAR"       { return VAR; }
-"ENDVAR"    { return ENDVAR; }
+"ENDVAR"    {
+				finDeclaraciones=1;
+				return ENDVAR;
+			}
 "INLIST"    { return INLIST; }
 
 ":"   { return COLON; }
 ";"   { return SCOLON; }
 ","   { return COMMA; }
-":="  { strcpy(yylval.texto, yytext); return ASSIG; }
-"/"   { strcpy(yylval.texto, yytext); return SLASH; }
-"*"   { strcpy(yylval.texto, yytext); return STAR; }
-"+"   { strcpy(yylval.texto, yytext); return PLUS; }
-"-"   { strcpy(yylval.texto, yytext); return DASH; }
+":="  { return ASSIG; }
+"/"   { return SLASH; }
+"*"   { return STAR; }
+"+"   { return PLUS; }
+"-"   { return DASH; }
 "("   { return BRA_O; }
 ")"   { return BRA_C; }
 "["   { return SBRA_O; }
@@ -94,40 +85,43 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
 "{"   { return CBRA_O; }
 "}"   { return CBRA_C; }
 
-{EQ} { strcpy(yylval.texto, /* salto opuesto */ saltos[tsJNE]); return COMP; }
-{NE} { strcpy(yylval.texto, /* salto opuesto */ saltos[tsJE]); return COMP; }
-{LT} { strcpy(yylval.texto, /* salto opuesto */ saltos[tsJGE]); return COMP; }
-{LE} { strcpy(yylval.texto, /* salto opuesto */ saltos[tsJG]); return COMP; }
-{GT} { strcpy(yylval.texto, /* salto opuesto */ saltos[tsJLE]); return COMP; }
-{GE} { strcpy(yylval.texto, /* salto opuesto */ saltos[tsJL]); return COMP; }
+">"	 {return GT;}
+"<"	 {return LT;}
+">=" {return GE;}
+"<=" {return LE;}
+"==" {return EQ;}
+"<>" {return NE;}
 
 {ID}        {
-                if(validateID(yytext)){
-                    strcpy(yylval.texto, yytext);
-                    insertarSimbolo(yytext, tipos[tdUndefined]);
-                    return ID;
+                sprintf(auxS,"%s", yytext);
+                if(validateID(yytext)){                    
+                    yylval.str_val=auxS;
+                    if(finDeclaraciones==1){
+                        validarVariableDeclarada(yytext);
+                    }
+					return ID;
                 }
             }
 {CTE_S}     {
-               if(validateString(yytext)){
-                   strcpy(yylval.texto, yytext);
-                   insertarSimbolo(yytext, tipos[tdConstString]);
+
+
+               if(validateString(yytext)){ 
+                            sprintf(auxS,"%s", yytext);
+							quitarComillas();
+							yylval.str_val=auxS;              
           		   return CTE_S;
                }
+
             }
 {CTE_I}     {
        			if(validateInteger(yytext)){
-                    yylval.entero = atoi(yytext);
-                    strcpy(yylval.texto, yytext);
-                    insertarSimbolo(yytext, tipos[tdConstInteger]);
+ 				yylval.str_val=yytext;
                     return CTE_I;
                 }
             }
 {CTE_F}     {
                 if(validateFloat(yytext)){
-                    yylval.real = atof(yytext);
-                    strcpy(yylval.texto, yytext);
-                    insertarSimbolo(yytext, tipos[tdConstFloat]);
+                   	yylval.str_val=yytext;
                     return CTE_F;
                 }
             }
@@ -138,12 +132,6 @@ CTE_F    ({DIGIT}+{DOT})|({DOT}{DIGIT}+)|({DIGIT}+{DOT}{DIGIT}+)
                     system("PAUSE");
                     exit(ERROR);	
                 }
-            }
-
-
-<<EOF>>     {
-               guardarTablaDeSimbolos();
-               yyterminate();
             }
 
 "\t"
@@ -211,3 +199,11 @@ int validateComment(){
     return 0;
 }
 
+void quitarComillas() {
+	int i = 0;
+	while(auxS[i+1] != '\"') {
+		auxS[i] = auxS[i+1];
+		i++;
+	}
+	auxS[i] = '\0';
+}

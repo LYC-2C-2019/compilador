@@ -1,36 +1,76 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-
 #include "pila.h"
 
-int pila_vacia(t_pila* p) {
-    return (*p == NULL);
+Pila crearPila()
+{
+   Pila pila;
+   pila.base = NULL;
+   pila.tope = NULL;
+   return pila;
 }
 
-void insertar_pila (t_pila *p, int valor) {
-    t_nodo *nodo = (t_nodo*) malloc (sizeof(t_nodo));
-    nodo->valor = valor;
-    nodo->sig = *p;
-    *p = nodo;
+void vaciarPila(Pila *pila)
+{
+   pila->base = NULL;
+   pila->tope = NULL;
 }
 
-int sacar_pila(t_pila *p) {
-    int valor = -1;
-    t_nodo *aux;
-    if (*p != NULL) {
-       aux = *p;
-       valor = aux->valor;
-       *p = aux->sig;
-       free(aux);
-    }
-    return valor;
+void apilar(Pila *pila, int v){
+   /* Crear un nodo nuevo */
+   pNodoPila nuevo = (pNodoPila)malloc(sizeof(tipoNodoPila));
+   nuevo->valor = v;
+
+   if(pila->tope == NULL)
+   {
+      pila->base = pila->tope = nuevo;
+      nuevo->anterior = NULL;
+   } else {
+      nuevo->anterior = pila->tope;
+      pila->tope = nuevo;
+   }
 }
 
-void crear_pila(t_pila *p) {
-    *p = NULL;
+
+int desapilar(Pila *pila){
+	if(pila->tope == NULL){
+		printf("PILA VACIA!\n");
+		return;
+	}
+	pNodoPila aux;
+	int res;
+	res = pila->tope->valor;
+	aux = pila->tope;
+	pila->tope = pila->tope->anterior;
+	free(aux);
+	return res;
 }
 
-void destruir_pila(t_pila *p) {
-    while (sacar_pila(p) > 0);
+int buscarEnPila(Pila *pila, int v){
+	if(pila->tope == NULL){
+		return 0;
+	}
+	pNodoPila aux;
+	aux = pila->tope;
+	while(aux != NULL)
+	{
+		if (aux->valor == v)
+		{
+			return 1;
+		}
+		aux = aux->anterior;
+	}
+	return 0;
+
+}
+
+void mostrarPila(Pila *pila)
+{
+   pNodoPila nodo = pila->tope;
+   while(nodo)
+   {
+      printf("%s\n", nodo->valor);
+      nodo = nodo->anterior;
+   }
+
 }
