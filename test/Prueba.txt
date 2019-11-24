@@ -14,9 +14,15 @@ x := "hola";
 
 a := (((8 + c) + t) / 3) + 10;
 
+
+--/ seleccion /--
+
 IF (a<c) 
   c:=5;
 ENDIF
+
+
+--/ iteracion /--
 
 REPEAT
     a := a+1;
