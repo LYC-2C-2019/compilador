@@ -75,7 +75,6 @@ int yylineno;
 	int aux2=0;
 	char tipoVariableActual[20];
 	char tipoVariable[10];
-	// int aux_tiponumerico=0;
 	int aux_ladoIzquierdo_comparacion =0;
 	int aux_ladoDerecho_comparacion =0;
 	int cantidad_constantes_float=1;
@@ -194,7 +193,11 @@ int yylineno;
 
 start_programa : programa 
 { 
-	printf("Compilation successful!\n\n"); 
+	printf("\n");
+	printf("------------------------\n");
+	printf("  COMPILATION SUCCESS! \n");
+	printf("------------------------\n");
+	printf("\n");
 }
 
 programa : declaraciones bloque
@@ -317,7 +320,7 @@ iteracion: REPEAT
 
 asignacion: ID {strcpy(idAux,yylval.str_val);} ASSIG expresion SCOLON				// operador_asignacion -> :=
 {
-	printf("asignacion OK\n\n");
+	// printf("asignacion OK\n\n");
 	aux=desapilar(&pilaOperacion);
 	if(strcmp(vector_operacion[aux].tipo,validaTipo(idAux))==0)
 	{	E_ind = desapilar(&pilaExpresion);
@@ -450,7 +453,8 @@ termino: termino STAR factor
 }
 
 factor: ID  {
-	int aux_tiponumerico = obteneraux_tiponumerico();
+	int aux_tiponumerico = get_aux_tiponumerico();
+	// printf("FACTOR ID aux_tiponumerico: %d", aux_tiponumerico);
 	printf("Regla 28\n");
 	strcpy(vector_operacion[cantOperaciones].id,yylval.str_val);
 	strcpy(vector_operacion[cantOperaciones].tipo,validaTipo(yylval.str_val));
@@ -483,7 +487,7 @@ factor: ID  {
 }
 | CTE_F		
 {
-	printf("factor -> Cte_Real OK\n\n");
+	printf("Regla 30\n");
 	agregarConstante(yylval.str_val,CteReal,constanteFloat);
 	strcpy(constanteAux,"_");
 	strcat(constanteAux,yylval.str_val);
@@ -830,17 +834,17 @@ lista_expresiones_asignMultiple : lista_expresiones_asignMultiple COMMA expresio
 | expresion_asignMultiple
 
 expresion_asignMultiple: termino_asignMultiple	{
-	printf("expresion_asignMultiple -> termino_asignMultiple OK \n\n");
+	printf("Regla 33\n");
 }
 
 termino_asignMultiple: factor_asignMultiple{
-	printf("termino_asignMultiple -> factor_asignMultiple OK \n\n");
+	printf("Regla 36\n");
 }
 
 factor_asignMultiple: ID 
 | CTE_I 
 {	
-	printf("factor_asignMultiple -> Cte_entera OK\n\n");
+	printf("Regla 37\n");
 
 	if(indice_expresiones_asign_multiple < indice_asign_multiple)
 	{
@@ -865,7 +869,7 @@ factor_asignMultiple: ID
 }
 | CTE_F 
 {
-	printf("factor_asignMultiple -> Cte_Real OK\n\n");
+	printf("Regla 38\n");
 	if(indice_expresiones_asign_multiple < indice_asign_multiple)
 	{
 		if(strcmp(vector_asig_multiple[indice_expresiones_asign_multiple].tipo,"Float") == 0)
@@ -1164,8 +1168,9 @@ char* validaTipo(char* id)
 	for(i=0;i<cant_ctes;i++)
 	{		
 		if(strcmp(id,tablaDeSimbolos[i].nombre)==0)
-		{		
-			aux_tiponumerico = tablaDeSimbolos[i].TipodeDato_numerico;			// guardo en la variable global aux de tipo numerico, el tipo de la variable encontrada
+		{	
+			// guardo en la variable global aux de tipo numerico, el tipo de la variable encontrada	
+			set_aux_tiponumerico(tablaDeSimbolos[i].TipodeDato_numerico);
 			return tablaDeSimbolos[i].tipo;
 		}
 	}
