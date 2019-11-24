@@ -17,10 +17,10 @@ s dd ?
 r dd ?
 t dd ?
 y dd ?
+_2_5 dd 2.5
 _4 dd 4.0
 _12 dd 12.0
 _hola db "hola", '$'
-_1 dd 1.0
 _8 dd 8.0
 @aux10 dd ?
 @aux12 dd ?
@@ -28,9 +28,12 @@ _3 dd 3.0
 @aux14 dd ?
 _10 dd 10.0
 @aux16 dd ?
+_100 dd 100.0
+_200 dd 200.0
 _5 dd 5.0
-@aux26 dd ?
-@aux30 dd ?
+_1 dd 1.0
+@aux28 dd ?
+@aux32 dd ?
 
 .CODE
 
@@ -40,14 +43,14 @@ MOV AX,@DATA
 MOV DS, AX
 FINIT
 
+fld _2_5
+fstp b
 fld _4
 fstp c
 fld _12
 fstp t
 LEA EAX, _hola
  MOV x , EAX
-fld _1
-fstp s
 fld _8
 fld c
 fadd
@@ -66,29 +69,33 @@ fadd
 fstp @aux16
 fld @aux16
 fstp a
+fld _100
+fstp r
+fld _200
+fstp s
 fld a
 fld c
 fxch
 fcomp
 fstsw ax
 sahf
-JAE etiqueta_24
+JAE etiqueta_26
 
 fld _5
 fstp c
-etiqueta_24:
+etiqueta_26:
 fld a
 fld _1
 fadd
-fstp @aux26
-fld @aux26
+fstp @aux28
+fld @aux28
 fstp a
-etiqueta_28:
+etiqueta_30:
 fld c
 fld _1
 fadd
-fstp @aux30
-fld @aux30
+fstp @aux32
+fld @aux32
 fstp c
 fld c
 fld t
@@ -96,7 +103,7 @@ fxch
 fcomp
 fstsw ax
 sahf
-JNAE etiqueta_28
+JNAE etiqueta_30
 
 fld c
 fld s
@@ -104,21 +111,21 @@ fxch
 fcomp
 fstsw ax
 sahf
-JNA etiqueta_41
+JNA etiqueta_43
 
-JMP etiqueta_28
+JMP etiqueta_30
 
-etiqueta_41:
+etiqueta_43:
 fld t
 fld a
 fxch
 fcomp
 fstsw ax
 sahf
-JAE etiqueta_45
+JAE etiqueta_47
 
-etiqueta_45:
-JMP etiqueta_28
+etiqueta_47:
+JMP etiqueta_30
 
 DisplayFloat a,1
 newLine

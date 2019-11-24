@@ -1,11 +1,13 @@
 --/ declaraciones /--
 VAR
     [Integer, Float, Integer, String] : [a, b, c, x],
-    [Integer, Float, Integer, String] : [s, r, t, y]
+    [Integer, Integer, Integer, String] : [s, r, t, y]
 ENDVAR
 
 
 --/ asignacion simple y expresion /--
+
+b := 2.5;
 
 c := 4;
 
@@ -13,10 +15,12 @@ t := 12;
 
 x := "hola";
 
-s := 1;
-
 a := (((8 + c) + t) / 3) + 10;
 
+
+--/ asignacion multiple /--
+
+[r,s] := [100, 200]
 
 --/ seleccion /--
 
