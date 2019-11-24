@@ -56,6 +56,11 @@ void escribir_seccion_datos(FILE *archivoAssembler, int cant_ctes) {
 	char valorAuxiliar[100];
 
 	fprintf(archivoAssembler, ".DATA\n");
+
+    //CREO LAS VARIABLES PARA MENSAJES DEL READ
+	
+	fprintf(archivoAssembler, "@msg_int db \"Type in integer value:\", '$'\n");
+	fprintf(archivoAssembler, "@msg_float db \"Type in float value:\", '$'\n");
 	
 	for(i=0; i < cant_ctes; i++)
 	{
@@ -153,14 +158,14 @@ void escribir_seccion_codigo(FILE *archivoAssembler)
 			break;
 			
 		case 8: //Read enteros
-			fprintf(archivoAssembler,"DisplayString @msj_entero \n");
+			fprintf(archivoAssembler,"DisplayString @msg_int \n");
 			fprintf(archivoAssembler,"int 21h \n");
 			fprintf(archivoAssembler,"newLine 1\n");
 			fprintf(archivoAssembler,"GetFloat %s \n",vector_tercetos[i].te1);
 			break;
 			
 		case 9: //Read Real
-			fprintf(archivoAssembler,"DisplayString @msj_real \n");
+			fprintf(archivoAssembler,"DisplayString @msg_float \n");
 			fprintf(archivoAssembler,"int 21h \n");
 			fprintf(archivoAssembler,"newLine 1\n");
 			fprintf(archivoAssembler,"GetFloat %s \n",vector_tercetos[i].te1);

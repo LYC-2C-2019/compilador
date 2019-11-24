@@ -4,6 +4,7 @@ VAR
     [Integer, Float, Integer, String] : [s, r, t, y]
 ENDVAR
 
+
 --/ asignacion simple y expresion /--
 
 c := 4;
@@ -11,6 +12,8 @@ c := 4;
 t := 12;
 
 x := "hola";
+
+s := 1;
 
 a := (((8 + c) + t) / 3) + 10;
 
@@ -26,4 +29,13 @@ ENDIF
 
 REPEAT
     a := a+1;
-UNTIL (a > t);
+    REPEAT
+        c := c+1;
+    UNTIL (NOT (c<t));
+UNTIL (c>s OR t<a);
+
+
+--/ print, read /--
+
+PRINT a
+READ b

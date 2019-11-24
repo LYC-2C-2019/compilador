@@ -11,13 +11,14 @@ y                             String                                            
 _4                            ConstInteger             4                             0    
 _12                           ConstInteger             12                            0    
 _hola                         ConstString              hola                          4    
-_8                            ConstInteger             8                             0    
-@aux8                                                                                0    
-@aux10                                                                               0    
-_3                            ConstInteger             3                             0    
-@aux12                                                                               0    
-_10                           ConstInteger             10                            0    
-@aux14                                                                               0    
-_5                            ConstInteger             5                             0    
 _1                            ConstInteger             1                             0    
-@aux24                                                                               0    
+_8                            ConstInteger             8                             0    
+@aux10                                                                               0    
+@aux12                                                                               0    
+_3                            ConstInteger             3                             0    
+@aux14                                                                               0    
+_10                           ConstInteger             10                            0    
+@aux16                                                                               0    
+_5                            ConstInteger             5                             0    
+@aux26                                                                               0    
+@aux30                                                                               0    
