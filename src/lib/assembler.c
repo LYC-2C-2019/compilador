@@ -38,7 +38,7 @@ void escribir_assembler(int cant_ctes)
     escribir_seccion_datos(archivo, cant_ctes);
 
     // escribo header de seccion de codigo
-    fprintf(archivo, "\n.CODE\n.startup\n\tmov AX,@DATA\n\tmov DS,AX\n\n\tFINIT\n\n");
+    fprintf(archivo, ".CODE\n\nSTART:\n\nMOV AX,@DATA\nMOV DS, AX\nFINIT\n\n");
 
     // escribo seccion de codigo, usando los tercetos
     escribir_seccion_codigo(archivo);
@@ -101,8 +101,7 @@ void escribir_seccion_datos(FILE *archivoAssembler, int cant_ctes) {
 		}
 	}
 
-	fprintf(archivoAssembler, "\n");
-	fprintf(archivoAssembler, ".CODE\n\nSTART:\n\nMOV AX,@DATA\nMOV DS, AX\nFINIT\n\n");
+	fprintf(archivoAssembler, "\n");	
 }
 
 void escribir_seccion_codigo(FILE *archivoAssembler)
@@ -311,6 +310,8 @@ void preparar_assembler()
 
 int esOperacion(int indice)
 {
+    // printf("\n\nesOperacion indice: %d", indice);
+    // printf("\nvector_tercetos[indice].ope = %s", vector_tercetos[indice].ope);
 	if(strcmp(vector_tercetos[indice].ope,"+")==0)
 	return 1;	
 	if(strcmp(vector_tercetos[indice].ope,"-")==0)
@@ -320,6 +321,7 @@ int esOperacion(int indice)
 	if(strcmp(vector_tercetos[indice].ope,"/")==0)
 	return 4;
 	if(strcmp(vector_tercetos[indice].ope,"=")==0){
+        // printf("\n\naux_tiponumerico: %d", aux_tiponumerico);
 		validaTipo(vector_tercetos[indice].te1);
 		if(aux_tiponumerico==3 || aux_tiponumerico==6){				// asignacion de una CADENA
 			return 10;
@@ -378,7 +380,12 @@ int esSalto(int indice)
 	return 0;
 }
 
-int obteneraux_tiponumerico()
+int get_aux_tiponumerico()
 {
    return aux_tiponumerico;
+}
+
+void set_aux_tiponumerico(int value)
+{
+   aux_tiponumerico = value;
 }

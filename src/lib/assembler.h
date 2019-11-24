@@ -10,6 +10,8 @@ void escribir_seccion_codigo(FILE*);
 int esOperacion(int);
 int esSalto(int);
 void preparar_assembler();
+int get_aux_tiponumerico();
+void set_aux_tiponumerico(int);
 // char* asignar_nombre_variable_assembler(char*);
 // char* obtener_instruccion_assembler(char*);
 // void prepararAssembler();

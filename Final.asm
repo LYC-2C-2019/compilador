@@ -3,9 +3,10 @@ include number.asm
 .MODEL LARGE
 .386
 .STACK 200h
+
+MAXTEXTSIZE EQU 32
+
 .DATA
-NEW_LINE DB 0AH,0DH,'$'
-CWprevio DW ?
 a dd ?
 b dd ?
 c dd ?
@@ -24,8 +25,9 @@ _3 dd 3.0
 @aux12 dd ?
 _10 dd 10.0
 @aux14 dd ?
+_5 dd 5.0
 _1 dd 1.0
-@aux18 dd ?
+@aux24 dd ?
 
 .CODE
 
@@ -35,20 +37,12 @@ MOV AX,@DATA
 MOV DS, AX
 FINIT
 
-
-.CODE
-.startup
-	mov AX,@DATA
-	mov DS,AX
-
-	FINIT
-
 fld _4
 fstp c
 fld _12
 fstp t
-fld _hola
-fstp x
+LEA EAX, _hola
+ MOV x , EAX
 fld _8
 fld c
 fadd
@@ -67,12 +61,22 @@ fadd
 fstp @aux14
 fld @aux14
 fstp a
-etiqueta_16:
+fld a
+fld c
+fxch
+fcomp
+fstsw ax
+sahf
+JAE etiqueta_22
+
+fld _5
+fstp c
+etiqueta_22:
 fld a
 fld _1
 fadd
-fstp @aux18
-fld @aux18
+fstp @aux24
+fld @aux24
 fstp a
 fld a
 fld t
@@ -80,7 +84,7 @@ fxch
 fcomp
 fstsw ax
 sahf
-JNA etiqueta_16
+JNA etiqueta_22
 
 
 MOV AH, 1
