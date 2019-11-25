@@ -11,7 +11,7 @@ gcc.exe lib\*.c lex.yy.c y.tab.c -o ..\bin\Grupo04.exe
 REM pause
 cd ..
 echo EJECUCION DE PRUEBAS
-bin\Grupo04.exe test\Prueba.txt
+bin\Grupo04.exe test\Prueba-inlist.txt
 cd src
 del lex.yy.c
 del y.tab.c

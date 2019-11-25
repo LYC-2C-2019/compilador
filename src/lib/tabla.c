@@ -4,6 +4,8 @@
 
 #include "tabla.h"
 
+int yyerror();
+
 void guardarTablaDeSimbolos(int cantidadTokens, int cant_ctes){
 
 	// Verifico si se cargo algo en la tabla

@@ -12,6 +12,9 @@
 char bufferaux1[20];
 int cant_op = 0;
 int yyerror();
+void replace_char(char*, char, char);
+int esOperacion(int);
+char* validaTipo(char* );
 
 // FUNCIONES PUBLICAS
 

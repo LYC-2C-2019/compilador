@@ -35,7 +35,7 @@ void apilar(Pila *pila, int v){
 int desapilar(Pila *pila){
 	if(pila->tope == NULL){
 		printf("PILA VACIA!\n");
-		return;
+		return 0;
 	}
 	pNodoPila aux;
 	int res;

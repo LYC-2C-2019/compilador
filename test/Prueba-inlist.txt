@@ -12,11 +12,6 @@ a := 2;
 
 t := 6;
 
-IF (a<c) THEN
-  c:=5;
-ENDIF
-
-
-IF (INLIST (a,[2;4])) THEN
+IF(INLIST(a,[2;4]))
     a:=4;
 ENDIF

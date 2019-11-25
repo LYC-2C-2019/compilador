@@ -783,8 +783,7 @@ comparacion : expresion {aux_ladoIzquierdo_comparacion = desapilar(&pilaOperacio
 		mostrarError(mensajeDeError);
 	}
 }
-|
-		funcion	{
+| funcion	{
 			printf("Regla 46\n");
 		}
 
@@ -888,51 +887,54 @@ factor_asignMultiple: ID
 		}
 
 	}
-};
+}
 
 funcion:
-		BRA_O inlist BRA_C {
-			// int idx = -1;
-			// int idx_jmp= -1;
-			// while(!pila_vacia(&pila_saltos)) {
-			// 	idx_jmp = sacar_pila(&pila_saltos);
+		inlist {
+			 //int idx = -1;
+			 //int idx_jmp= -1;
+			 //while(!desapilar(&pilaInlist)) {
+			 //	idx_jmp = desapilar(&pilaInlist);
 
-			// 	/*
-			// 	 * - Si se cumple por verdadero, salto al terceto actual - 2
-			// 	 * - si se cumple por falso, salto al siguiente terceto de comparacion
-			// 	 */
-			// 	if (strcmp(tercetos[idx_jmp]->t1, saltos[tsJE]) == 0) {
-			// 		strcpy(tercetos[idx_jmp]->t2, intToStr($2));
-			// 	} else {
-			// 		strcpy(tercetos[idx_jmp]->t2, intToStr(idx_jmp + 2));
-			// 	}
-			// }
+			 	/*
+			 	 * - Si se cumple por verdadero, salto al terceto actual - 2
+			 	 * - si se cumple por falso, salto al siguiente terceto de comparacion
+			 	 */
+			 //	if (strcmp(vector_tercetos[idx_jmp]->t1, saltos[tsJE]) == 0) {
+			 		//strcpy(vector_tercetos[idx_jmp]->t2, intToStr($2));
+			 //		 strcpy(vector_tercetos[idx_jmp]->t2, 2;
+			 //	} else {
+			 //		strcpy(vector_tercetos[idx_jmp]->t2, intToStr(idx_jmp + 2));
+			 //	}
+			 //}
 
-			// $$ = $2;
+			 //$$ = $2;
 			printf("Regla 53\n");
-		};
+		}
 
 inlist:
 		INLIST BRA_O ID COMMA SBRA_O lista_expresiones_scolon SBRA_C BRA_C {
 			// int idx = -1;
 			// int idx_exp = -1;
-			// while(!pila_vacia(&pila_exp)) {
-			// 	idx_exp = sacar_pila(&pila_exp);
+			// while(desapilar(&pilaExpresion)!=0) {
+			// 	idx_exp = desapilar(&pilaExpresion);
 
-			// 	/*
-			// 	 * Creo un terceto de comparacion y dos tercetos de salto
-			// 	 *  n-2 (CMP, ID, EXPRESION)
-			// 	 * 	n-1 (JNE, n-2, NULL) -> completar
-			// 	 * 	n   (JE, n-1, NULL) -> completar
-			// 	 */
-			// 	int cmp = crear_terceto("CMP", $3, intToStr(idx_exp));
+			 	/*
+			 	 * Creo un terceto de comparacion y dos tercetos de salto
+			 	 *  n-2 (CMP, ID, EXPRESION)
+			 	 * 	n-1 (JNE, n-2, NULL) -> completar
+			 	 * 	n   (JE, n-1, NULL) -> completar
+			 	 */
+			 	//int cmp = crear_terceto("CMP", $3, intToStr(idx_exp));
+				//int cmp = crear_terceto("CMP", desapilar($pilaFactor), intToStr(idx_exp));
 
-			// 	idx = crear_terceto(saltos[tsJNE], NULL, NULL);
-			// 	insertar_pila(&pila_saltos, idx);
+			// 	idx = crear_terceto("JNE", NULL, NULL);
+			// 	apilar(&pilaInlist, idx);
 
-			// 	idx = crear_terceto(saltos[tsJE], NULL, NULL);
-			// 	insertar_pila(&pila_saltos, idx);
+			// 	idx = crear_terceto("JE", NULL, NULL);
+			// 	apilar(&pilaInlist, idx);
 			// }
+			 //idx = crear_terceto("JNE", NULL, NULL);
 
 			// /*
 			//  * Creo una variable de apoyo con falso
@@ -943,32 +945,33 @@ inlist:
 			// char aux[20];
 			// sprintf(aux, "_INLIST_%d", ++cantidadInlist);
 
-			// /* terceto resultado falso */
+			 /* terceto resultado falso */
 			// idx = crear_terceto(":=", aux, "false");
 
-			// /* salteo un terceto */
+			 /* salteo un terceto */
 			// idx = crear_terceto(saltos[tsJMP], NULL , intToStr(idx + 2));
 
-			// /* terceto resultado verdadero */
+			 /* terceto resultado verdadero */
 			// idx = crear_terceto(":=", aux, "true");
 
-			// // devuelvo el ultimo terceto creado */
-			// $$ = idx;
-			printf("Regla 54\n");
-		};
+			// devuelvo el ultimo terceto creado */
+		 	//$$ = idx;
+			//printf("Regla 54\n");
+			//printf("Pase");
+		}
 
 lista_expresiones_scolon:
 		expresion {
-			// insertar_pila(&pila_exp, $1);
-			// $$ = $1;
-			printf("Regla 55\n");
+			 //apilar(&pilaExpresion, $1);
+			 //$$ = $1;
+			//printf("Regla 55\n");
 		}
-	|	lista_expresiones_scolon SCOLON expresion	{
-			// insertar_pila(&pila_exp, $3);
-			// $$ = $3;
-			printf("Regla 56\n");
+|	lista_expresiones_scolon SCOLON expresion	{
+			 //apilar(&pilaExpresion, $3);
+			 //$$ = $3;
+			//printf("Regla 56\n");
 		}
-	;
+	
 
 
 %%

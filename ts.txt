@@ -3,25 +3,10 @@ NOMBRE                        TIPO                     VALOR                    
 a                             Integer                                                0    
 b                             Float                                                  0    
 c                             Integer                                                0    
-x                             String                                                 0    
+A                             String                                                 0    
 s                             Integer                                                0    
-r                             Integer                                                0    
+r                             Float                                                  0    
 t                             Integer                                                0    
-y                             String                                                 0    
-_2.5                          ConstFloat               2.5                           0    
+_2                            ConstInteger             2                             0    
+_6                            ConstInteger             6                             0    
 _4                            ConstInteger             4                             0    
-_12                           ConstInteger             12                            0    
-_hola                         ConstString              hola                          4    
-_8                            ConstInteger             8                             0    
-@aux10                                                                               0    
-@aux12                                                                               0    
-_3                            ConstInteger             3                             0    
-@aux14                                                                               0    
-_10                           ConstInteger             10                            0    
-@aux16                                                                               0    
-_100                          ConstInteger             100                           0    
-_200                          ConstInteger             200                           0    
-_5                            ConstInteger             5                             0    
-_1                            ConstInteger             1                             0    
-@aux28                                                                               0    
-@aux32                                                                               0    
