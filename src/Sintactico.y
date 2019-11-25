@@ -1,19 +1,19 @@
 %{
-#include <stdio.h>
-#include <stdlib.h>
-#include <conio.h>
-#include "y.tab.h"
-#include <string.h>
-#include <ctype.h>
-#include "lib/const.h"
-#include "lib/tabla.h"
-#include "lib/pila.h"
-#include "lib/tercetos.h"
-#include "lib/assembler.h"
-#include "lib/utils.h"
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <conio.h>
+	#include "y.tab.h"
+	#include <string.h>
+	#include <ctype.h>
+	#include "lib/const.h"
+	#include "lib/tabla.h"
+	#include "lib/pila.h"
+	#include "lib/tercetos.h"
+	#include "lib/assembler.h"
+	#include "lib/utils.h"
 
 	int yystopparser=0;
-int yylineno;
+	int yylineno;
 	FILE  *yyin;
 	char *yyltext;
 	char *yytext;
@@ -27,17 +27,17 @@ int yylineno;
 
 	/* --------------- CONSTANTES --------------- */
 
-#define TAM_NOMBRE 32						/* Limite tamaño nombre (sumar 1 para _ ) */
-#define CteString "ConstString"
-#define CteInt "ConstInteger"
-#define CteReal "ConstFloat"
+	#define TAM_NOMBRE 32						/* Limite tamaño nombre (sumar 1 para _ ) */
+	#define CteString "ConstString"
+	#define CteInt "ConstInteger"
+	#define CteReal "ConstFloat"
 
-#define variableEntera 1
-#define	variableFloat 2
-#define variableString 3
-#define constanteEntera 4
-#define constanteFloat 5
-#define constanteString 6
+	#define variableEntera 1
+	#define	variableFloat 2
+	#define variableString 3
+	#define constanteEntera 4
+	#define constanteFloat 5
+	#define constanteString 6
 
 	/* --------------- PROTOTIPO DE FUNCIONES --------------- */
 
@@ -114,7 +114,7 @@ int yylineno;
 	Pila pilaIf;
 	Pila pilaRepeat;
 	Pila pilaOperacion;
-	Pila pilaFilter;
+	Pila pilaInlist;
 
 	/* --------------- ASIGNACION MULTIPLE -------------- */
 
@@ -987,7 +987,7 @@ int main(int argc,char *argv[]){
 		pilaIf = crearPila();
 		pilaRepeat = crearPila();
 		pilaOperacion = crearPila();
-		pilaFilter = crearPila();
+		pilaInlist = crearPila();
 
 		yyparse();
 
