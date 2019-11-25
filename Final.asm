@@ -28,12 +28,15 @@ MOV AX,@DATA
 MOV DS, AX
 FINIT
 
+etiqueta_0:
 fld a
 fstp c
 fld 2
 fstp a
 fld _6
 fstp t
+JNE etiqueta__
+
 fld _4
 fstp a
 

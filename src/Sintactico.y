@@ -914,9 +914,9 @@ funcion:
 
 inlist:
 		INLIST BRA_O ID COMMA SBRA_O lista_expresiones_scolon SBRA_C BRA_C {
-			// int idx = -1;
-			// int idx_exp = -1;
-			// while(desapilar(&pilaExpresion)!=0) {
+			 int idx = -1;
+			 int idx_exp = -1;
+			//while(desapilar(&pilaExpresion)!=0) {
 			// 	idx_exp = desapilar(&pilaExpresion);
 
 			 	/*
@@ -934,7 +934,7 @@ inlist:
 			// 	idx = crear_terceto("JE", NULL, NULL);
 			// 	apilar(&pilaInlist, idx);
 			// }
-			 //idx = crear_terceto("JNE", NULL, NULL);
+			idx = crear_terceto("JNE", "_", "_");
 
 			// /*
 			//  * Creo una variable de apoyo con falso
@@ -956,20 +956,19 @@ inlist:
 
 			// devuelvo el ultimo terceto creado */
 		 	//$$ = idx;
-			//printf("Regla 54\n");
-			//printf("Pase");
+			printf("Regla 54\n");
 		}
 
 lista_expresiones_scolon:
 		expresion {
 			 //apilar(&pilaExpresion, $1);
 			 //$$ = $1;
-			//printf("Regla 55\n");
+			printf("Regla 55\n");
 		}
 |	lista_expresiones_scolon SCOLON expresion	{
 			 //apilar(&pilaExpresion, $3);
 			 //$$ = $3;
-			//printf("Regla 56\n");
+			printf("Regla 56\n");
 		}
 	
 
