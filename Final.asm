@@ -28,7 +28,6 @@ MOV AX,@DATA
 MOV DS, AX
 FINIT
 
-etiqueta_0:
 fld a
 fstp c
 fld 2
@@ -41,20 +40,26 @@ fxch
 fcomp
 fstsw ax
 sahf
-JNE etiqueta__
+JNE etiqueta_11
 
-JE etiqueta__
+JE etiqueta_16
 
+etiqueta_11:
 fld a
 fld _2
 fxch
 fcomp
 fstsw ax
 sahf
-JNE etiqueta__
+JNE etiqueta_14
 
-JE etiqueta__
+JE etiqueta_16
 
+etiqueta_14:
+JMP etiqueta_17
+
+etiqueta_16:
+etiqueta_17:
 fld _4
 fstp a
 

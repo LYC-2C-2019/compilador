@@ -78,6 +78,8 @@
 	int aux_ladoIzquierdo_comparacion =0;
 	int aux_ladoDerecho_comparacion =0;
 	int cantidad_constantes_float=1;
+	int cantidadInlist=0;
+	int tercetoVerdadero=0;
 
 	char idAux[20];
 	char aux_assembler[10]="@aux";
@@ -893,24 +895,21 @@ factor_asignMultiple: ID
 
 funcion:
 		inlist {
-			 //int idx = -1;
-			 //int idx_jmp= -1;
-			 //while(!desapilar(&pilaInlist)) {
-			 //	idx_jmp = desapilar(&pilaInlist);
+			int idx_jmp= -1;
+			while(!pilaVacia(&pilaSaltosInlist)) {
+				idx_jmp = desapilar(&pilaSaltosInlist);
 
 			 	/*
 			 	 * - Si se cumple por verdadero, salto al terceto actual - 2
 			 	 * - si se cumple por falso, salto al siguiente terceto de comparacion
 			 	 */
-			 //	if (strcmp(vector_tercetos[idx_jmp]->t1, saltos[tsJE]) == 0) {
-			 		//strcpy(vector_tercetos[idx_jmp]->t2, intToStr($2));
-			 //		 strcpy(vector_tercetos[idx_jmp]->t2, 2;
-			 //	} else {
-			 //		strcpy(vector_tercetos[idx_jmp]->t2, intToStr(idx_jmp + 2));
-			 //	}
-			 //}
+				if (strcmp(vector_tercetos[idx_jmp].ope, "JE") == 0) {
+			 		strcpy(vector_tercetos[idx_jmp].te1, intToStr(tercetoVerdadero));
+				} else {
+					strcpy(vector_tercetos[idx_jmp].te1, intToStr(idx_jmp + 2));
+				}
+			}
 
-			 //$$ = $2;
 			printf("Regla 53\n");
 		}
 
@@ -928,7 +927,7 @@ inlist:
 			 	 * 	n-1 (JNE, n-2, NULL) -> completar
 			 	 * 	n   (JE, n-1, NULL) -> completar
 			 	 */
-				  
+
 				int cmp = crear_terceto("CMP", idAux, intToStr(idx_exp));
 
 			 	idx = crear_terceto("JNE", "_", "_");
@@ -937,28 +936,27 @@ inlist:
 			 	idx = crear_terceto("JE", "_", "_");
 			 	apilar(&pilaSaltosInlist, idx);
 			}
-			//idx = crear_terceto("JNE", "_", "_");
+			 /*
+			  * Creo una variable de apoyo con falso
+			  * Si no se encuentra el valor en la lista
+			  * saltará a este terceto.
+			  * debe guardarse en la tabla de simbolos
+			  */
 
-			// /*
-			//  * Creo una variable de apoyo con falso
-			//  * Si no se encuentra el valor en la lista
-			//  * saltará a este terceto.
-			//  * debe guardarse en la tabla de simbolos
-			//  */
-			// char aux[20];
-			// sprintf(aux, "_INLIST_%d", ++cantidadInlist);
+			char aux[20];
+			sprintf(aux, "_INLIST_%d", ++cantidadInlist);
 
 			 /* terceto resultado falso */
-			// idx = crear_terceto(":=", aux, "false");
+			idx = crear_terceto(":=", aux, "false");
 
 			 /* salteo un terceto */
-			// idx = crear_terceto(saltos[tsJMP], NULL , intToStr(idx + 2));
+			idx = crear_terceto("JMP", intToStr(idx + 3), "_");
 
 			 /* terceto resultado verdadero */
-			// idx = crear_terceto(":=", aux, "true");
+			idx = crear_terceto(":=", aux, "true");
 
-			// devuelvo el ultimo terceto creado */
-		 	//$$ = idx;
+			tercetoVerdadero = idx;
+
 			printf("Regla 54\n");
 		}
 
