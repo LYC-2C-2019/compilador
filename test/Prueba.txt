@@ -43,3 +43,9 @@ UNTIL (c>s OR t<a);
 
 PRINT a
 READ b
+
+IF(INLIST(a,[2;4]) AND a<c)
+    a:=4;
+ELSE
+    C:=5;
+ENDIF
