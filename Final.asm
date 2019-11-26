@@ -35,7 +35,25 @@ fld 2
 fstp a
 fld _6
 fstp t
+fld a
+fld _4
+fxch
+fcomp
+fstsw ax
+sahf
 JNE etiqueta__
+
+JE etiqueta__
+
+fld a
+fld _2
+fxch
+fcomp
+fstsw ax
+sahf
+JNE etiqueta__
+
+JE etiqueta__
 
 fld _4
 fstp a

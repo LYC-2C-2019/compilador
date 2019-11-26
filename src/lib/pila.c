@@ -74,3 +74,8 @@ void mostrarPila(Pila *pila)
    }
 
 }
+
+int pilaVacia(Pila *pila)
+{
+	return pila->tope == NULL;
+}

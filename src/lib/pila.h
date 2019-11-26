@@ -20,3 +20,4 @@ void mostrarPila(Pila *p);
 int buscarEnPila(Pila *p, int v);
 Pila crearPila();
 void vaciarPila(Pila *p);
+int pilaVacia(Pila*p);

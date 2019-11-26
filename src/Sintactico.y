@@ -114,7 +114,9 @@
 	Pila pilaIf;
 	Pila pilaRepeat;
 	Pila pilaOperacion;
-	Pila pilaInlist;
+	Pila pilaSaltosInlist;
+	Pila pilaExpresionesInlist;
+	Pila pilaIdInlist;
 
 	/* --------------- ASIGNACION MULTIPLE -------------- */
 
@@ -913,11 +915,12 @@ funcion:
 		}
 
 inlist:
-		INLIST BRA_O ID COMMA SBRA_O lista_expresiones_scolon SBRA_C BRA_C {
+		INLIST BRA_O ID {strcpy(idAux,yylval.str_val);} COMMA SBRA_O lista_expresiones_scolon SBRA_C BRA_C {
 			 int idx = -1;
 			 int idx_exp = -1;
-			//while(desapilar(&pilaExpresion)!=0) {
-			// 	idx_exp = desapilar(&pilaExpresion);
+			 int id_cmp = desapilar(&pilaIdInlist);
+			while(!pilaVacia(&pilaExpresionesInlist)) {
+			 	idx_exp = desapilar(&pilaExpresionesInlist);
 
 			 	/*
 			 	 * Creo un terceto de comparacion y dos tercetos de salto
@@ -925,16 +928,16 @@ inlist:
 			 	 * 	n-1 (JNE, n-2, NULL) -> completar
 			 	 * 	n   (JE, n-1, NULL) -> completar
 			 	 */
-			 	//int cmp = crear_terceto("CMP", $3, intToStr(idx_exp));
-				//int cmp = crear_terceto("CMP", desapilar($pilaFactor), intToStr(idx_exp));
+				  
+				int cmp = crear_terceto("CMP", idAux, intToStr(idx_exp));
 
-			// 	idx = crear_terceto("JNE", NULL, NULL);
-			// 	apilar(&pilaInlist, idx);
+			 	idx = crear_terceto("JNE", "_", "_");
+			 	apilar(&pilaSaltosInlist, idx);
 
-			// 	idx = crear_terceto("JE", NULL, NULL);
-			// 	apilar(&pilaInlist, idx);
-			// }
-			idx = crear_terceto("JNE", "_", "_");
+			 	idx = crear_terceto("JE", "_", "_");
+			 	apilar(&pilaSaltosInlist, idx);
+			}
+			//idx = crear_terceto("JNE", "_", "_");
 
 			// /*
 			//  * Creo una variable de apoyo con falso
@@ -961,12 +964,12 @@ inlist:
 
 lista_expresiones_scolon:
 		expresion {
-			 //apilar(&pilaExpresion, $1);
+			apilar(&pilaExpresionesInlist, desapilar(&pilaExpresion));
 			 //$$ = $1;
 			printf("Regla 55\n");
 		}
 |	lista_expresiones_scolon SCOLON expresion	{
-			 //apilar(&pilaExpresion, $3);
+			apilar(&pilaExpresionesInlist, desapilar(&pilaExpresion));
 			 //$$ = $3;
 			printf("Regla 56\n");
 		}
@@ -989,7 +992,10 @@ int main(int argc,char *argv[]){
 		pilaIf = crearPila();
 		pilaRepeat = crearPila();
 		pilaOperacion = crearPila();
-		pilaInlist = crearPila();
+		pilaSaltosInlist = crearPila();
+		pilaExpresionesInlist = crearPila();
+		pilaIdInlist = crearPila();
+
 
 		yyparse();
 
