@@ -15,19 +15,17 @@ t := 12;
 
 x := "hola";
 
-a := (((8 + c) + t) / 3) + 10;
-
+a := (((8 + c)  + t) / 3) + 10;
 
 --/ asignacion multiple /--
 
 [r,s] := [100, 200]
 
---/ seleccion /--
+--/ inlist /--
 
-IF (a<c) 
-  c:=5;
+IF(INLIST(a,[2;4]))
+    a:=4;
 ENDIF
-
 
 --/ iteracion /--
 
@@ -43,9 +41,3 @@ UNTIL (c>s OR t<a);
 
 PRINT a
 READ b
-
-IF(INLIST(a,[2;4]) AND a<c)
-    a:=4;
-ELSE
-    C:=5;
-ENDIF

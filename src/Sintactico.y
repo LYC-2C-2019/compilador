@@ -540,11 +540,6 @@ ifelse: IF BRA_O comparacion {apilar(&pilaIf,aux);} BRA_C bloque ENDIF
 	aux=desapilar(&pilaIf);
 	itoa(indice_terceto,bufferaux1,10);					
 	strcpy(vector_tercetos[aux].te1,bufferaux1);		// desapilo y voy al final
-	//Verifico si hay inlist y es falso voy al final.
-	if (tercetoFalso!=0)
-	{
-		strcpy(vector_tercetos[tercetoFalso].te1,bufferaux1);
-	}
 }
 
 | IF BRA_O comparacion {apilar(&pilaIf,aux);} AND comparacion {apilar(&pilaIf,aux);} BRA_C bloque ENDIF
@@ -556,11 +551,6 @@ ifelse: IF BRA_O comparacion {apilar(&pilaIf,aux);} BRA_C bloque ENDIF
 	aux=desapilar(&pilaIf);
 	itoa(indice_terceto,bufferaux1,10);					// desapilo y pongo donde voy en la primer cond - voy al final
 	strcpy(vector_tercetos[aux].te1,bufferaux1);
-	//Verifico si hay inlist y es falso voy al final.
-	if (tercetoFalso!=0)
-	{
-		strcpy(vector_tercetos[tercetoFalso].te1,bufferaux1);
-	}
 }
 
 |	IF BRA_O comparacion {apilar(&pilaIf,aux); apilar(&pilaIf,crear_terceto("JMP","_","_"));} OR comparacion {apilar(&pilaIf,aux);} BRA_C {int indice_terceto = obtenerIndiceTercetos(); aux1=indice_terceto;} bloque ENDIF
@@ -575,11 +565,6 @@ ifelse: IF BRA_O comparacion {apilar(&pilaIf,aux);} BRA_C bloque ENDIF
 	aux=desapilar(&pilaIf);
 	itoa(aux+2,bufferaux1,10);							// desapilo y pongo donde voy si la primer condicion es falsa
 	strcpy(vector_tercetos[aux].te1,bufferaux1);
-	//Verifico si hay inlist y es falso voy al final.
-	if (tercetoFalso!=0)
-	{
-		strcpy(vector_tercetos[tercetoFalso].te1,bufferaux1);
-	}
 }
 
 | IF IF BRA_O comparacion {apilar(&pilaIf,aux);} BRA_C THEN bloque {
@@ -589,11 +574,6 @@ ifelse: IF BRA_O comparacion {apilar(&pilaIf,aux);} BRA_C bloque ENDIF
 	itoa(indice_terceto,bufferaux1,10);					// paso a char[] el valor indice
 	strcpy(vector_tercetos[aux].te1,bufferaux1);		// asigno el lugar donde salto
 	apilar(&pilaIf,indice_terceto-1);
-	//Verifico si hay inlist y es falso voy al final.
-	if (tercetoFalso!=0)
-	{
-		strcpy(vector_tercetos[tercetoFalso].te1,bufferaux1);
-	}
 }	ELSE bloque ENDIF 
 {
 	int indice_terceto = obtenerIndiceTercetos();
@@ -601,11 +581,6 @@ ifelse: IF BRA_O comparacion {apilar(&pilaIf,aux);} BRA_C bloque ENDIF
 	aux=desapilar(&pilaIf);
 	itoa(indice_terceto,bufferaux1,10);					// paso a char[] el valor indice
 	strcpy(vector_tercetos[aux].te1,bufferaux1);		// asigno el lugar donde salto
-	//Verifico si hay inlist y es falso voy al final.
-	if (tercetoFalso!=0)
-	{
-		strcpy(vector_tercetos[tercetoFalso].te1,bufferaux1);
-	}
 }
 
 |	IF IF BRA_O comparacion {apilar(&pilaIf,aux);} AND comparacion {apilar(&pilaIf,aux);} BRA_C THEN bloque
@@ -619,11 +594,6 @@ ifelse: IF BRA_O comparacion {apilar(&pilaIf,aux);} BRA_C bloque ENDIF
 	itoa(indice_terceto,bufferaux1,10);					// paso a char[] el valor indice
 	strcpy(vector_tercetos[aux1].te1,bufferaux1);		// SALTO AL PRINCIPIO DEL ELSE
 	apilar(&pilaIf,aux);											// apilo el terceto que salta al final del THEN
-	//Verifico si hay inlist y es falso voy al final.
-	if (tercetoFalso!=0)
-	{
-		strcpy(vector_tercetos[tercetoFalso].te1,bufferaux1);
-	}
 }
 ELSE bloque ENDIF 	
 {
@@ -632,12 +602,6 @@ ELSE bloque ENDIF
 	aux=desapilar(&pilaIf);
 	itoa(indice_terceto,bufferaux1,10);					// paso a char[] el valor indice
 	strcpy(vector_tercetos[aux].te1,bufferaux1);		// SALTO AL FINAL DEL ELSE
-	//Verifico si hay inlist y es falso voy al final.
-	if (tercetoFalso!=0)
-	{
-		strcpy(vector_tercetos[tercetoFalso].te1,bufferaux1);
-	}
-	
 }			
 
 |	IF IF BRA_O comparacion {apilar(&pilaIf,aux); apilar(&pilaIf,crear_terceto("JMP","_","_"));} OR comparacion {apilar(&pilaIf,aux);} BRA_C {int indice_terceto = obtenerIndiceTercetos(); aux1=indice_terceto;} 
@@ -657,11 +621,6 @@ THEN bloque {apilar(&pilaIf,crear_terceto("JMP","_","_"));} ELSE bloque ENDIF
 	aux=desapilar(&pilaIf);
 	itoa(aux+2,bufferaux1,10);							// desapilo y pongo donde voy si la primer condicion es falsa
 	strcpy(vector_tercetos[aux].te1,bufferaux1);
-	//Verifico si hay inlist y es falso voy al final.
-	if (tercetoFalso!=0)
-	{
-		strcpy(vector_tercetos[tercetoFalso].te1,bufferaux1);
-	}
 }
 
 
@@ -672,11 +631,6 @@ condicion:   BRA_O comparacion BRA_C
 	itoa(aux,bufferaux1,10);							// desapilo y pongo donde voy si la condicion es verdadera
 	strcpy(vector_tercetos[indice_terceto-1].te1,bufferaux1);
 	vector_tercetos[auxRepeat].esEtiqueta=99;
-	//Verifico si hay inlist y es falso voy al final.
-	if (tercetoFalso!=0)
-	{
-		strcpy(vector_tercetos[tercetoFalso].te1,bufferaux1);
-	}
 }
 |	BRA_O comparacion {apilar(&pilaRepeat,aux);} AND comparacion {apilar(&pilaRepeat,aux);} BRA_C 
 {
@@ -692,11 +646,6 @@ condicion:   BRA_O comparacion BRA_C
 	itoa(aux2,bufferaux1,10);		
 	strcpy(vector_tercetos[aux].te1,bufferaux1);
 	vector_tercetos[auxRepeat].esEtiqueta=99;
-	//Verifico si hay inlist y es falso voy al final.
-	if (tercetoFalso!=0)
-	{
-		strcpy(vector_tercetos[tercetoFalso].te1,bufferaux1);
-	}
 }
 
 | BRA_O comparacion {
@@ -720,11 +669,6 @@ condicion:   BRA_O comparacion BRA_C
 	itoa(aux2+2,bufferaux1,10);		
 	strcpy(vector_tercetos[aux2].te1,bufferaux1);
 	vector_tercetos[auxRepeat].esEtiqueta=99;
-	//Verifico si hay inlist y es falso voy al final.
-	if (tercetoFalso!=0)
-	{
-		strcpy(vector_tercetos[tercetoFalso].te1,bufferaux1);
-	}
 }
 | BRA_O NOT BRA_O comparacion BRA_C BRA_C 
 {
@@ -734,11 +678,6 @@ condicion:   BRA_O comparacion BRA_C
 	itoa(aux,bufferaux1,10);							// desapilo y pongo donde voy si la primer condicion es falsa
 	strcpy(vector_tercetos[indice_terceto-1].te1,bufferaux1);
 	vector_tercetos[auxRepeat].esEtiqueta=99;
-	//Verifico si hay inlist y es falso voy al final.
-	if (tercetoFalso!=0)
-	{
-		strcpy(vector_tercetos[tercetoFalso].te1,bufferaux1);
-	}
 }
 
 
@@ -847,6 +786,7 @@ comparacion : expresion {aux_ladoIzquierdo_comparacion = desapilar(&pilaOperacio
 	}
 }
 | funcion	{
+			aux = tercetoFalso;
 			printf("Regla 46\n");
 		}
 
@@ -1026,12 +966,10 @@ inlist:
 lista_expresiones_scolon:
 		expresion {
 			apilar(&pilaExpresionesInlist, desapilar(&pilaExpresion));
-			 //$$ = $1;
 			printf("Regla 55\n");
 		}
 |	lista_expresiones_scolon SCOLON expresion	{
 			apilar(&pilaExpresionesInlist, desapilar(&pilaExpresion));
-			 //$$ = $3;
 			printf("Regla 56\n");
 		}
 	

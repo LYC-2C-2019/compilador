@@ -30,10 +30,9 @@ _10 dd 10.0
 @aux16 dd ?
 _100 dd 100.0
 _200 dd 200.0
-_2 dd 2.0
 _1 dd 1.0
-@aux35 dd ?
-@aux39 dd ?
+@aux22 dd ?
+@aux26 dd ?
 
 .CODE
 
@@ -74,45 +73,17 @@ fstp r
 fld _200
 fstp s
 fld a
-fld _4
-fxch
-fcomp
-fstsw ax
-sahf
-JNE etiqueta_25
-
-JE etiqueta_30
-
-etiqueta_25:
-fld a
-fld _2
-fxch
-fcomp
-fstsw ax
-sahf
-JNE etiqueta_28
-
-JE etiqueta_30
-
-etiqueta_28:
-JMP etiqueta_33
-
-etiqueta_30:
-fld _4
-fstp a
-etiqueta_33:
-fld a
 fld _1
 fadd
-fstp @aux35
-fld @aux35
+fstp @aux22
+fld @aux22
 fstp a
-etiqueta_37:
+etiqueta_24:
 fld c
 fld _1
 fadd
-fstp @aux39
-fld @aux39
+fstp @aux26
+fld @aux26
 fstp c
 fld c
 fld t
@@ -120,7 +91,7 @@ fxch
 fcomp
 fstsw ax
 sahf
-JNAE etiqueta_37
+JNAE etiqueta_24
 
 fld c
 fld s
@@ -128,21 +99,21 @@ fxch
 fcomp
 fstsw ax
 sahf
-JNA etiqueta_50
+JNA etiqueta_37
 
-JMP etiqueta_37
+JMP etiqueta_24
 
-etiqueta_50:
+etiqueta_37:
 fld t
 fld a
 fxch
 fcomp
 fstsw ax
 sahf
-JAE etiqueta_54
+JAE etiqueta_41
 
-etiqueta_54:
-JMP etiqueta_37
+etiqueta_41:
+JMP etiqueta_24
 
 DisplayFloat a,1
 newLine
