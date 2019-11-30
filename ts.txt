@@ -28,3 +28,6 @@ _parte_falsa                  ConstString              parte_falsa              
 _100                          ConstInteger             100                           0    
 _200                          ConstInteger             200                           0    
 _2                            ConstInteger             2                             0    
+_1                            ConstInteger             1                             0    
+@aux52                                                                               0    
+@aux56                                                                               0    

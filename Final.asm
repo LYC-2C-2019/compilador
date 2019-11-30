@@ -37,6 +37,9 @@ _parte_falsa db "parte_falsa", '$'
 _100 dd 100.0
 _200 dd 200.0
 _2 dd 2.0
+_1 dd 1.0
+@aux52 dd ?
+@aux56 dd ?
 
 .CODE
 
@@ -137,9 +140,6 @@ fstsw ax
 sahf
 JNE etiqueta_45
 
-<<<<<<< HEAD
-etiqueta_54:
-=======
 JE etiqueta_47
 
 etiqueta_45:
@@ -149,7 +149,47 @@ etiqueta_47:
 fld _4
 fstp a
 etiqueta_50:
->>>>>>> correccion-if
+fld a
+fld _1
+fadd
+fstp @aux52
+fld @aux52
+fstp a
+etiqueta_54:
+fld c
+fld _1
+fadd
+fstp @aux56
+fld @aux56
+fstp c
+fld c
+fld t
+fxch
+fcomp
+fstsw ax
+sahf
+JNAE etiqueta_54
+
+fld c
+fld s
+fxch
+fcomp
+fstsw ax
+sahf
+JNA etiqueta_67
+
+JMP etiqueta_54
+
+etiqueta_67:
+fld t
+fld a
+fxch
+fcomp
+fstsw ax
+sahf
+JAE etiqueta_71
+
+etiqueta_71:
 DisplayFloat a,1
 newLine
 

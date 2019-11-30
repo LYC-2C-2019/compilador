@@ -44,6 +44,16 @@ IF(INLIST(a,[2;4]))
 ENDIF
 
 
+--/ iteracion /--
+
+REPEAT
+    a := a+1;
+    REPEAT
+        c := c+1;
+    UNTIL (NOT (c<t));
+UNTIL (c>s OR t<a);
+
+
 --/ print, read /--
 
 PRINT a
