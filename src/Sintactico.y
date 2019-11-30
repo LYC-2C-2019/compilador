@@ -635,7 +635,6 @@ condicion:   BRA_O comparacion BRA_C
 |	BRA_O comparacion {apilar(&pilaRepeat,aux);} AND comparacion {apilar(&pilaRepeat,aux);} BRA_C 
 {
 	int indice_terceto = obtenerIndiceTercetos();
-	aux=crear_terceto("JMP","_","_");
 	aux2=desapilar(&pilaRepeat);
 	itoa(indice_terceto,bufferaux1,10);		
 	strcpy(vector_tercetos[aux2].te1,bufferaux1);
@@ -644,7 +643,6 @@ condicion:   BRA_O comparacion BRA_C
 	strcpy(vector_tercetos[aux2].te1,bufferaux1);
 	aux2=desapilar(&pilaRepeat);
 	itoa(aux2,bufferaux1,10);		
-	strcpy(vector_tercetos[aux].te1,bufferaux1);
 	vector_tercetos[auxRepeat].esEtiqueta=99;
 }
 
@@ -659,8 +657,6 @@ condicion:   BRA_O comparacion BRA_C
 
 	char posInicial[10];
 	itoa(auxRepeat, posInicial,10);
-	aux=crear_terceto("JMP",posInicial,"_");
-
 	aux2=desapilar(&pilaRepeat);
 	printf("aux2: %d\n",aux);
 	itoa(indice_terceto,bufferaux1,10);		

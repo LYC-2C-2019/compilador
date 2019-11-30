@@ -142,8 +142,6 @@ sahf
 JAE etiqueta_54
 
 etiqueta_54:
-JMP etiqueta_37
-
 DisplayFloat a,1
 newLine
 
