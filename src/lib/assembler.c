@@ -117,14 +117,14 @@ void escribir_seccion_codigo(FILE *archivoAssembler)
 	int i;
     int indice_terceto = obtenerIndiceTercetos();
 
-	for(i=0;i< indice_terceto;i++)
+	for(i=0;i <= indice_terceto;i++)
 	{		        
 
 		if(vector_tercetos[i].esEtiqueta == 99)
 		{
             // printf("\nVALOR i: %d", i);
             // printf("\nES ETIQUETA[%s, %s, %s]", vector_tercetos[i].te1, vector_tercetos[i].te2, vector_tercetos[i].resultado_aux);
-			fprintf(archivoAssembler,"etiqueta_%d:\n",i);		
+			fprintf(archivoAssembler,"etiqueta_%d:\n",i);
 		}
 
         // printf("ES OPERACION %d", esOperacion(i));
@@ -241,11 +241,10 @@ void preparar_assembler()
 
 	for(i=0;i<indice_terceto;i++)
 	{
-		
+
 		if(strcmp(vector_tercetos[i].te1,"_")==0 && strcmp(vector_tercetos[i].te2,"_")==0 && vector_tercetos[i].esEtiqueta!=99 )
 		{
-			//printf("ESTOY EN _ , _ : %d\n",i);
-			//printf("OPE: %s - TE1: %s - TE2: %s\n",vector_tercetos[i].ope,vector_tercetos[i].te1,vector_tercetos[i].te2);
+			
 			for(j=i+1;j< indice_terceto;j++)
 			{
 				itoa(i,bufferaux1,10);
@@ -259,6 +258,8 @@ void preparar_assembler()
 				}
 			}
 		}
+
+		
 		
 		if(strcmp(vector_tercetos[i].te1,"_")==0 && strcmp(vector_tercetos[i].te2,"_")==0 && vector_tercetos[i].esEtiqueta==99 )
 		{
@@ -276,7 +277,6 @@ void preparar_assembler()
 		
 		if(esOperacion(i))
 		{
-			//printf("ESTOY EN esOperacion : %d\n",i);
 			for(j=i+1;j< indice_terceto;j++)
 			{	
 				itoa(i,bufferaux1,10);
@@ -298,12 +298,12 @@ void preparar_assembler()
 		{	
 			//printf("OPE: %s - TE1: %s - TE2: %s\n",vector_tercetos[i].ope,vector_tercetos[i].te1,vector_tercetos[i].te2);
 			entero_aux = atoi(vector_tercetos[i].te1);
-			//printf("entero_aux: %d\n",entero_aux);
+			// printf("\nentero_aux: %d",entero_aux);
 			vector_tercetos[entero_aux].esEtiqueta = 99;
 			strcat(etiqueta,vector_tercetos[i].te1);
-			//printf("ETIQUETA: %s\n",etiqueta);
+			// printf("\nETIQUETA: %s",etiqueta);
 			strcpy(vector_tercetos[i].te1,etiqueta);
-			//printf("vector_tercetos[%d].te1: %s\n",i,vector_tercetos[i].te1);
+			// printf("\nvector_tercetos[%d].te1: %s",i,vector_tercetos[i].te1);
 			strcpy(etiqueta,"etiqueta_");
 		}
 		
@@ -318,8 +318,7 @@ void preparar_assembler()
 
 int esOperacion(int indice)
 {
-    // printf("\n\nesOperacion indice: %d", indice);
-    // printf("\nvector_tercetos[indice].ope = %s", vector_tercetos[indice].ope);
+
 	if(strcmp(vector_tercetos[indice].ope,"+")==0)
 	return 1;	
 	if(strcmp(vector_tercetos[indice].ope,"-")==0)
@@ -329,7 +328,6 @@ int esOperacion(int indice)
 	if(strcmp(vector_tercetos[indice].ope,"/")==0)
 	return 4;
 	if(strcmp(vector_tercetos[indice].ope,"=")==0){
-        // printf("\n\naux_tiponumerico: %d", aux_tiponumerico);
 		validaTipo(vector_tercetos[indice].te1);
 		if(aux_tiponumerico==3 || aux_tiponumerico==6){				// asignacion de una CADENA
 			return 10;

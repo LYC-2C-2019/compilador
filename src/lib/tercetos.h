@@ -41,5 +41,6 @@ void escribir_tercetos();
 // /* devuelve la cantidad de tercetos, funciona como un get de una variable privada 
 // si no se usa una funcion, no se puede acceder al valor de la variable no se por que */
 int obtenerIndiceTercetos();
+void setIndiceTercetos(int);
 
 #endif

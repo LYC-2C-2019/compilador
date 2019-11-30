@@ -37,3 +37,8 @@ int obtenerIndiceTercetos()
 {
    return indice_terceto;
 }
+
+void setIndiceTercetos(int value)
+{
+   indice_terceto = value;
+}
