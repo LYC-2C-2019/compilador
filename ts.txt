@@ -8,6 +8,7 @@ s                             Integer                                           
 r                             Integer                                                0    
 t                             Integer                                                0    
 y                             String                                                 0    
+e                             Float                                                  0    
 _2.5                          ConstFloat               2.5                           0    
 _4                            ConstInteger             4                             0    
 _12                           ConstInteger             12                            0    
@@ -19,9 +20,11 @@ _3                            ConstInteger             3                        
 @aux14                                                                               0    
 _10                           ConstInteger             10                            0    
 @aux16                                                                               0    
+_10.87                        ConstFloat               10.87                         0    
+_20.9                         ConstFloat               20.9                          0    
+_se_cumple                    ConstString              se_cumple                     9    
+_parte_verdadera              ConstString              parte_verdadera               15   
+_parte_falsa                  ConstString              parte_falsa                   11   
 _100                          ConstInteger             100                           0    
 _200                          ConstInteger             200                           0    
 _2                            ConstInteger             2                             0    
-_1                            ConstInteger             1                             0    
-@aux35                                                                               0    
-@aux39                                                                               0    

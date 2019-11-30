@@ -222,7 +222,6 @@ lista_declaraciones: lista_declaraciones COMMA declaracion {	printf("Regla 2\n")
 
 declaracion: SBRA_O lista_tipos SBRA_C COLON SBRA_O lista_ids SBRA_C  
 { 	acomodarPunterosTS(); 
-	printf("definicion OK\n\n");
 }
 
 lista_tipos: lista_tipos COMMA tipo { printf("Regla 5\n");} 
@@ -251,13 +250,11 @@ INTEGER
 lista_ids: 
 lista_ids COMMA  ID 
 {
-	printf("%s\n", yylval.str_val);
 	guardarEnVectorTablaSimbolos(2,yylval.str_val);
 	printf("Regla 8\n");
 }
 | ID 
 {
-	printf("%s\n", yylval.str_val);
 	guardarEnVectorTablaSimbolos(2,yylval.str_val);
 	printf("Regla 7\n");
 }
@@ -267,10 +264,10 @@ bloque: bloque sentencia {printf("Regla 13\n");}
 
 sentencia : asignacion 	{printf("Regla 15\n");}
 | seleccion 	{printf("Regla 16\n");}
-| asignacion_multiple 	{printf("sentencia -> asignacion_multiple OK \n\n");}
-| iteracion  		{printf("Regla 17\n");}
+| asignacion_multiple 	{printf("Regla 17\n");}
+| iteracion  		{printf("Regla 18\n");}
 | lectura 			{printf("Regla 19\n");}
-| impresion 			{printf("Regla 18\n");}
+| impresion 			{printf("Regla 20\n");}
 
 lectura: READ ID 	
 { 
@@ -567,13 +564,15 @@ ifelse: IF BRA_O comparacion {apilar(&pilaIf,aux);} BRA_C bloque ENDIF
 	strcpy(vector_tercetos[aux].te1,bufferaux1);
 }
 
-| IF IF BRA_O comparacion {apilar(&pilaIf,aux);} BRA_C THEN bloque {
+| IF IF BRA_O comparacion {apilar(&pilaIf,aux);} BRA_C bloque {
 	int indice_terceto = obtenerIndiceTercetos();
 	crear_terceto("JMP","_","_");			
 	aux=desapilar(&pilaIf);
+	setIndiceTercetos(indice_terceto + 1);
+	indice_terceto = obtenerIndiceTercetos();
 	itoa(indice_terceto,bufferaux1,10);					// paso a char[] el valor indice
 	strcpy(vector_tercetos[aux].te1,bufferaux1);		// asigno el lugar donde salto
-	apilar(&pilaIf,indice_terceto-1);
+	apilar(&pilaIf,indice_terceto-1);	
 }	ELSE bloque ENDIF 
 {
 	int indice_terceto = obtenerIndiceTercetos();
@@ -583,7 +582,7 @@ ifelse: IF BRA_O comparacion {apilar(&pilaIf,aux);} BRA_C bloque ENDIF
 	strcpy(vector_tercetos[aux].te1,bufferaux1);		// asigno el lugar donde salto
 }
 
-|	IF IF BRA_O comparacion {apilar(&pilaIf,aux);} AND comparacion {apilar(&pilaIf,aux);} BRA_C THEN bloque
+|	IF IF BRA_O comparacion {apilar(&pilaIf,aux);} AND comparacion {apilar(&pilaIf,aux);} BRA_C bloque
 {
 	int indice_terceto = obtenerIndiceTercetos();
 	aux=crear_terceto("JMP","_","_");			// guardo el numero de terceto donde voy a poner el salto desde el fin del THEN al FINAL
@@ -602,10 +601,11 @@ ELSE bloque ENDIF
 	aux=desapilar(&pilaIf);
 	itoa(indice_terceto,bufferaux1,10);					// paso a char[] el valor indice
 	strcpy(vector_tercetos[aux].te1,bufferaux1);		// SALTO AL FINAL DEL ELSE
+	vector_tercetos[aux].esEtiqueta=99;
 }			
 
 |	IF IF BRA_O comparacion {apilar(&pilaIf,aux); apilar(&pilaIf,crear_terceto("JMP","_","_"));} OR comparacion {apilar(&pilaIf,aux);} BRA_C {int indice_terceto = obtenerIndiceTercetos(); aux1=indice_terceto;} 
-THEN bloque {apilar(&pilaIf,crear_terceto("JMP","_","_"));} ELSE bloque ENDIF
+bloque {apilar(&pilaIf,crear_terceto("JMP","_","_"));} ELSE bloque ENDIF
 {
 	int indice_terceto = obtenerIndiceTercetos();
 	aux=desapilar(&pilaIf);								// cargo el salto al final cuando termina el THEN
@@ -658,7 +658,6 @@ condicion:   BRA_O comparacion BRA_C
 	char posInicial[10];
 	itoa(auxRepeat, posInicial,10);
 	aux2=desapilar(&pilaRepeat);
-	printf("aux2: %d\n",aux);
 	itoa(indice_terceto,bufferaux1,10);		
 	strcpy(vector_tercetos[aux2].te1,bufferaux1);
 	aux2=desapilar(&pilaRepeat);
@@ -794,7 +793,6 @@ asignacion_multiple: SBRA_O lista_ids_asignMultiple SBRA_C ASSIG SBRA_O lista_ex
 lista_ids_asignMultiple: 
 lista_ids_asignMultiple COMMA ID {
 
-	//printf("%s\n", yylval.str_val);
 	printf("Regla 37\n");
 	if(strcmp(yylval.str_val,validaTipo(yylval.str_val))==0){
 		//No existe en tabla de simbolo
@@ -994,8 +992,8 @@ int main(int argc,char *argv[]){
 
 		yyparse();
 
-		guardarTablaDeSimbolos(cantidadTokens, cant_ctes);					// archivos de tabla de simbolos
-		escribir_tercetos();		// archivo del codigo intermedio -> tercetos
+		guardarTablaDeSimbolos(cantidadTokens, cant_ctes);					// archivos de tabla de simbolos		
+		escribir_tercetos();		// archivo del codigo intermedio -> tercetos		
 		preparar_assembler();			// arreglo el vector_tercetos
 		escribir_assembler(cant_ctes);			// escribo archivo del codigo assembler
 	}
@@ -1147,7 +1145,7 @@ int buscarCte(char* nombre, char* tipo){			//return 1 = ya esta, return 0 = no e
 	for( i ; i < cant_ctes ; i++){
 		if(strcmp(tablaDeSimbolos[i].nombre, nombre)==0 
 				&& strcmp(tablaDeSimbolos[i].tipo,tipo)==0){
-			printf("%s DUPLICADA\n\n", tipo);
+			// printf("%s DUPLICADA\n\n", tipo);
 			return 1;
 		}
 	}
@@ -1181,8 +1179,7 @@ char* validaTipo(char* id)
 	return id;
 }
 void invertir_salto(terceto* vector, int indice){
-
-	printf("invertir el salto: %s\n", vector[indice].ope);
+	
 	if(strcmp(vector[indice].ope,"JE")==0){
 		strcpy(vector[indice].ope,"JNE");
 		return;

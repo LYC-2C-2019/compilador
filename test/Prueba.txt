@@ -1,7 +1,8 @@
 --/ declaraciones /--
 VAR
     [Integer, Float, Integer, String] : [a, b, c, x],
-    [Integer, Integer, Integer, String] : [s, r, t, y]
+    [Integer, Integer, Integer, String] : [s, r, t, y],
+    [Float] : [e]
 ENDVAR
 
 
@@ -17,24 +18,30 @@ x := "hola";
 
 a := (((8 + c)  + t) / 3) + 10;
 
+
+--/ seleccion /--
+
+IF(b>10.87 OR e<20.9)
+PRINT "se_cumple"
+ENDIF
+
+IF IF(c<=10)
+PRINT "parte_verdadera"
+ELSE
+PRINT "parte_falsa"
+ENDIF
+
+
 --/ asignacion multiple /--
 
 [r,s] := [100, 200]
+
 
 --/ inlist /--
 
 IF(INLIST(a,[2;4]))
     a:=4;
 ENDIF
-
---/ iteracion /--
-
-REPEAT
-    a := a+1;
-    REPEAT
-        c := c+1;
-    UNTIL (NOT (c<t));
-UNTIL (c>s OR t<a);
 
 
 --/ print, read /--
